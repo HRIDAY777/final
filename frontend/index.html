@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="AI-Powered School Management System with Advanced Analytics and Automation" />
+	<meta name="keywords" content="school management, education, AI, analytics, automation, PWA" />
+	<meta name="author" content="EduCore Team" />
+	
+	<!-- PWA Meta Tags -->
+	<meta name="theme-color" content="#3B82F6" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+	<meta name="apple-mobile-web-app-title" content="EduCore" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="msapplication-TileColor" content="#3B82F6" />
+	<meta name="msapplication-config" content="/browserconfig.xml" />
+	
+	<!-- Open Graph Meta Tags -->
+	<meta property="og:title" content="EduCore Ultra" />
+	<meta property="og:description" content="AI-Powered School Management System" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://educore.com" />
+	<meta property="og:image" content="/icon-512x512.png" />
+	
+	<!-- Twitter Meta Tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="EduCore Ultra" />
+	<meta name="twitter:description" content="AI-Powered School Management System" />
+	<meta name="twitter:image" content="/icon-512x512.png" />
+	
+	<!-- Icons -->
+	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+	<link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/icon-180x180.png" />
+	<link rel="apple-touch-icon" sizes="152x152" href="/icon-152x152.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="/icon-144x144.png" />
+	<link rel="apple-touch-icon" sizes="120x120" href="/icon-120x120.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="/icon-114x114.png" />
+	<link rel="apple-touch-icon" sizes="76x76" href="/icon-76x76.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="/icon-72x72.png" />
+	<link rel="apple-touch-icon" sizes="60x60" href="/icon-60x60.png" />
+	<link rel="apple-touch-icon" sizes="57x57" href="/icon-57x57.png" />
+	
+	<!-- PWA Manifest -->
+	<link rel="manifest" href="/manifest.json" />
+	
+	<!-- Preconnect to external domains -->
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	
+	<title>EduCore Ultra</title>
+  </head>
+  <body>
+	<div id="root"></div>
+	<script type="module" src="/src/main.tsx"></script>
+	
+	<!-- PWA Initialization Script -->
+	<script>
+		// Handle beforeinstallprompt event
+		window.addEventListener('beforeinstallprompt', (e) => {
+			// Prevent the mini-infobar from appearing on mobile
+			e.preventDefault();
+			// Stash the event so it can be triggered later
+			window.deferredPrompt = e;
+			console.log('Install prompt ready');
+		});
+
+		// Handle appinstalled event
+		window.addEventListener('appinstalled', (evt) => {
+			console.log('App was installed');
+			// Clear the deferredPrompt
+			window.deferredPrompt = null;
+		});
+
+		// Handle service worker updates
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.addEventListener('controllerchange', () => {
+				console.log('Service Worker updated');
+				// Optionally reload the page to use the new service worker
+				// window.location.reload();
+			});
+		}
+
+		// Handle offline/online events
+		window.addEventListener('online', () => {
+			console.log('App is online');
+			// You can show a notification or update UI
+		});
+
+		window.addEventListener('offline', () => {
+			console.log('App is offline');
+			// You can show a notification or update UI
+		});
+	</script>
+  </body>
+</html>
+
+

@@ -1,0 +1,45 @@
+// =============================================================================
+// MOBILE RESPONSIVE STYLES
+// =============================================================================
+
+@media (max-width: 768px) {
+  .container {
+    @apply px-4;
+  }
+  
+  .header {
+    &__nav {
+      @apply hidden;
+    }
+    
+    &__mobile-menu {
+      @apply block;
+    }
+  }
+  
+  .sidebar {
+    @apply -translate-x-full;
+    
+    &--open {
+      @apply translate-x-0;
+    }
+  }
+  
+  .dashboard {
+    &__main {
+      @apply ml-0;
+    }
+    
+    &__grid {
+      @apply grid-cols-1;
+    }
+  }
+  
+  .table {
+    @apply text-xs;
+    
+    th, td {
+      @apply px-2 py-2;
+    }
+  }
+}

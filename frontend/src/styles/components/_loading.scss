@@ -1,0 +1,31 @@
+// =============================================================================
+// LOADING COMPONENT STYLES
+// =============================================================================
+
+.loading {
+  @apply flex items-center justify-center;
+  
+  &__spinner {
+    @apply animate-spin rounded-full border-b-2 border-blue-600;
+    
+    &--sm {
+      @apply h-4 w-4;
+    }
+    
+    &--md {
+      @apply h-8 w-8;
+    }
+    
+    &--lg {
+      @apply h-12 w-12;
+    }
+  }
+  
+  &__text {
+    @apply text-gray-600 dark:text-gray-400 ml-2;
+  }
+  
+  &__overlay {
+    @apply fixed inset-0 bg-black/30 z-50 flex items-center justify-center;
+  }
+}

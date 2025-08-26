@@ -1,0 +1,42 @@
+// =============================================================================
+// HEADER LAYOUT STYLES
+// =============================================================================
+
+.header {
+  @apply bg-white dark:bg-secondary-800 border-b border-gray-200 dark:border-gray-700;
+  @apply sticky top-0 z-50;
+  
+  &__container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply flex items-center justify-between h-16;
+  }
+  
+  &__logo {
+    @apply flex items-center space-x-2;
+    
+    img {
+      @apply h-8 w-auto;
+    }
+    
+    span {
+      @apply text-xl font-bold text-gray-900 dark:text-gray-100;
+    }
+  }
+  
+  &__nav {
+    @apply hidden md:flex items-center space-x-8;
+    
+    a {
+      @apply text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100;
+      @apply transition-colors duration-200;
+    }
+  }
+  
+  &__actions {
+    @apply flex items-center space-x-4;
+  }
+  
+  &__mobile-menu {
+    @apply md:hidden;
+  }
+}

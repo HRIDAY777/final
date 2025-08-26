@@ -1,0 +1,54 @@
+# Root Git Ignore
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+
+# Django
+backend/staticfiles/
+backend/media/
+*.sqlite3
+*.db
+
+# Env files
+.env
+.env.*
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+**/.docker/**
+**/docker-compose.override.yml
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+.coverage.*
+
+# Build outputs
+build/
+dist/

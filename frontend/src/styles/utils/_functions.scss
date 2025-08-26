@@ -1,0 +1,377 @@
+// =============================================================================
+// EDUCORE ULTRA - SASS Functions
+// =============================================================================
+
+// Color Functions
+@function lighten-color($color, $percentage) {
+  @return lighten($color, $percentage);
+}
+
+@function darken-color($color, $percentage) {
+  @return darken($color, $percentage);
+}
+
+@function mix-colors($color1, $color2, $weight: 50%) {
+  @return mix($color1, $color2, $weight);
+}
+
+@function rgba-color($color, $alpha) {
+  @return rgba($color, $alpha);
+}
+
+// Spacing Functions
+@function spacing($multiplier: 1) {
+  @return $spacing-md * $multiplier;
+}
+
+@function spacing-xs($multiplier: 1) {
+  @return $spacing-xs * $multiplier;
+}
+
+@function spacing-sm($multiplier: 1) {
+  @return $spacing-sm * $multiplier;
+}
+
+@function spacing-lg($multiplier: 1) {
+  @return $spacing-lg * $multiplier;
+}
+
+@function spacing-xl($multiplier: 1) {
+  @return $spacing-xl * $multiplier;
+}
+
+// Typography Functions
+@function font-size($size) {
+  @if $size == 'xs' {
+    @return $font-size-xs;
+  } @else if $size == 'sm' {
+    @return $font-size-sm;
+  } @else if $size == 'base' {
+    @return $font-size-base;
+  } @else if $size == 'lg' {
+    @return $font-size-lg;
+  } @else if $size == 'xl' {
+    @return $font-size-xl;
+  } @else if $size == '2xl' {
+    @return $font-size-2xl;
+  } @else if $size == '3xl' {
+    @return $font-size-3xl;
+  } @else if $size == '4xl' {
+    @return $font-size-4xl;
+  } @else if $size == '5xl' {
+    @return $font-size-5xl;
+  } @else {
+    @return $font-size-base;
+  }
+}
+
+@function font-weight($weight) {
+  @if $weight == 'light' {
+    @return $font-weight-light;
+  } @else if $weight == 'normal' {
+    @return $font-weight-normal;
+  } @else if $weight == 'medium' {
+    @return $font-weight-medium;
+  } @else if $weight == 'semibold' {
+    @return $font-weight-semibold;
+  } @else if $weight == 'bold' {
+    @return $font-weight-bold;
+  } @else if $weight == 'extrabold' {
+    @return $font-weight-extrabold;
+  } @else {
+    @return $font-weight-normal;
+  }
+}
+
+// Border Radius Functions
+@function radius($size) {
+  @if $size == 'sm' {
+    @return $radius-sm;
+  } @else if $size == 'md' {
+    @return $radius-md;
+  } @else if $size == 'lg' {
+    @return $radius-lg;
+  } @else if $size == 'xl' {
+    @return $radius-xl;
+  } @else if $size == '2xl' {
+    @return $radius-2xl;
+  } @else if $size == 'full' {
+    @return $radius-full;
+  } @else {
+    @return $radius-md;
+  }
+}
+
+// Shadow Functions
+@function shadow($size) {
+  @if $size == 'sm' {
+    @return $shadow-sm;
+  } @else if $size == 'md' {
+    @return $shadow-md;
+  } @else if $size == 'lg' {
+    @return $shadow-lg;
+  } @else if $size == 'xl' {
+    @return $shadow-xl;
+  } @else if $size == '2xl' {
+    @return $shadow-2xl;
+  } @else {
+    @return $shadow-sm;
+  }
+}
+
+// Math Functions
+@function rem($pixels) {
+  @return #{$pixels / 16}rem;
+}
+
+@function em($pixels, $context: 16) {
+  @return #{$pixels / $context}em;
+}
+
+@function percentage($value, $total) {
+  @return percentage($value / $total);
+}
+
+// Grid Functions
+@function grid-column($columns) {
+  @return percentage($columns / $grid-columns);
+}
+
+@function grid-gap($multiplier: 1) {
+  @return $grid-gutter * $multiplier;
+}
+
+// Z-Index Functions
+@function z($level) {
+  @if $level == 'dropdown' {
+    @return $z-dropdown;
+  } @else if $level == 'sticky' {
+    @return $z-sticky;
+  } @else if $level == 'fixed' {
+    @return $z-fixed;
+  } @else if $level == 'modal-backdrop' {
+    @return $z-modal-backdrop;
+  } @else if $level == 'modal' {
+    @return $z-modal;
+  } @else if $level == 'popover' {
+    @return $z-popover;
+  } @else if $level == 'tooltip' {
+    @return $z-tooltip;
+  } @else {
+    @return 1;
+  }
+}
+
+// Breakpoint Functions
+@function breakpoint($size) {
+  @if $size == 'sm' {
+    @return $breakpoint-sm;
+  } @else if $size == 'md' {
+    @return $breakpoint-md;
+  } @else if $size == 'lg' {
+    @return $breakpoint-lg;
+  } @else if $size == 'xl' {
+    @return $breakpoint-xl;
+  } @else if $size == '2xl' {
+    @return $breakpoint-2xl;
+  } @else {
+    @return 0;
+  }
+}
+
+// Color Palette Functions
+@function primary-color($variant: 'base') {
+  @if $variant == 'light' {
+    @return $primary-light;
+  } @else if $variant == 'dark' {
+    @return $primary-dark;
+  } @else if $variant == 'lighter' {
+    @return $primary-lighter;
+  } @else {
+    @return $primary-color;
+  }
+}
+
+@function secondary-color($variant: 'base') {
+  @if $variant == 'light' {
+    @return $secondary-light;
+  } @else if $variant == 'dark' {
+    @return $secondary-dark;
+  } @else if $variant == 'lighter' {
+    @return $secondary-lighter;
+  } @else {
+    @return $secondary-color;
+  }
+}
+
+@function success-color($variant: 'base') {
+  @if $variant == 'light' {
+    @return $success-light;
+  } @else if $variant == 'dark' {
+    @return $success-dark;
+  } @else if $variant == 'lighter' {
+    @return $success-lighter;
+  } @else {
+    @return $success-color;
+  }
+}
+
+@function warning-color($variant: 'base') {
+  @if $variant == 'light' {
+    @return $warning-light;
+  } @else if $variant == 'dark' {
+    @return $warning-dark;
+  } @else if $variant == 'lighter' {
+    @return $warning-lighter;
+  } @else {
+    @return $warning-color;
+  }
+}
+
+@function error-color($variant: 'base') {
+  @if $variant == 'light' {
+    @return $error-light;
+  } @else if $variant == 'dark' {
+    @return $error-dark;
+  } @else if $variant == 'lighter' {
+    @return $error-lighter;
+  } @else {
+    @return $error-color;
+  }
+}
+
+@function info-color($variant: 'base') {
+  @if $variant == 'light' {
+    @return $info-light;
+  } @else if $variant == 'dark' {
+    @return $info-dark;
+  } @else if $variant == 'lighter' {
+    @return $info-lighter;
+  } @else {
+    @return $info-color;
+  }
+}
+
+// Gray Scale Functions
+@function gray($level) {
+  @if $level == 50 {
+    @return $gray-50;
+  } @else if $level == 100 {
+    @return $gray-100;
+  } @else if $level == 200 {
+    @return $gray-200;
+  } @else if $level == 300 {
+    @return $gray-300;
+  } @else if $level == 400 {
+    @return $gray-400;
+  } @else if $level == 500 {
+    @return $gray-500;
+  } @else if $level == 600 {
+    @return $gray-600;
+  } @else if $level == 700 {
+    @return $gray-700;
+  } @else if $level == 800 {
+    @return $gray-800;
+  } @else if $level == 900 {
+    @return $gray-900;
+  } @else {
+    @return $gray-500;
+  }
+}
+
+// Layout Functions
+@function header-height() {
+  @return $header-height;
+}
+
+@function sidebar-width($collapsed: false) {
+  @if $collapsed {
+    @return $sidebar-collapsed-width;
+  } @else {
+    @return $sidebar-width;
+  }
+}
+
+@function footer-height() {
+  @return $footer-height;
+}
+
+// Container Functions
+@function container-max-width() {
+  @return $container-max-width;
+}
+
+@function container-padding() {
+  @return $container-padding;
+}
+
+// Utility Functions
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+  @return $number;
+}
+
+@function calculate-rem($size) {
+  $rem-size: $size / 16px;
+  @return #{$rem-size}rem;
+}
+
+@function calculate-em($size, $context: 16px) {
+  $em-size: $size / $context;
+  @return #{$em-size}em;
+}
+
+// Color Contrast Functions
+@function contrast-ratio($color1, $color2) {
+  $l1: luminance($color1);
+  $l2: luminance($color2);
+  
+  @if $l1 > $l2 {
+    @return ($l1 + 0.05) / ($l2 + 0.05);
+  } @else {
+    @return ($l2 + 0.05) / ($l1 + 0.05);
+  }
+}
+
+@function luminance($color) {
+  $red: nth(linear-rgb($color), 1);
+  $green: nth(linear-rgb($color), 2);
+  $blue: nth(linear-rgb($color), 3);
+  
+  @return 0.2126 * $red + 0.7152 * $green + 0.0722 * $blue;
+}
+
+@function linear-rgb($color) {
+  $r: red($color) / 255;
+  $g: green($color) / 255;
+  $b: blue($color) / 255;
+  
+  $r: if($r <= 0.03928, $r / 12.92, pow(($r + 0.055) / 1.055, 2.4));
+  $g: if($g <= 0.03928, $g / 12.92, pow(($g + 0.055) / 1.055, 2.4));
+  $b: if($b <= 0.03928, $b / 12.92, pow(($b + 0.055) / 1.055, 2.4));
+  
+  @return ($r, $g, $b);
+}
+
+// Accessibility Functions
+@function accessible-text-color($background-color) {
+  $contrast-ratio: contrast-ratio($background-color, $white);
+  
+  @if $contrast-ratio >= 4.5 {
+    @return $white;
+  } @else {
+    @return $black;
+  }
+}
+
+@function accessible-border-color($background-color) {
+  $contrast-ratio: contrast-ratio($background-color, $gray-300);
+  
+  @if $contrast-ratio >= 3 {
+    @return $gray-300;
+  } @else {
+    @return $gray-500;
+  }
+}
