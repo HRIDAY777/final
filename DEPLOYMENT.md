@@ -1,22 +1,24 @@
 # EduCore Ultra - Deployment Guide
 
-## 🚀 Complete Deployment Setup
-
-This guide will help you deploy the EduCore Ultra school management system with both frontend and backend services.
-
 ## 📋 Prerequisites
 
-Before starting the deployment, ensure you have the following installed:
+Before deploying EduCore Ultra, ensure you have the following installed:
 
-- **Docker** (version 20.10 or higher)
-- **Docker Compose** (version 2.0 or higher)
-- **Git** (for cloning the repository)
-- **OpenSSL** (for SSL certificate generation)
+1. **Docker Desktop** (version 20.10 or higher)
+2. **Docker Compose** (included with Docker Desktop)
+3. **Git** (for version control)
+4. **PowerShell** (Windows) or **Bash** (Linux/macOS)
 
-### Installing Docker on Windows
+### System Requirements
 
-1. Download Docker Desktop from [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
-2. Install and start Docker Desktop
+- **RAM**: Minimum 4GB, Recommended 8GB+
+- **Storage**: At least 10GB free space
+- **OS**: Windows 10/11, macOS 10.15+, or Linux (Ubuntu 20.04+)
+
+### Pre-deployment Checklist
+
+1. Install Docker Desktop from [docker.com](https://docker.com)
+2. Start Docker Desktop and wait for it to be ready
 3. Ensure Docker is running (you should see the Docker icon in your system tray)
 
 ## 🏗️ Project Structure
@@ -50,11 +52,13 @@ educore-ultra/
 ### Step 1: Environment Setup
 
 1. Copy the environment template:
+
    ```bash
    cp env.example .env
    ```
 
 2. Edit the `.env` file with your actual values:
+
    ```bash
    # Update these values with your actual configuration
    DB_PASSWORD=your_secure_password
@@ -67,11 +71,13 @@ educore-ultra/
 ### Step 2: Run Deployment
 
 #### On Linux/macOS:
+
 ```bash
 ./deploy.sh
 ```
 
 #### On Windows (PowerShell):
+
 ```powershell
 # Make sure Docker Desktop is running
 docker-compose down --remove-orphans
@@ -84,11 +90,13 @@ docker-compose up -d
 If the automatic deployment script doesn't work, follow these manual steps:
 
 1. **Create necessary directories:**
+
    ```bash
    mkdir -p logs nginx/ssl monitoring backend/staticfiles backend/media frontend/dist
    ```
 
 2. **Generate SSL certificates:**
+
    ```bash
    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
        -keyout nginx/ssl/key.pem \
@@ -97,237 +105,262 @@ If the automatic deployment script doesn't work, follow these manual steps:
    ```
 
 3. **Start services:**
+
    ```bash
    docker-compose up -d
    ```
 
 4. **Run database migrations:**
+
    ```bash
    docker-compose exec backend python manage.py migrate
    ```
 
 5. **Create superuser:**
+
    ```bash
    docker-compose exec backend python manage.py createsuperuser
    ```
 
 6. **Collect static files:**
+
    ```bash
    docker-compose exec backend python manage.py collectstatic --noinput
    ```
 
 ## 🌐 Access URLs
 
-After successful deployment, you can access the application at:
+After successful deployment, you can access the following services:
 
-- **Main Application:** http://localhost
-- **Frontend Only:** http://localhost:3000
-- **Backend API:** http://localhost:8000
-- **Admin Panel:** http://localhost/admin
-- **API Documentation:** http://localhost:8000/api/docs/
-- **Grafana Dashboard:** http://localhost:3001
-- **Prometheus:** http://localhost:9090
+| Service | URL | Description |
+|---------|-----|-------------|
+| Main Application | [http://localhost](http://localhost) | Complete application |
+| Frontend Only | [http://localhost:3000](http://localhost:3000) | React app directly |
+| Backend API | [http://localhost:8000](http://localhost:8000) | Django API directly |
+| Admin Panel | [http://localhost/admin](http://localhost/admin) | Django admin |
+| API Docs | [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/) | API documentation |
+| Grafana | [http://localhost:3001](http://localhost:3001) | Monitoring dashboard |
+| Prometheus | [http://localhost:9090](http://localhost:9090) | Metrics collection |
 
-### Default Admin Credentials
+### Default Credentials
 
-- **Username:** admin
-- **Password:** admin123
+- **Admin Username**: `admin`
+- **Admin Password**: `admin123`
 
-**⚠️ Important:** Change these credentials immediately after first login!
+**⚠️ Important**: Change these credentials immediately after first login!
 
 ## 🔧 Service Management
 
-### View Logs
+### View Service Status
+
 ```bash
-# All services
+# Check all services
+docker-compose ps
+
+# View logs for all services
 docker-compose logs -f
 
-# Specific service
+# View logs for specific service
 docker-compose logs -f backend
 docker-compose logs -f frontend
 docker-compose logs -f nginx
 ```
 
-### Stop Services
-```bash
-docker-compose down
-```
+### Start/Stop Services
 
-### Restart Services
 ```bash
-docker-compose restart
+# Start all services
+docker-compose up -d
+
+# Stop all services
+docker-compose down
+
+# Restart specific service
+docker-compose restart backend
+docker-compose restart frontend
 ```
 
 ### Update Services
-```bash
-docker-compose pull
-docker-compose up -d
-```
 
-### Rebuild Services
 ```bash
+# Pull latest images
+docker-compose pull
+
+# Rebuild and restart
 docker-compose build --no-cache
 docker-compose up -d
 ```
 
-## 📊 Monitoring
+## 📊 Monitoring Setup
 
-The deployment includes comprehensive monitoring:
+### Grafana Dashboard
 
-### Prometheus
-- **URL:** http://localhost:9090
-- **Purpose:** Metrics collection and alerting
-- **Configuration:** `monitoring/prometheus.yml`
+1. Access Grafana at [http://localhost:3001](http://localhost:3001)
+2. Default credentials:
+   - Username: `admin`
+   - Password: `admin`
+3. Import the provided dashboard templates
 
-### Grafana
-- **URL:** http://localhost:3001
-- **Username:** admin
-- **Password:** admin123 (from .env file)
-- **Purpose:** Dashboard and visualization
+### Prometheus Metrics
+
+- Access Prometheus at [http://localhost:9090](http://localhost:9090)
+- View metrics for all services
+- Set up alerts for critical metrics
 
 ## 🔒 Security Configuration
 
-### SSL Certificates
+### SSL/HTTPS Setup
+
 For production deployment, replace the self-signed certificates:
 
-1. **Obtain SSL certificates** from a trusted CA (Let's Encrypt, etc.)
-2. **Replace the certificates:**
+1. **Obtain SSL certificates** (Let's Encrypt recommended)
+2. **Replace certificate files**:
+   - `nginx/ssl/cert.pem` (your certificate)
+   - `nginx/ssl/key.pem` (your private key)
+3. **Restart nginx**:
    ```bash
-   # Replace these files with your actual certificates
-   nginx/ssl/cert.pem
-   nginx/ssl/key.pem
+   docker-compose restart nginx
    ```
 
 ### Environment Variables
+
 Update the following in your `.env` file:
 
-- `SECRET_KEY`: Generate a strong Django secret key
-- `DB_PASSWORD`: Use a strong database password
-- `EMAIL_HOST_PASSWORD`: Use app-specific passwords for email
-- `OPENAI_API_KEY`: Your OpenAI API key for AI features
+```bash
+# Security
+SECRET_KEY=your_very_secure_secret_key
+DEBUG=False
+ALLOWED_HOSTS=your-domain.com,www.your-domain.com
 
-### Firewall Configuration
-Ensure these ports are open:
-- **80:** HTTP
-- **443:** HTTPS
-- **8000:** Backend API (optional, for direct access)
-- **3000:** Frontend (optional, for direct access)
-- **9090:** Prometheus (optional)
-- **3001:** Grafana (optional)
+# Database
+DB_PASSWORD=your_secure_database_password
 
-## 🚨 Troubleshooting
+# Email
+EMAIL_HOST_USER=your_email@domain.com
+EMAIL_HOST_PASSWORD=your_email_password
+
+# API Keys
+OPENAI_API_KEY=your_openai_api_key
+```
+
+## 🛠️ Troubleshooting
 
 ### Common Issues
 
-1. **Port already in use:**
-   ```bash
-   # Check what's using the port
-   netstat -tulpn | grep :80
-   
-   # Stop conflicting services
-   sudo systemctl stop apache2  # if Apache is running
-   sudo systemctl stop nginx    # if nginx is running
-   ```
+1. **Port conflicts**:
+   - Check if ports 80, 8000, 3000, 3001, 9090 are available
+   - Stop conflicting services or change ports in `docker-compose.yml`
 
-2. **Database connection failed:**
-   ```bash
-   # Check database logs
-   docker-compose logs db
-   
-   # Restart database
-   docker-compose restart db
-   ```
+2. **Permission errors**:
+   - Run PowerShell as Administrator (Windows)
+   - Use `sudo` for Linux/macOS
 
-3. **Frontend not loading:**
-   ```bash
-   # Check frontend logs
-   docker-compose logs frontend
-   
-   # Rebuild frontend
-   docker-compose build --no-cache frontend
-   docker-compose up -d frontend
-   ```
+3. **Docker not running**:
+   - Start Docker Desktop
+   - Wait for Docker to be ready
 
-4. **Backend API errors:**
-   ```bash
-   # Check backend logs
-   docker-compose logs backend
-   
-   # Run migrations
-   docker-compose exec backend python manage.py migrate
-   
-   # Check Django settings
-   docker-compose exec backend python manage.py check
-   ```
+4. **Database connection errors**:
+   - Check PostgreSQL container status: `docker-compose ps db`
+   - View database logs: `docker-compose logs db`
 
-### Health Checks
+5. **SSL certificate errors**:
+   - Accept self-signed certificates in browser
+   - For production, use proper SSL certificates
 
-Test the health of your services:
+### Debug Commands
 
 ```bash
-# Backend health
+# Check container status
+docker-compose ps
+
+# View detailed logs
+docker-compose logs backend
+
+# Check disk space
+docker system df
+
+# Clean up unused resources
+docker system prune
+
+# Check network connectivity
+docker network ls
+```
+
+### Reset Everything
+
+If you need to start fresh:
+
+```bash
+# Stop and remove everything
+docker-compose down -v
+
+# Remove all images
+docker system prune -a
+
+# Start fresh
+./deploy.sh
+```
+
+## 📈 Production Deployment
+
+### Before Going Live
+
+1. **Update environment variables**:
+   - Set `DEBUG=False`
+   - Configure production database
+   - Set up proper SSL certificates
+   - Update `ALLOWED_HOSTS`
+
+2. **Security hardening**:
+   - Change default passwords
+   - Enable 2FA for admin accounts
+   - Configure firewall rules
+   - Set up backup strategy
+
+3. **Performance optimization**:
+   - Enable Redis caching
+   - Configure CDN for static files
+   - Optimize database queries
+   - Set up load balancing
+
+### Production Checklist
+
+- [ ] SSL certificates configured
+- [ ] Environment variables updated
+- [ ] Database backups configured
+- [ ] Monitoring alerts set up
+- [ ] Security audit completed
+- [ ] Performance testing done
+- [ ] Disaster recovery plan ready
+- [ ] Documentation updated
+
+## 📞 Support
+
+### Getting Help
+
+1. **Check logs**: `docker-compose logs -f`
+2. **Verify prerequisites**: Ensure Docker is running
+3. **Review configuration**: Check `.env` file settings
+4. **Test connectivity**: Verify all ports are accessible
+
+### Useful Commands
+
+```bash
+# Health check
 curl http://localhost:8000/health/
 
-# Frontend health
-curl http://localhost:3000/health
-
-# Main nginx health
-curl http://localhost/health/
-```
-
-## 📈 Production Recommendations
-
-### 1. Domain Configuration
-Update `nginx/nginx.conf` with your actual domain:
-```nginx
-server_name yourdomain.com www.yourdomain.com;
-```
-
-### 2. SSL Configuration
-Use Let's Encrypt for free SSL certificates:
-```bash
-# Install certbot
-sudo apt install certbot
-
-# Generate certificates
-sudo certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com
-```
-
-### 3. Backup Strategy
-Set up automated backups:
-```bash
 # Database backup
-docker-compose exec db pg_dump -U educore_user educore_db > backup.sql
+docker-compose exec backend python manage.py dumpdata > backup.json
 
-# Media files backup
-tar -czf media_backup.tar.gz backend/media/
+# Database restore
+docker-compose exec backend python manage.py loaddata backup.json
+
+# Create new superuser
+docker-compose exec backend python manage.py createsuperuser
 ```
 
-### 4. Monitoring Alerts
-Configure Grafana alerts for:
-- High CPU usage
-- High memory usage
-- Database connection issues
-- API response time
+---
 
-### 5. Scaling
-For high traffic, consider:
-- Load balancer (HAProxy, Nginx)
-- Multiple backend instances
-- CDN for static files
-- Database clustering
+**🎯 Your EduCore Ultra system is now ready for deployment!**
 
-## 🆘 Support
-
-If you encounter issues:
-
-1. Check the logs: `docker-compose logs -f`
-2. Verify environment variables in `.env`
-3. Ensure all ports are available
-4. Check Docker and Docker Compose versions
-5. Verify SSL certificates (if using HTTPS)
-
-## 📝 License
-
-This deployment configuration is part of the EduCore Ultra project. Please refer to the main project license for usage terms.
-
+For quick setup, see [QUICK_START.md](QUICK_START.md).

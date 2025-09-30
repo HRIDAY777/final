@@ -2,149 +2,108 @@
 
 ## ⚡ 5-Minute Deployment
 
-Follow these steps to get your EduCore Ultra school management system running in minutes!
+Get your EduCore Ultra school management system running in just 5 minutes!
 
-### Prerequisites
-- ✅ Docker Desktop installed and running
-- ✅ Git (optional, for cloning)
+## 📋 Prerequisites
 
-### Step 1: Setup Environment
+- Docker Desktop installed and running
+- PowerShell (Windows) or Terminal (Linux/macOS)
+- At least 4GB RAM available
+
+## 🚀 Quick Deployment
+
+### Windows (PowerShell)
+
 ```powershell
-# Copy environment template
+# 1. Setup environment
 Copy-Item env.example .env
 
-# Edit .env file with your values (optional for testing)
-# You can use default values for initial testing
-```
-
-### Step 2: Deploy Everything
-```powershell
-# Run the Windows deployment script
+# 2. Deploy everything
 .\deploy.ps1
+
+# 3. Access your application
+Start-Process http://localhost
 ```
 
-**OR** manually:
-```powershell
-# Stop any existing containers
-docker-compose down --remove-orphans
+### Linux/macOS (Terminal)
 
-# Build and start all services
-docker-compose build
-docker-compose up -d
+```bash
+# 1. Setup environment
+cp env.example .env
 
-# Wait for services to start (30 seconds)
-Start-Sleep -Seconds 30
+# 2. Deploy everything
+./deploy.sh
 
-# Run database setup
-docker-compose exec backend python manage.py migrate
-docker-compose exec backend python manage.py collectstatic --noinput
+# 3. Access your application
+open http://localhost
 ```
 
-### Step 3: Access Your Application
+## 🌐 Access Your Application
 
-🎉 **Your application is now running!**
+After deployment, access your services at:
 
-- **🌐 Main App:** http://localhost
-- **🔐 Admin Panel:** http://localhost/admin
-- **📊 API Docs:** http://localhost:8000/api/docs/
-- **📈 Monitoring:** http://localhost:3001
+| Service | URL | Description |
+|---------|-----|-------------|
+| Main App | [http://localhost](http://localhost) | Complete application |
+| Admin Panel | [http://localhost/admin](http://localhost/admin) | Django admin |
+| API Docs | [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/) | API documentation |
+| Monitoring | [http://localhost:3001](http://localhost:3001) | Grafana dashboard |
 
-**Default Admin Login:**
-- Username: `admin`
-- Password: `admin123`
+## 👤 Default Login
 
-## 🔧 Quick Commands
+- **Username**: `admin`
+- **Password**: `admin123`
 
-### View Logs
-```powershell
-# All services
+**⚠️ Important**: Change these credentials immediately after first login!
+
+## 🔧 Basic Commands
+
+### Check Status
+
+```bash
+# View all services
+docker-compose ps
+
+# View logs
 docker-compose logs -f
-
-# Specific service
-docker-compose logs -f backend
-docker-compose logs -f frontend
 ```
 
-### Stop Application
-```powershell
+### Stop/Start
+
+```bash
+# Stop all services
 docker-compose down
-```
 
-### Restart Application
-```powershell
-docker-compose restart
-```
-
-### Update Application
-```powershell
-docker-compose pull
+# Start all services
 docker-compose up -d
 ```
 
-## 🚨 Troubleshooting
+### Troubleshooting
 
-### Port Already in Use
-```powershell
-# Check what's using port 80
-netstat -ano | findstr :80
+```bash
+# Check if Docker is running
+docker --version
 
-# Stop conflicting services (if any)
-# Or change ports in docker-compose.yml
+# View service logs
+docker-compose logs backend
+
+# Restart specific service
+docker-compose restart backend
 ```
 
-### Docker Not Running
-1. Start Docker Desktop
-2. Wait for Docker to fully start
-3. Run deployment again
+## 🆘 Common Issues
 
-### Database Connection Issues
-```powershell
-# Restart database
-docker-compose restart db
-
-# Check database logs
-docker-compose logs db
-```
-
-### Frontend Not Loading
-```powershell
-# Rebuild frontend
-docker-compose build --no-cache frontend
-docker-compose up -d frontend
-```
-
-## 📊 What's Included
-
-Your deployment includes:
-
-- ✅ **React Frontend** - Modern UI with Tailwind CSS
-- ✅ **Django Backend** - RESTful API with DRF
-- ✅ **PostgreSQL Database** - Reliable data storage
-- ✅ **Redis Cache** - Fast caching and sessions
-- ✅ **Nginx Reverse Proxy** - Load balancing and SSL
-- ✅ **Celery Workers** - Background task processing
-- ✅ **Prometheus Monitoring** - Metrics collection
-- ✅ **Grafana Dashboards** - Beautiful visualizations
-- ✅ **SSL Certificates** - Secure HTTPS (self-signed for testing)
-
-## 🔒 Security Notes
-
-For production use:
-
-1. **Change default passwords** in `.env` file
-2. **Update SSL certificates** with real ones
-3. **Configure domain name** in nginx settings
-4. **Set up proper backups** using `.\backup.ps1`
-5. **Enable firewall rules** for your ports
+1. **Docker not running**: Start Docker Desktop
+2. **Port conflicts**: Check if ports 80, 8000, 3000 are free
+3. **Permission errors**: Run PowerShell as Administrator
+4. **SSL errors**: Accept self-signed certificates in browser
 
 ## 📞 Need Help?
 
-1. Check the logs: `docker-compose logs -f`
-2. Verify Docker is running
-3. Ensure ports 80, 8000, 3000, 3001, 9090 are available
-4. Check the full deployment guide: `DEPLOYMENT.md`
+- Check [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions
+- View service logs: `docker-compose logs -f`
+- Verify Docker is running: `docker --version`
 
 ---
 
-**🎉 Congratulations!** Your EduCore Ultra school management system is now running successfully!
-
+**🎯 Your EduCore Ultra system is now ready to use!**
