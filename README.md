@@ -1,9 +1,10 @@
 # EduCore Ultra - AI-Powered School Management System
 
 ![EduCore Ultra Logo](https://img.shields.io/badge/EduCore-Ultra-blue?style=for-the-badge&logo=education)
-![Django](https://img.shields.io/badge/Django-5.0-green?style=for-the-badge&logo=django)
+![Django](https://img.shields.io/badge/Django-5.2.7-green?style=for-the-badge&logo=django)
 ![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![Python](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python)
 ![Docker](https://img.shields.io/badge/Docker-20.10+-blue?style=for-the-badge&logo=docker)
 
 **A comprehensive, modern school management system built with Django REST Framework and React, featuring AI-powered analytics and real-time communication.**
@@ -12,13 +13,51 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![GitHub stars](https://img.shields.io/github/stars/HRIDAY777/final.svg?style=social&label=Star)](https://github.com/HRIDAY777/final)
 
+---
+
+## ⚡ Quick Start (2 Minutes)
+
+**Get started instantly!** No complex setup needed:
+
+### Method 1: One-Click Start (Windows) 🚀
+```powershell
+# Just double-click this file:
+START_WEBSITE.bat
+```
+Done! Website opens automatically at http://localhost:5173
+
+### Method 2: Manual Start (Any OS) 📝
+
+**Terminal 1 - Backend:**
+```bash
+cd backend
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+**Open browser:** http://localhost:5173 🎉
+
+**Demo Login:** Click "Admin" button or use `admin@edu.com` / `password`
+
+---
+
 ## 📋 Table of Contents
 
+- [⚡ Quick Start (2 Minutes)](#-quick-start-2-minutes)
 - [✅ Project Status](#-project-status)
 - [🚀 Features](#-features)
 - [🛠️ Technology Stack](#️-technology-stack)
 - [📋 Prerequisites](#-prerequisites)
-- [🚀 Quick Start](#-quick-start)
+- [🚀 Detailed Setup](#-detailed-setup)
+- [🔐 Social Login Setup](#-social-authentication-setup-facebook--google-)
 - [📁 Project Structure](#-project-structure)
 - [🔧 Configuration](#-configuration)
 - [📊 Monitoring](#-monitoring)
@@ -51,13 +90,26 @@
 ### 🚀 **Key Strengths**
 
 - **Enterprise-Grade Architecture** - Multi-tenant support, microservices-ready
-- **Security Excellence** - JWT authentication, OAuth integration, rate limiting
+- **Security Excellence** - JWT authentication, OAuth integration (Facebook & Google), rate limiting
 - **Production Readiness** - Health checks, monitoring, backup strategies
 - **Developer Experience** - Hot reloading, comprehensive logging, debug tools
+- **Python 3.13 Compatible** - Latest Python version support
+- **Modern Stack** - Django 5.2.7, React 18, Vite 6, TypeScript
 
 ### 🎉 **Ready for Production!**
 
 Your EduCore Ultra project is **production-ready** and follows industry best practices. No action required - your project is in excellent condition! 🎊
+
+### 🆕 **Latest Updates (October 2025)**
+
+- ✅ **Facebook & Google Login** - OAuth social authentication fully configured
+- ✅ **Python 3.13 Support** - All dependencies updated for latest Python
+- ✅ **Django 5.2.7** - Latest stable Django version
+- ✅ **Enhanced Documentation** - New setup guides and quick start
+- ✅ **One-Click Start** - START_WEBSITE.bat for instant launch
+- ✅ **100+ Pages** - All frontend pages tested and working
+- ✅ **30+ Backend Apps** - Complete school management modules
+- ✅ **AI Integration** - LangChain, OpenAI, Anthropic ready
 
 ---
 
@@ -97,6 +149,7 @@ Your EduCore Ultra project is **production-ready** and follows industry best pra
 - **📱 Responsive Design** - Mobile-first approach with PWA capabilities
 - **⚡ Progressive Web App** - Offline capabilities and app-like experience
 - **🔒 Advanced Security** - JWT authentication, rate limiting, and security headers
+- **🔐 Social Authentication** - Facebook & Google OAuth login integration
 - **📊 Monitoring & Logging** - Prometheus and Grafana integration for observability
 - **🔄 Background Tasks** - Celery-based task processing for heavy operations
 - **📧 Email Integration** - Automated email notifications and communication
@@ -108,16 +161,18 @@ Your EduCore Ultra project is **production-ready** and follows industry best pra
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| **Django** | 5.0 | Web framework |
-| **Django REST Framework** | 3.14 | API framework |
-| **PostgreSQL** | 15 | Primary database |
-| **Redis** | 7.0 | Caching and message broker |
-| **Celery** | 5.3 | Background task processing |
-| **Channels** | 4.0 | WebSocket support |
-| **JWT** | 5.3 | Authentication |
-| **Django CORS Headers** | 4.3 | CORS handling |
-| **Django Filter** | 23.3 | API filtering |
-| **Django Extensions** | 3.2 | Development utilities |
+| **Django** | 5.2.7 | Web framework |
+| **Django REST Framework** | 3.16 | API framework |
+| **PostgreSQL** | 15 | Primary database (Production) |
+| **SQLite** | 3 | Development database |
+| **Redis** | 6.4 | Caching and message broker |
+| **Celery** | 5.5 | Background task processing |
+| **Channels** | 4.3 | WebSocket support |
+| **JWT** | 5.5 | Authentication |
+| **Django Allauth** | 65.12 | Social authentication (Facebook/Google) |
+| **Django CORS Headers** | 4.9 | CORS handling |
+| **Django Filter** | 25.2 | API filtering |
+| **Django Extensions** | 4.1 | Development utilities |
 
 ### ⚛️ Frontend
 
@@ -150,12 +205,12 @@ Your EduCore Ultra project is **production-ready** and follows industry best pra
 
 Before you begin, ensure you have the following installed:
 
-- **Docker** 20.10+ and **Docker Compose** 2.0+
-- **Node.js** 18+ and **npm** 9+
-- **Python** 3.11+ (for local development)
-- **Git** 2.30+
-- **PostgreSQL** 15+ (for local development)
-- **Redis** 7.0+ (for local development)
+- **Python** 3.13+ (for local development) ✅
+- **Node.js** 18+ and **npm** 9+ ✅
+- **Git** 2.30+ ✅
+- **Docker** 20.10+ and **Docker Compose** 2.0+ (optional, for production)
+- **PostgreSQL** 15+ (optional, for production - SQLite used in development)
+- **Redis** 7.0+ (optional, for production)
 
 ### System Requirements
 
@@ -164,7 +219,7 @@ Before you begin, ensure you have the following installed:
 - **OS**: Linux, macOS, or Windows 10/11
 - **Network**: Stable internet connection for dependencies
 
-## 🚀 Quick Start
+## 🚀 Detailed Setup
 
 ### 1. Clone the Repository
 
@@ -185,32 +240,53 @@ nano .env
 nano frontend/.env.local
 ```
 
-### 3. Local Development (without Docker)
+### 3. Local Development (Recommended - No Docker Required!)
 
-Backend (Django):
+**🚀 Super Easy Start!** Just run these 2 commands:
+
+#### Backend (Django):
 
 ```powershell
 cd backend
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-$env:DJANGO_SETTINGS_ENV='dev'
 python manage.py migrate
+python manage.py createsuperuser  # Create admin account
 python manage.py runserver
 ```
 
-Frontend (Vite):
+**Backend runs at:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+#### Frontend (Vite) - Open NEW terminal:
 
 ```powershell
-cd ..\frontend
+cd frontend
 npm install
 npm run dev
 ```
 
-Access:
+**Frontend runs at:** [http://localhost:5173](http://localhost:5173)
 
-- Backend API: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- Frontend: [http://127.0.0.1:5173](http://127.0.0.1:5173)
+#### ⚡ Even Easier - One-Click Start:
+
+Double-click: **`START_WEBSITE.bat`** 🎉
+
+This will:
+- ✅ Start backend automatically
+- ✅ Start frontend automatically
+- ✅ Open website in browser
+- ✅ No manual commands needed!
+
+### Access Your Website:
+
+- **Main Website:** [http://localhost:5173](http://localhost:5173) ⬅️ **Start here!**
+- **Backend API:** [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Admin Panel:** [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
+
+### 🔑 Demo Login Credentials:
+
+- **Admin:** admin@edu.com / password
+- **Teacher:** teacher@edu.com / password
+- **Student:** student@edu.com / password
 
 ### 4. Development Setup (Docker)
 
@@ -234,14 +310,26 @@ docker-compose exec backend python manage.py collectstatic --noinput
 docker-compose exec backend python manage.py loaddata sample_data
 ```
 
-### 5. Access the Application
+### 5. Social Authentication Setup (Facebook & Google) 🔐
 
-- **Frontend**: [http://localhost:3000](http://localhost:3000)
-- **Backend API**: [http://localhost:8000](http://localhost:8000)
-- **Admin Panel**: [http://localhost:8000/admin](http://localhost:8000/admin)
-- **API Docs**: [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
+Your website supports Facebook and Google login! To enable:
 
-### 6. Production Deployment
+1. **Read the setup guide:** `FACEBOOK_LOGIN_SETUP_GUIDE.md`
+2. **Create Facebook App** at https://developers.facebook.com/
+3. **Add Social App in Django Admin:** http://127.0.0.1:8000/admin
+4. **Configure OAuth redirect URIs**
+5. **Test login!** 🎉
+
+**Detailed guide available:** See `FACEBOOK_LOGIN_SETUP_GUIDE.md`
+
+### 6. Access the Application
+
+- **Main Website (Frontend)**: [http://localhost:5173](http://localhost:5173) ⬅️ **Start Here!**
+- **Backend API**: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- **Admin Panel**: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
+- **API Docs**: [http://127.0.0.1:8000/api/schema/swagger-ui/](http://127.0.0.1:8000/api/schema/swagger-ui/)
+
+### 7. Production Deployment
 
 ```bash
 # Make deployment script executable
@@ -832,8 +920,8 @@ We welcome contributions from the community! Here's how you can help:
 2. **Clone your fork**:
 
    ```bash
-   git clone https://github.com/yourusername/educore-ultra.git
-   cd educore-ultra
+   git clone https://github.com/HRIDAY777/final.git
+   cd final
    ```
 
 3. **Create a feature branch**:
@@ -937,26 +1025,28 @@ SOFTWARE.
 
 ## 🆘 Support
 
-### Documentation
+### 📚 Documentation Files
 
-- **[User Guide](docs/user-guide.md)** - Complete user manual
-- **[API Reference](docs/api-reference.md)** - Detailed API documentation
-- **[Deployment Guide](docs/deployment.md)** - Production deployment instructions
-- **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
-- **[FAQ](docs/faq.md)** - Frequently asked questions
+- **[QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)** - Get started in 2 minutes
+- **[FACEBOOK_LOGIN_SETUP_GUIDE.md](FACEBOOK_LOGIN_SETUP_GUIDE.md)** - Facebook/Google OAuth setup
+- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Production deployment checklist
+- **[HOSTINGER_DEPLOYMENT_GUIDE.md](HOSTINGER_DEPLOYMENT_GUIDE.md)** - Deploy to Hostinger VPS
+- **[FUNCTIONALITY_TEST_REPORT.md](FUNCTIONALITY_TEST_REPORT.md)** - Feature testing report
+- **[README.md](README.md)** - This comprehensive guide
 
 ### Community Support
 
-- **[GitHub Issues](https://github.com/yourusername/educore-ultra/issues)** - Bug reports and feature requests
-- **[GitHub Discussions](https://github.com/yourusername/educore-ultra/discussions)** - Community discussions
-- **[GitHub Wiki](https://github.com/yourusername/educore-ultra/wiki)** - Community-maintained documentation
+- **[GitHub Repository](https://github.com/HRIDAY777/final)** - Main repository
+- **[GitHub Issues](https://github.com/HRIDAY777/final/issues)** - Bug reports and feature requests
+- **[GitHub Discussions](https://github.com/HRIDAY777/final/discussions)** - Community discussions
+- **[Star on GitHub](https://github.com/HRIDAY777/final)** - Show your support ⭐
 
-### Professional Support
+### Getting Started
 
-- **Email**: [support@educore-ultra.com](mailto:support@educore-ultra.com)
-- **Website**: [https://educore-ultra.com](https://educore-ultra.com)
-- **Documentation**: [https://docs.educore-ultra.com](https://docs.educore-ultra.com)
-- **Status Page**: [https://status.educore-ultra.com](https://status.educore-ultra.com)
+- **📖 Quick Start:** Read `QUICK_START_GUIDE.md` for 2-minute setup
+- **🔐 Social Login:** See `FACEBOOK_LOGIN_SETUP_GUIDE.md` for OAuth setup
+- **🚀 One-Click Start:** Double-click `START_WEBSITE.bat` (Windows)
+- **⚙️ Manual Setup:** Follow the detailed setup section below
 
 ### Getting Help
 
@@ -1040,9 +1130,9 @@ We would like to thank the following for their contributions:
 
 **EduCore Ultra** - Empowering Education with AI
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/educore-ultra.svg?style=social&label=Star)](https://github.com/yourusername/educore-ultra)
-[![GitHub forks](https://img.shields.io/github/forks/yourusername/educore-ultra.svg?style=social&label=Fork)](https://github.com/yourusername/educore-ultra)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/educore-ultra.svg)](https://github.com/yourusername/educore-ultra/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/educore-ultra.svg)](https://github.com/yourusername/educore-ultra/pulls)
+[![GitHub stars](https://img.shields.io/github/stars/HRIDAY777/final.svg?style=social&label=Star)](https://github.com/HRIDAY777/final)
+[![GitHub forks](https://img.shields.io/github/forks/HRIDAY777/final.svg?style=social&label=Fork)](https://github.com/HRIDAY777/final)
+[![GitHub issues](https://img.shields.io/github/issues/HRIDAY777/final.svg)](https://github.com/HRIDAY777/final/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/HRIDAY777/final.svg)](https://github.com/HRIDAY777/final/pulls)
 
 Made with ❤️ by the EduCore Ultra Team
