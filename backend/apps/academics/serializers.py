@@ -59,46 +59,42 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    class_enrolled = ClassSerializer(read_only=True)
-    full_name = serializers.ReadOnlyField(source='user.get_full_name')
-    email = serializers.ReadOnlyField(source='user.email')
+    full_name = serializers.ReadOnlyField()
+    current_class_name = serializers.CharField(source='current_class.name', read_only=True)
 
     class Meta:
         model = Student
         fields = [
-            'id', 'user', 'student_id', 'class_enrolled', 'admission_number',
-            'admission_date', 'parent_name', 'parent_phone', 'parent_email',
-            'address', 'emergency_contact', 'blood_group', 'is_active',
-            'full_name', 'email', 'created_at', 'updated_at'
+            'id', 'user', 'student_id', 'admission_number', 'first_name',
+            'last_name', 'middle_name', 'full_name', 'date_of_birth', 'gender',
+            'blood_group', 'email', 'phone', 'address', 'city', 'state',
+            'postal_code', 'country', 'current_class', 'current_class_name',
+            'admission_date', 'academic_year', 'status', 'is_active',
+            'created_at', 'updated_at'
         ]
 
 
 class StudentCreateSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    class_enrolled_id = serializers.UUIDField(write_only=True)
+    current_class_id = serializers.UUIDField(write_only=True, required=False)
 
     class Meta:
         model = Student
         fields = [
-            'id', 'user', 'student_id', 'class_enrolled_id',
-            'admission_number', 'admission_date', 'parent_name',
-            'parent_phone', 'parent_email', 'address',
-            'emergency_contact', 'blood_group'
+            'id', 'user', 'student_id', 'admission_number', 'first_name',
+            'last_name', 'middle_name', 'date_of_birth', 'gender',
+            'blood_group', 'email', 'phone', 'address', 'city', 'state',
+            'postal_code', 'country', 'current_class_id', 'admission_date',
+            'academic_year', 'status'
         ]
 
     def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        class_enrolled_id = validated_data.pop('class_enrolled_id')
+        current_class_id = validated_data.pop('current_class_id', None)
+        
+        if current_class_id:
+            current_class = Class.objects.get(id=current_class_id)
+            validated_data['current_class'] = current_class
 
-        user = User.objects.create_user(**user_data, user_type='student')
-        class_enrolled = Class.objects.get(id=class_enrolled_id)
-
-        student = Student.objects.create(
-            user=user,
-            class_enrolled=class_enrolled,
-            **validated_data
-        )
+        student = Student.objects.create(**validated_data)
         return student
 
 
