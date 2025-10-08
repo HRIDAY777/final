@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -17,8 +17,16 @@ const Categories: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
-  useEffect(() => { fetchCategories({ page, search }); }, [page, search]);
-  useEffect(() => { if (categoriesError) setTimeout(() => clearErrors(), 3000); }, [categoriesError]);
+  const fetchCategoriesCallback = useCallback(() => {
+    fetchCategories({ page, search });
+  }, [fetchCategories, page, search]);
+
+  const clearErrorsCallback = useCallback(() => {
+    clearErrors();
+  }, [clearErrors]);
+
+  useEffect(() => { fetchCategoriesCallback(); }, [fetchCategoriesCallback]);
+  useEffect(() => { if (categoriesError) setTimeout(() => clearErrorsCallback(), 3000); }, [categoriesError, clearErrorsCallback]);
 
   const onOpen = (c?: any) => {
     setEditing(c || null);

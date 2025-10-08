@@ -7,5 +7,5 @@ class AIToolsConfig(AppConfig):
     verbose_name = 'AI Tools & Automation'
 
     def ready(self):
-        import apps.ai_tools.signals
-
+        # Import signals to register them
+        import apps.ai_tools.signals  # noqa: F401

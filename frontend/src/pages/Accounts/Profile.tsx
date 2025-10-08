@@ -5,8 +5,6 @@ import { useAuth } from '../../stores/authStore';
 import {
   UserIcon,
   EnvelopeIcon,
-  PhoneIcon,
-  MapPinIcon,
   CalendarIcon,
   CameraIcon,
   PencilIcon,

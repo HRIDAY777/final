@@ -1,31 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/UI/Card';
 import { Button } from '@/components/UI/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/Tabs';
-import { Badge } from '@/components/UI/Badge';
 import { 
   FileText, 
   Calendar, 
   Download, 
   Plus, 
-  Settings, 
   BarChart3,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle
+  Clock
 } from 'lucide-react';
 import ReportTemplates from './components/ReportTemplates';
 import GeneratedReports from './components/GeneratedReports';
 import ScheduledReports from './components/ScheduledReports';
 import ReportDashboard from './components/ReportDashboard';
 import CreateReportModal from './components/CreateReportModal';
-import { useReports } from '@/hooks/useReports';
+import { useReports } from '@/hooks/useAnalytics';
 
 const ReportsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { stats, isLoading } = useReports();
+  const { reports, templates, loading, error, getReports, getTemplates } = useReports();
+
+  // Calculate stats from the data
+  const stats = {
+    templates: templates.length,
+    generated: reports.length,
+    scheduled: 0, // TODO: Add scheduled reports
+    thisMonth: reports.filter(report => {
+      const reportDate = new Date(report.generated_at);
+      const now = new Date();
+      return reportDate.getMonth() === now.getMonth() && reportDate.getFullYear() === now.getFullYear();
+    }).length
+  };
 
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -58,7 +65,7 @@ const ReportsPage: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Templates</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {isLoading ? '...' : stats?.templates || 0}
+                  {loading ? '...' : stats?.templates || 0}
                 </p>
               </div>
               <FileText className="w-8 h-8 text-blue-500" />
@@ -72,7 +79,7 @@ const ReportsPage: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Generated Reports</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {isLoading ? '...' : stats?.generated || 0}
+                  {loading ? '...' : stats?.generated || 0}
                 </p>
               </div>
               <Download className="w-8 h-8 text-green-500" />
@@ -86,7 +93,7 @@ const ReportsPage: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Scheduled Reports</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {isLoading ? '...' : stats?.scheduled || 0}
+                  {loading ? '...' : stats?.scheduled || 0}
                 </p>
               </div>
               <Clock className="w-8 h-8 text-orange-500" />
@@ -100,7 +107,7 @@ const ReportsPage: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">This Month</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {isLoading ? '...' : stats?.thisMonth || 0}
+                  {loading ? '...' : stats?.thisMonth || 0}
                 </p>
               </div>
               <BarChart3 className="w-8 h-8 text-purple-500" />
@@ -111,9 +118,7 @@ const ReportsPage: React.FC = () => {
 
       {/* Main Content */}
       <Card>
-        <CardHeader>
-          <CardTitle>Report Management</CardTitle>
-        </CardHeader>
+        <CardHeader title="Report Management" />
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4">

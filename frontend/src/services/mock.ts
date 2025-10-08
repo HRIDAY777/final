@@ -135,7 +135,7 @@ export const mockPost = (url: string, data?: any): any => {
     }
     return { success: true }
 }
-export const mockPut = (_url: string, _data?: any): any => ({ success: true })
+export const mockPut = (_url: string, _data?: any): any => ({ success: true }) // eslint-disable-line no-unused-vars
 export const mockPatch = (url: string, data?: any): any => {
     const path = url.split('?')[0]
     if (path.startsWith('/shop/cart/items/')) {

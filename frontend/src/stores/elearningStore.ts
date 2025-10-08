@@ -1,6 +1,15 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { api } from '../services/api';
+
+// API Response Types
+interface ApiResponse<T> {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: T[];
+}
 
 export interface Course {
   id: number;
@@ -132,55 +141,55 @@ export interface DiscussionReply {
 
 interface ELearningState {
   // Courses
-  courses: any;
+  courses: ApiResponse<Course> | null;
   currentCourse: Course | null;
   coursesLoading: boolean;
   coursesError: string | null;
 
   // Categories
-  categories: any;
+  categories: ApiResponse<CourseCategory> | null;
   currentCategory: CourseCategory | null;
   categoriesLoading: boolean;
   categoriesError: string | null;
 
   // Lessons
-  lessons: any;
+  lessons: ApiResponse<Lesson> | null;
   currentLesson: Lesson | null;
   lessonsLoading: boolean;
   lessonsError: string | null;
 
   // Enrollments
-  enrollments: any;
+  enrollments: ApiResponse<Enrollment> | null;
   currentEnrollment: Enrollment | null;
   enrollmentsLoading: boolean;
   enrollmentsError: string | null;
 
   // Progress
-  progress: any;
+  progress: ApiResponse<LessonProgress> | null;
   currentProgress: LessonProgress | null;
   progressLoading: boolean;
   progressError: string | null;
 
   // Quizzes
-  quizzes: any;
+  quizzes: ApiResponse<Quiz> | null;
   currentQuiz: Quiz | null;
   quizzesLoading: boolean;
   quizzesError: string | null;
 
   // Quiz Attempts
-  quizAttempts: any;
+  quizAttempts: ApiResponse<QuizAttempt> | null;
   currentQuizAttempt: QuizAttempt | null;
   quizAttemptsLoading: boolean;
   quizAttemptsError: string | null;
 
   // Certificates
-  certificates: any;
+  certificates: ApiResponse<Certificate> | null;
   currentCertificate: Certificate | null;
   certificatesLoading: boolean;
   certificatesError: string | null;
 
   // Discussions
-  discussions: any;
+  discussions: ApiResponse<Discussion> | null;
   currentDiscussion: Discussion | null;
   discussionsLoading: boolean;
   discussionsError: string | null;
@@ -250,7 +259,7 @@ interface ELearningActions {
   updateCertificate: (id: number, data: Partial<Certificate>) => Promise<Certificate>;
   deleteCertificate: (id: number) => Promise<void>;
   generateCertificate: (enrollmentId: number) => Promise<void>;
-  downloadCertificate: (certificateId: number) => Promise<void>;
+  downloadCertificate: (certificateId: number) => Promise<Blob>;
 
   // Discussion actions
   fetchDiscussions: (params?: any) => Promise<void>;
@@ -321,7 +330,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchCourses: async (params = {}) => {
         set({ coursesLoading: true, coursesError: null });
         try {
-          const response = await api.get('/elearning/courses/', { params });
+          const response = await api.get('/elearning/courses/', { params }) as { data: ApiResponse<Course> };
           set({ courses: response.data, coursesLoading: false });
         } catch (error: any) {
           set({ 
@@ -334,7 +343,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchCourseById: async (id: number) => {
         set({ coursesLoading: true, coursesError: null });
         try {
-          const response = await api.get(`/elearning/courses/${id}/`);
+          const response = await api.get(`/elearning/courses/${id}/`) as { data: Course };
           set({ currentCourse: response.data, coursesLoading: false });
         } catch (error: any) {
           set({ 
@@ -347,7 +356,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createCourse: async (data: Partial<Course>) => {
         set({ coursesLoading: true, coursesError: null });
         try {
-          const response = await api.post('/elearning/courses/', data);
+          const response = await api.post('/elearning/courses/', data) as { data: Course };
           set({ coursesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -362,7 +371,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateCourse: async (id: number, data: Partial<Course>) => {
         set({ coursesLoading: true, coursesError: null });
         try {
-          const response = await api.put(`/elearning/courses/${id}/`, data);
+          const response = await api.put(`/elearning/courses/${id}/`, data) as { data: Course };
           set({ coursesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -420,7 +429,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchCategories: async (params = {}) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.get('/elearning/categories/', { params });
+          const response = await api.get('/elearning/categories/', { params }) as { data: ApiResponse<CourseCategory> };
           set({ categories: response.data, categoriesLoading: false });
         } catch (error: any) {
           set({ 
@@ -433,7 +442,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchCategoryById: async (id: number) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.get(`/elearning/categories/${id}/`);
+          const response = await api.get(`/elearning/categories/${id}/`) as { data: CourseCategory };
           set({ currentCategory: response.data, categoriesLoading: false });
         } catch (error: any) {
           set({ 
@@ -446,7 +455,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createCategory: async (data: Partial<CourseCategory>) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.post('/elearning/categories/', data);
+          const response = await api.post('/elearning/categories/', data) as { data: CourseCategory };
           set({ categoriesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -461,7 +470,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateCategory: async (id: number, data: Partial<CourseCategory>) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.put(`/elearning/categories/${id}/`, data);
+          const response = await api.put(`/elearning/categories/${id}/`, data) as { data: CourseCategory };
           set({ categoriesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -491,7 +500,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchLessons: async (params = {}) => {
         set({ lessonsLoading: true, lessonsError: null });
         try {
-          const response = await api.get('/elearning/lessons/', { params });
+          const response = await api.get('/elearning/lessons/', { params }) as { data: ApiResponse<Lesson> };
           set({ lessons: response.data, lessonsLoading: false });
         } catch (error: any) {
           set({ 
@@ -504,7 +513,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchLessonById: async (id: number) => {
         set({ lessonsLoading: true, lessonsError: null });
         try {
-          const response = await api.get(`/elearning/lessons/${id}/`);
+          const response = await api.get(`/elearning/lessons/${id}/`) as { data: Lesson };
           set({ currentLesson: response.data, lessonsLoading: false });
         } catch (error: any) {
           set({ 
@@ -517,7 +526,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createLesson: async (data: Partial<Lesson>) => {
         set({ lessonsLoading: true, lessonsError: null });
         try {
-          const response = await api.post('/elearning/lessons/', data);
+          const response = await api.post('/elearning/lessons/', data) as { data: Lesson };
           set({ lessonsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -532,7 +541,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateLesson: async (id: number, data: Partial<Lesson>) => {
         set({ lessonsLoading: true, lessonsError: null });
         try {
-          const response = await api.put(`/elearning/lessons/${id}/`, data);
+          const response = await api.put(`/elearning/lessons/${id}/`, data) as { data: Lesson };
           set({ lessonsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -576,7 +585,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchEnrollments: async (params = {}) => {
         set({ enrollmentsLoading: true, enrollmentsError: null });
         try {
-          const response = await api.get('/elearning/enrollments/', { params });
+          const response = await api.get('/elearning/enrollments/', { params }) as { data: ApiResponse<Enrollment> };
           set({ enrollments: response.data, enrollmentsLoading: false });
         } catch (error: any) {
           set({ 
@@ -589,7 +598,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchEnrollmentById: async (id: number) => {
         set({ enrollmentsLoading: true, enrollmentsError: null });
         try {
-          const response = await api.get(`/elearning/enrollments/${id}/`);
+          const response = await api.get(`/elearning/enrollments/${id}/`) as { data: Enrollment };
           set({ currentEnrollment: response.data, enrollmentsLoading: false });
         } catch (error: any) {
           set({ 
@@ -602,7 +611,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createEnrollment: async (data: Partial<Enrollment>) => {
         set({ enrollmentsLoading: true, enrollmentsError: null });
         try {
-          const response = await api.post('/elearning/enrollments/', data);
+          const response = await api.post('/elearning/enrollments/', data) as { data: Enrollment };
           set({ enrollmentsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -617,7 +626,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateEnrollment: async (id: number, data: Partial<Enrollment>) => {
         set({ enrollmentsLoading: true, enrollmentsError: null });
         try {
-          const response = await api.put(`/elearning/enrollments/${id}/`, data);
+          const response = await api.put(`/elearning/enrollments/${id}/`, data) as { data: Enrollment };
           set({ enrollmentsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -675,7 +684,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchProgress: async (params = {}) => {
         set({ progressLoading: true, progressError: null });
         try {
-          const response = await api.get('/elearning/progress/', { params });
+          const response = await api.get('/elearning/progress/', { params }) as { data: ApiResponse<LessonProgress> };
           set({ progress: response.data, progressLoading: false });
         } catch (error: any) {
           set({ 
@@ -688,7 +697,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchProgressById: async (id: number) => {
         set({ progressLoading: true, progressError: null });
         try {
-          const response = await api.get(`/elearning/progress/${id}/`);
+          const response = await api.get(`/elearning/progress/${id}/`) as { data: LessonProgress };
           set({ currentProgress: response.data, progressLoading: false });
         } catch (error: any) {
           set({ 
@@ -701,7 +710,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createProgress: async (data: Partial<LessonProgress>) => {
         set({ progressLoading: true, progressError: null });
         try {
-          const response = await api.post('/elearning/progress/', data);
+          const response = await api.post('/elearning/progress/', data) as { data: LessonProgress };
           set({ progressLoading: false });
           return response.data;
         } catch (error: any) {
@@ -716,7 +725,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateProgress: async (id: number, data: Partial<LessonProgress>) => {
         set({ progressLoading: true, progressError: null });
         try {
-          const response = await api.put(`/elearning/progress/${id}/`, data);
+          const response = await api.put(`/elearning/progress/${id}/`, data) as { data: LessonProgress };
           set({ progressLoading: false });
           return response.data;
         } catch (error: any) {
@@ -763,7 +772,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchQuizzes: async (params = {}) => {
         set({ quizzesLoading: true, quizzesError: null });
         try {
-          const response = await api.get('/elearning/quizzes/', { params });
+          const response = await api.get('/elearning/quizzes/', { params }) as { data: ApiResponse<Quiz> };
           set({ quizzes: response.data, quizzesLoading: false });
         } catch (error: any) {
           set({ 
@@ -776,7 +785,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchQuizById: async (id: number) => {
         set({ quizzesLoading: true, quizzesError: null });
         try {
-          const response = await api.get(`/elearning/quizzes/${id}/`);
+          const response = await api.get(`/elearning/quizzes/${id}/`) as { data: Quiz };
           set({ currentQuiz: response.data, quizzesLoading: false });
         } catch (error: any) {
           set({ 
@@ -789,7 +798,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createQuiz: async (data: Partial<Quiz>) => {
         set({ quizzesLoading: true, quizzesError: null });
         try {
-          const response = await api.post('/elearning/quizzes/', data);
+          const response = await api.post('/elearning/quizzes/', data) as { data: Quiz };
           set({ quizzesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -804,7 +813,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateQuiz: async (id: number, data: Partial<Quiz>) => {
         set({ quizzesLoading: true, quizzesError: null });
         try {
-          const response = await api.put(`/elearning/quizzes/${id}/`, data);
+          const response = await api.put(`/elearning/quizzes/${id}/`, data) as { data: Quiz };
           set({ quizzesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -834,7 +843,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchQuizAttempts: async (params = {}) => {
         set({ quizAttemptsLoading: true, quizAttemptsError: null });
         try {
-          const response = await api.get('/elearning/quiz-attempts/', { params });
+          const response = await api.get('/elearning/quiz-attempts/', { params }) as { data: ApiResponse<QuizAttempt> };
           set({ quizAttempts: response.data, quizAttemptsLoading: false });
         } catch (error: any) {
           set({ 
@@ -847,7 +856,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchQuizAttemptById: async (id: number) => {
         set({ quizAttemptsLoading: true, quizAttemptsError: null });
         try {
-          const response = await api.get(`/elearning/quiz-attempts/${id}/`);
+          const response = await api.get(`/elearning/quiz-attempts/${id}/`) as { data: QuizAttempt };
           set({ currentQuizAttempt: response.data, quizAttemptsLoading: false });
         } catch (error: any) {
           set({ 
@@ -860,7 +869,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createQuizAttempt: async (data: Partial<QuizAttempt>) => {
         set({ quizAttemptsLoading: true, quizAttemptsError: null });
         try {
-          const response = await api.post('/elearning/quiz-attempts/', data);
+          const response = await api.post('/elearning/quiz-attempts/', data) as { data: QuizAttempt };
           set({ quizAttemptsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -875,7 +884,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateQuizAttempt: async (id: number, data: Partial<QuizAttempt>) => {
         set({ quizAttemptsLoading: true, quizAttemptsError: null });
         try {
-          const response = await api.put(`/elearning/quiz-attempts/${id}/`, data);
+          const response = await api.put(`/elearning/quiz-attempts/${id}/`, data) as { data: QuizAttempt };
           set({ quizAttemptsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -919,7 +928,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchCertificates: async (params = {}) => {
         set({ certificatesLoading: true, certificatesError: null });
         try {
-          const response = await api.get('/elearning/certificates/', { params });
+          const response = await api.get('/elearning/certificates/', { params }) as { data: ApiResponse<Certificate> };
           set({ certificates: response.data, certificatesLoading: false });
         } catch (error: any) {
           set({ 
@@ -932,7 +941,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchCertificateById: async (id: number) => {
         set({ certificatesLoading: true, certificatesError: null });
         try {
-          const response = await api.get(`/elearning/certificates/${id}/`);
+          const response = await api.get(`/elearning/certificates/${id}/`) as { data: Certificate };
           set({ currentCertificate: response.data, certificatesLoading: false });
         } catch (error: any) {
           set({ 
@@ -945,7 +954,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createCertificate: async (data: Partial<Certificate>) => {
         set({ certificatesLoading: true, certificatesError: null });
         try {
-          const response = await api.post('/elearning/certificates/', data);
+          const response = await api.post('/elearning/certificates/', data) as { data: Certificate };
           set({ certificatesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -960,7 +969,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateCertificate: async (id: number, data: Partial<Certificate>) => {
         set({ certificatesLoading: true, certificatesError: null });
         try {
-          const response = await api.put(`/elearning/certificates/${id}/`, data);
+          const response = await api.put(`/elearning/certificates/${id}/`, data) as { data: Certificate };
           set({ certificatesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -1005,7 +1014,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
         try {
           const response = await api.get(`/elearning/certificates/${certificateId}/download/`, {
             responseType: 'blob'
-          });
+          }) as { data: Blob };
           set({ certificatesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -1021,7 +1030,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchDiscussions: async (params = {}) => {
         set({ discussionsLoading: true, discussionsError: null });
         try {
-          const response = await api.get('/elearning/discussions/', { params });
+          const response = await api.get('/elearning/discussions/', { params }) as { data: ApiResponse<Discussion> };
           set({ discussions: response.data, discussionsLoading: false });
         } catch (error: any) {
           set({ 
@@ -1034,7 +1043,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       fetchDiscussionById: async (id: number) => {
         set({ discussionsLoading: true, discussionsError: null });
         try {
-          const response = await api.get(`/elearning/discussions/${id}/`);
+          const response = await api.get(`/elearning/discussions/${id}/`) as { data: Discussion };
           set({ currentDiscussion: response.data, discussionsLoading: false });
         } catch (error: any) {
           set({ 
@@ -1047,7 +1056,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       createDiscussion: async (data: Partial<Discussion>) => {
         set({ discussionsLoading: true, discussionsError: null });
         try {
-          const response = await api.post('/elearning/discussions/', data);
+          const response = await api.post('/elearning/discussions/', data) as { data: Discussion };
           set({ discussionsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -1062,7 +1071,7 @@ export const useELearningStore = create<ELearningState & ELearningActions>()(
       updateDiscussion: async (id: number, data: Partial<Discussion>) => {
         set({ discussionsLoading: true, discussionsError: null });
         try {
-          const response = await api.put(`/elearning/discussions/${id}/`, data);
+          const response = await api.put(`/elearning/discussions/${id}/`, data) as { data: Discussion };
           set({ discussionsLoading: false });
           return response.data;
         } catch (error: any) {

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import { Card, CardContent, CardTitle } from '@/components/UI/Card';
 import { Button } from '@/components/UI/Button';
 import { Badge } from '@/components/UI/Badge';
 import Input from '@/components/UI/Input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/Select';
 import { useCourses } from '@/hooks/useElearning';
-import { BookOpen, Clock, Users, Star, PlayCircle, Search, Filter } from 'lucide-react';
+import { BookOpen, Clock, Users, Star, PlayCircle, Search } from 'lucide-react';
 
 const Courses: React.FC = () => {
   const { courses, loading, error } = useCourses();

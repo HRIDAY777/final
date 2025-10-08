@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { 
   AttendanceSession, AttendanceRecord, LeaveRequest, 
@@ -115,7 +116,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchSessions: async (params?: any) => {
     set({ sessionsLoading: true, sessionsError: null });
     try {
-      const sessions = await attendanceAPI.getSessions(params);
+      const sessions = await attendanceAPI.getSessions(params) as PaginatedResponse<AttendanceSession>;
       set({ sessions, sessionsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -126,7 +127,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchSession: async (id: string) => {
     set({ sessionsLoading: true, sessionsError: null });
     try {
-      const currentSession = await attendanceAPI.getSession(id);
+      const currentSession = await attendanceAPI.getSession(id) as AttendanceSession;
       set({ currentSession, sessionsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -193,7 +194,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchRecords: async (params?: any) => {
     set({ recordsLoading: true, recordsError: null });
     try {
-      const records = await attendanceAPI.getRecords(params);
+      const records = await attendanceAPI.getRecords(params) as PaginatedResponse<AttendanceRecord>;
       set({ records, recordsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -204,7 +205,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchRecord: async (id: string) => {
     set({ recordsLoading: true, recordsError: null });
     try {
-      const currentRecord = await attendanceAPI.getRecord(id);
+      const currentRecord = await attendanceAPI.getRecord(id) as AttendanceRecord;
       set({ currentRecord, recordsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -258,7 +259,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchLeaveRequests: async (params?: any) => {
     set({ leaveRequestsLoading: true, leaveRequestsError: null });
     try {
-      const leaveRequests = await attendanceAPI.getLeaveRequests(params);
+      const leaveRequests = await attendanceAPI.getLeaveRequests(params) as PaginatedResponse<LeaveRequest>;
       set({ leaveRequests, leaveRequestsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -269,7 +270,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchLeaveRequest: async (id: string) => {
     set({ leaveRequestsLoading: true, leaveRequestsError: null });
     try {
-      const currentLeaveRequest = await attendanceAPI.getLeaveRequest(id);
+      const currentLeaveRequest = await attendanceAPI.getLeaveRequest(id) as LeaveRequest;
       set({ currentLeaveRequest, leaveRequestsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -351,7 +352,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchReports: async (params?: any) => {
     set({ reportsLoading: true, reportsError: null });
     try {
-      const reports = await attendanceAPI.getReports(params);
+      const reports = await attendanceAPI.getReports(params) as PaginatedResponse<AttendanceReport>;
       set({ reports, reportsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -362,7 +363,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchReport: async (id: string) => {
     set({ reportsLoading: true, reportsError: null });
     try {
-      const currentReport = await attendanceAPI.getReport(id);
+      const currentReport = await attendanceAPI.getReport(id) as AttendanceReport;
       set({ currentReport, reportsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -388,7 +389,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchSettings: async (params?: any) => {
     set({ settingsLoading: true, settingsError: null });
     try {
-      const settings = await attendanceAPI.getSettings(params);
+      const settings = await attendanceAPI.getSettings(params) as PaginatedResponse<AttendanceSettings>;
       set({ settings, settingsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -399,7 +400,7 @@ export const useAttendanceStore = create<AttendanceState>((set, get) => ({
   fetchSetting: async (id: string) => {
     set({ settingsLoading: true, settingsError: null });
     try {
-      const currentSetting = await attendanceAPI.getSetting(id);
+      const currentSetting = await attendanceAPI.getSetting(id) as AttendanceSettings;
       set({ currentSetting, settingsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);

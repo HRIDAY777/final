@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django_tenants.utils import tenant_context
+# from django_tenants.utils import tenant_context
 from apps.students.models import Student
 from apps.teachers.models import Teacher
 

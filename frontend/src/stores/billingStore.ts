@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import axios from 'axios';
@@ -260,8 +261,8 @@ export const useBillingStore = create<BillingState>()(
       fetchPlans: async (params = {}) => {
         set({ plansLoading: true, plansError: null });
         try {
-          const data = await apiService.get('/billing/plans/', { params } as any);
-          set({ plans: data as any, plansLoading: false });
+          const data = await apiService.get('/billing/plans/', { params } as any) as ApiResponse<Plan>;
+          set({ plans: data, plansLoading: false });
         } catch (error: any) {
           set({ 
             plansError: error.response?.data?.message || 'Failed to fetch plans',
@@ -273,8 +274,8 @@ export const useBillingStore = create<BillingState>()(
       fetchPlan: async (id: number) => {
         set({ plansLoading: true, plansError: null });
         try {
-          const data = await apiService.get(`/billing/plans/${id}/`);
-          set({ currentPlan: data as any, plansLoading: false });
+          const data = await apiService.get(`/billing/plans/${id}/`) as Plan;
+          set({ currentPlan: data, plansLoading: false });
         } catch (error: any) {
           set({ 
             plansError: error.response?.data?.message || 'Failed to fetch plan',
@@ -286,7 +287,7 @@ export const useBillingStore = create<BillingState>()(
       createPlan: async (data: Partial<Plan>) => {
         set({ plansLoading: true, plansError: null });
         try {
-          const newPlan = await apiService.post('/billing/plans/', data);
+          const newPlan = await apiService.post('/billing/plans/', data) as Plan;
           set(state => ({
             plans: state.plans ? {
               ...state.plans,
@@ -307,7 +308,7 @@ export const useBillingStore = create<BillingState>()(
       updatePlan: async (id: number, data: Partial<Plan>) => {
         set({ plansLoading: true, plansError: null });
         try {
-          const updatedPlan = await apiService.put(`/billing/plans/${id}/`, data);
+          const updatedPlan = await apiService.put(`/billing/plans/${id}/`, data) as Plan;
           set(state => ({
             plans: state.plans ? {
               ...state.plans,
@@ -351,8 +352,8 @@ export const useBillingStore = create<BillingState>()(
       fetchSubscriptions: async (params = {}) => {
         set({ subscriptionsLoading: true, subscriptionsError: null });
         try {
-          const data = await apiService.get('/billing/subscriptions/', { params } as any);
-          set({ subscriptions: data as any, subscriptionsLoading: false });
+          const data = await apiService.get('/billing/subscriptions/', { params } as any) as ApiResponse<Subscription>;
+          set({ subscriptions: data, subscriptionsLoading: false });
         } catch (error: any) {
           set({ 
             subscriptionsError: error.response?.data?.message || 'Failed to fetch subscriptions',
@@ -364,8 +365,8 @@ export const useBillingStore = create<BillingState>()(
       fetchSubscription: async (id: number) => {
         set({ subscriptionsLoading: true, subscriptionsError: null });
         try {
-          const data = await apiService.get(`/billing/subscriptions/${id}/`);
-          set({ currentSubscription: data as any, subscriptionsLoading: false });
+          const data = await apiService.get(`/billing/subscriptions/${id}/`) as Subscription;
+          set({ currentSubscription: data, subscriptionsLoading: false });
         } catch (error: any) {
           set({ 
             subscriptionsError: error.response?.data?.message || 'Failed to fetch subscription',
@@ -377,7 +378,7 @@ export const useBillingStore = create<BillingState>()(
       createSubscription: async (data: Partial<Subscription>) => {
         set({ subscriptionsLoading: true, subscriptionsError: null });
         try {
-          const newSubscription = await apiService.post('/billing/subscriptions/', data);
+          const newSubscription = await apiService.post('/billing/subscriptions/', data) as Subscription;
           set(state => ({
             subscriptions: state.subscriptions ? {
               ...state.subscriptions,
@@ -398,7 +399,7 @@ export const useBillingStore = create<BillingState>()(
       updateSubscription: async (id: number, data: Partial<Subscription>) => {
         set({ subscriptionsLoading: true, subscriptionsError: null });
         try {
-          const updatedSubscription = await apiService.put(`/billing/subscriptions/${id}/`, data);
+          const updatedSubscription = await apiService.put(`/billing/subscriptions/${id}/`, data) as Subscription;
           set(state => ({
             subscriptions: state.subscriptions ? {
               ...state.subscriptions,
@@ -441,7 +442,7 @@ export const useBillingStore = create<BillingState>()(
       cancelSubscription: async (id: number) => {
         set({ subscriptionsLoading: true, subscriptionsError: null });
         try {
-          const updatedSubscription = await apiService.post(`/billing/subscriptions/${id}/cancel/`);
+          const updatedSubscription = await apiService.post(`/billing/subscriptions/${id}/cancel/`) as Subscription;
           set(state => ({
             subscriptions: state.subscriptions ? {
               ...state.subscriptions,
@@ -464,8 +465,8 @@ export const useBillingStore = create<BillingState>()(
       fetchFees: async (params = {}) => {
         set({ feesLoading: true, feesError: null });
         try {
-          const data = await apiService.get('/billing/fees/', { params } as any);
-          set({ fees: data as any, feesLoading: false });
+          const data = await apiService.get('/billing/fees/', { params } as any) as ApiResponse<Fee>;
+          set({ fees: data, feesLoading: false });
         } catch (error: any) {
           set({ 
             feesError: error.response?.data?.message || 'Failed to fetch fees',
@@ -477,8 +478,8 @@ export const useBillingStore = create<BillingState>()(
       fetchFee: async (id: number) => {
         set({ feesLoading: true, feesError: null });
         try {
-          const data = await apiService.get(`/billing/fees/${id}/`);
-          set({ currentFee: data as any, feesLoading: false });
+          const data = await apiService.get(`/billing/fees/${id}/`) as Fee;
+          set({ currentFee: data, feesLoading: false });
         } catch (error: any) {
           set({ 
             feesError: error.response?.data?.message || 'Failed to fetch fee',
@@ -490,7 +491,7 @@ export const useBillingStore = create<BillingState>()(
       createFee: async (data: Partial<Fee>) => {
         set({ feesLoading: true, feesError: null });
         try {
-          const newFee = await apiService.post('/billing/fees/', data);
+          const newFee = await apiService.post('/billing/fees/', data) as Fee;
           set(state => ({
             fees: state.fees ? {
               ...state.fees,
@@ -511,7 +512,7 @@ export const useBillingStore = create<BillingState>()(
       updateFee: async (id: number, data: Partial<Fee>) => {
         set({ feesLoading: true, feesError: null });
         try {
-          const updatedFee = await apiService.put(`/billing/fees/${id}/`, data);
+          const updatedFee = await apiService.put(`/billing/fees/${id}/`, data) as Fee;
           set(state => ({
             fees: state.fees ? {
               ...state.fees,
@@ -555,8 +556,8 @@ export const useBillingStore = create<BillingState>()(
       fetchInvoices: async (params = {}) => {
         set({ invoicesLoading: true, invoicesError: null });
         try {
-          const data = await apiService.get('/billing/invoices/', { params } as any);
-          set({ invoices: data as any, invoicesLoading: false });
+          const data = await apiService.get('/billing/invoices/', { params } as any) as ApiResponse<Invoice>;
+          set({ invoices: data, invoicesLoading: false });
         } catch (error: any) {
           set({ 
             invoicesError: error.response?.data?.message || 'Failed to fetch invoices',
@@ -568,8 +569,8 @@ export const useBillingStore = create<BillingState>()(
       fetchInvoice: async (id: number) => {
         set({ invoicesLoading: true, invoicesError: null });
         try {
-          const data = await apiService.get(`/billing/invoices/${id}/`);
-          set({ currentInvoice: data as any, invoicesLoading: false });
+          const data = await apiService.get(`/billing/invoices/${id}/`) as Invoice;
+          set({ currentInvoice: data, invoicesLoading: false });
         } catch (error: any) {
           set({ 
             invoicesError: error.response?.data?.message || 'Failed to fetch invoice',
@@ -581,7 +582,7 @@ export const useBillingStore = create<BillingState>()(
       createInvoice: async (data: Partial<Invoice>) => {
         set({ invoicesLoading: true, invoicesError: null });
         try {
-          const newInvoice = await apiService.post('/billing/invoices/', data);
+          const newInvoice = await apiService.post('/billing/invoices/', data) as Invoice;
           set(state => ({
             invoices: state.invoices ? {
               ...state.invoices,
@@ -602,7 +603,7 @@ export const useBillingStore = create<BillingState>()(
       updateInvoice: async (id: number, data: Partial<Invoice>) => {
         set({ invoicesLoading: true, invoicesError: null });
         try {
-          const updatedInvoice = await apiService.put(`/billing/invoices/${id}/`, data);
+          const updatedInvoice = await apiService.put(`/billing/invoices/${id}/`, data) as Invoice;
           set(state => ({
             invoices: state.invoices ? {
               ...state.invoices,
@@ -645,12 +646,13 @@ export const useBillingStore = create<BillingState>()(
       sendInvoice: async (id: number) => {
         set({ invoicesLoading: true, invoicesError: null });
         try {
-          let updatedInvoice: any;
+          let updatedInvoice: Invoice;
           try {
-            updatedInvoice = await apiService.post(`/billing/invoices/${id}/send/`);
+            updatedInvoice = await apiService.post(`/billing/invoices/${id}/send/`) as Invoice;
           } catch {
             // Fallback: mark as sent locally if backend doesn't implement
-            updatedInvoice = { ...(get().currentInvoice as any), id, status: 'sent' };
+            const currentInvoice = get().currentInvoice;
+            updatedInvoice = currentInvoice ? { ...currentInvoice, id, status: 'sent' } : {} as Invoice;
           }
           set(state => ({
             invoices: state.invoices ? {
@@ -674,8 +676,8 @@ export const useBillingStore = create<BillingState>()(
       fetchPayments: async (params = {}) => {
         set({ paymentsLoading: true, paymentsError: null });
         try {
-          const data = await apiService.get('/billing/payments/', { params } as any);
-          set({ payments: data as any, paymentsLoading: false });
+          const data = await apiService.get('/billing/payments/', { params } as any) as ApiResponse<Payment>;
+          set({ payments: data, paymentsLoading: false });
         } catch (error: any) {
           set({ 
             paymentsError: error.response?.data?.message || 'Failed to fetch payments',
@@ -687,8 +689,8 @@ export const useBillingStore = create<BillingState>()(
       fetchPayment: async (id: number) => {
         set({ paymentsLoading: true, paymentsError: null });
         try {
-          const data = await apiService.get(`/billing/payments/${id}/`);
-          set({ currentPayment: data as any, paymentsLoading: false });
+          const data = await apiService.get(`/billing/payments/${id}/`) as Payment;
+          set({ currentPayment: data, paymentsLoading: false });
         } catch (error: any) {
           set({ 
             paymentsError: error.response?.data?.message || 'Failed to fetch payment',
@@ -700,7 +702,7 @@ export const useBillingStore = create<BillingState>()(
       createPayment: async (data: Partial<Payment>) => {
         set({ paymentsLoading: true, paymentsError: null });
         try {
-          const newPayment = await apiService.post('/billing/payments/', data);
+          const newPayment = await apiService.post('/billing/payments/', data) as Payment;
           set(state => ({
             payments: state.payments ? {
               ...state.payments,
@@ -721,7 +723,7 @@ export const useBillingStore = create<BillingState>()(
       updatePayment: async (id: number, data: Partial<Payment>) => {
         set({ paymentsLoading: true, paymentsError: null });
         try {
-          const updatedPayment = await apiService.put(`/billing/payments/${id}/`, data);
+          const updatedPayment = await apiService.put(`/billing/payments/${id}/`, data) as Payment;
           set(state => ({
             payments: state.payments ? {
               ...state.payments,
@@ -765,8 +767,8 @@ export const useBillingStore = create<BillingState>()(
       fetchTransactions: async (params = {}) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          const data = await apiService.get('/billing/transactions/', { params } as any);
-          set({ transactions: data as any, transactionsLoading: false });
+          const data = await apiService.get('/billing/transactions/', { params } as any) as ApiResponse<Transaction>;
+          set({ transactions: data, transactionsLoading: false });
         } catch (error: any) {
           set({ 
             transactionsError: error.response?.data?.message || 'Failed to fetch transactions',
@@ -778,8 +780,8 @@ export const useBillingStore = create<BillingState>()(
       fetchTransaction: async (id: number) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          const data = await apiService.get(`/billing/transactions/${id}/`);
-          set({ currentTransaction: data as any, transactionsLoading: false });
+          const data = await apiService.get(`/billing/transactions/${id}/`) as Transaction;
+          set({ currentTransaction: data, transactionsLoading: false });
         } catch (error: any) {
           set({ 
             transactionsError: error.response?.data?.message || 'Failed to fetch transaction',
@@ -791,7 +793,7 @@ export const useBillingStore = create<BillingState>()(
       createTransaction: async (data: Partial<Transaction>) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          const newTransaction = await apiService.post('/billing/transactions/', data);
+          const newTransaction = await apiService.post('/billing/transactions/', data) as Transaction;
           set(state => ({
             transactions: state.transactions ? {
               ...state.transactions,
@@ -812,7 +814,7 @@ export const useBillingStore = create<BillingState>()(
       updateTransaction: async (id: number, data: Partial<Transaction>) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          const updatedTransaction = await apiService.put(`/billing/transactions/${id}/`, data);
+          const updatedTransaction = await apiService.put(`/billing/transactions/${id}/`, data) as Transaction;
           set(state => ({
             transactions: state.transactions ? {
               ...state.transactions,
@@ -856,8 +858,8 @@ export const useBillingStore = create<BillingState>()(
       fetchSettings: async () => {
         set({ settingsLoading: true, settingsError: null });
         try {
-          const data = await apiService.get('/billing/settings/');
-          set({ settings: data as any, settingsLoading: false });
+          const data = await apiService.get('/billing/settings/') as BillingSettings;
+          set({ settings: data, settingsLoading: false });
         } catch (error: any) {
           set({ 
             settingsError: error.response?.data?.message || 'Failed to fetch settings',
@@ -869,8 +871,8 @@ export const useBillingStore = create<BillingState>()(
       updateSettings: async (data: Partial<BillingSettings>) => {
         set({ settingsLoading: true, settingsError: null });
         try {
-          const updated = await apiService.put('/billing/settings/', data);
-          set({ settings: updated as any, settingsLoading: false });
+          const updated = await apiService.put('/billing/settings/', data) as BillingSettings;
+          set({ settings: updated, settingsLoading: false });
         } catch (error: any) {
           set({ 
             settingsError: error.response?.data?.message || 'Failed to update settings',

@@ -3,8 +3,6 @@ import { Card, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import {
   ShieldCheckIcon,
-  KeyIcon,
-  LockClosedIcon,
   DevicePhoneMobileIcon,
   EnvelopeIcon,
   ExclamationTriangleIcon,
@@ -130,7 +128,7 @@ const Security: React.FC = () => {
     }
   };
 
-  const renderPasswordInput = (label: string, field: keyof typeof passwordData, showPassword: boolean, setShowPassword: (show: boolean) => void) => (
+  const renderPasswordInput = (label: string, field: keyof typeof passwordData, showPassword: boolean, setShowPassword: (show: boolean) => void) => ( // eslint-disable-line no-unused-vars
     <div>
       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
         {label}

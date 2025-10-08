@@ -11,7 +11,7 @@ interface ResetPasswordForm {
 const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { changePassword, isLoading, error, clearError } = useAuth();
+  const { isLoading, error, clearError } = useAuth();
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

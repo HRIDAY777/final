@@ -4,7 +4,7 @@ interface PaginationProps {
   page: number;
   pageSize: number;
   total: number;
-  onPageChange: (page: number) => void;
+  onPageChange: (page: number) => void; // eslint-disable-line no-unused-vars
 }
 
 export const Pagination: React.FC<PaginationProps> = ({ page, pageSize, total, onPageChange }) => {

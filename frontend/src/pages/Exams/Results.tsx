@@ -6,17 +6,12 @@ import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   EyeIcon,
   DocumentTextIcon,
-  UserIcon,
   AcademicCapIcon,
   TrophyIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
   ChartBarIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
@@ -549,7 +544,7 @@ const Results: React.FC = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Result</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete the result for "{selectedResult.student.user.first_name} {selectedResult.student.user.last_name}"? This action cannot be undone.
+              Are you sure you want to delete the result for &quot;{selectedResult.student.user.first_name} {selectedResult.student.user.last_name}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-3">
               <Button

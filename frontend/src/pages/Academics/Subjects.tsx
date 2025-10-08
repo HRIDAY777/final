@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -17,7 +17,7 @@ const Subjects: React.FC = () => {
   const [editing, setEditing] = useState<any | null>(null);
   const [form, setForm] = useState({ name: '', code: '', description: '', credits: 1, is_core: true });
 
-  const fetchSubjects = async () => {
+  const fetchSubjects = useCallback(async () => {
     setLoading(true); setError(null);
     try {
       const data: any = await academicAPI.getSubjects({ search, page });
@@ -25,9 +25,9 @@ const Subjects: React.FC = () => {
       setTotal(data.count || 0);
     } catch (e: any) { setError('Failed to load subjects'); }
     finally { setLoading(false); }
-  };
+  }, [search, page]);
 
-  useEffect(() => { fetchSubjects(); }, [page, search]);
+  useEffect(() => { fetchSubjects(); }, [fetchSubjects]);
 
   const onOpen = (s?: any) => {
     if (s) {

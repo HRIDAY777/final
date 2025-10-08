@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -27,8 +27,16 @@ const Authors: React.FC = () => {
   const [nationality, setNationality] = useState('');
   const [birth, setBirth] = useState('');
 
-  useEffect(() => { fetchAuthors({ page, search }); }, [page, search]);
-  useEffect(() => { if (authorsError) setTimeout(() => clearErrors(), 3000); }, [authorsError]);
+  const fetchAuthorsCallback = useCallback(() => {
+    fetchAuthors({ page, search });
+  }, [fetchAuthors, page, search]);
+
+  const clearErrorsCallback = useCallback(() => {
+    clearErrors();
+  }, [clearErrors]);
+
+  useEffect(() => { fetchAuthorsCallback(); }, [fetchAuthorsCallback]);
+  useEffect(() => { if (authorsError) setTimeout(() => clearErrorsCallback(), 3000); }, [authorsError, clearErrorsCallback]);
 
   const onOpen = (a?: any) => {
     setEditing(a || null);

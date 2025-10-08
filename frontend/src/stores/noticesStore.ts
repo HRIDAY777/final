@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { api } from '../services/api';
+import { apiService } from '../services/api';
 
 export interface Notice {
   id: number;
@@ -81,31 +81,31 @@ export interface NoticeSettings {
 
 interface NoticesState {
   // Notices
-  notices: any;
+  notices: Notice[] | null;
   currentNotice: Notice | null;
   noticesLoading: boolean;
   noticesError: string | null;
 
   // Categories
-  categories: any;
+  categories: NoticeCategory[] | null;
   currentCategory: NoticeCategory | null;
   categoriesLoading: boolean;
   categoriesError: string | null;
 
   // Attachments
-  attachments: any;
+  attachments: NoticeAttachment[] | null;
   currentAttachment: NoticeAttachment | null;
   attachmentsLoading: boolean;
   attachmentsError: string | null;
 
   // Recipients
-  recipients: any;
+  recipients: NoticeRecipient[] | null;
   currentRecipient: NoticeRecipient | null;
   recipientsLoading: boolean;
   recipientsError: string | null;
 
   // Templates
-  templates: any;
+  templates: NoticeTemplate[] | null;
   currentTemplate: NoticeTemplate | null;
   templatesLoading: boolean;
   templatesError: string | null;
@@ -118,46 +118,77 @@ interface NoticesState {
 
 interface NoticesActions {
   // Notice actions
+  // eslint-disable-next-line no-unused-vars
   fetchNotices: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchNoticeById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createNotice: (data: Partial<Notice>) => Promise<Notice>;
+  // eslint-disable-next-line no-unused-vars
   updateNotice: (id: number, data: Partial<Notice>) => Promise<Notice>;
+  // eslint-disable-next-line no-unused-vars
   deleteNotice: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   publishNotice: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   unpublishNotice: (id: number) => Promise<void>;
 
   // Category actions
+  // eslint-disable-next-line no-unused-vars
   fetchCategories: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchCategoryById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createCategory: (data: Partial<NoticeCategory>) => Promise<NoticeCategory>;
+  // eslint-disable-next-line no-unused-vars
   updateCategory: (id: number, data: Partial<NoticeCategory>) => Promise<NoticeCategory>;
+  // eslint-disable-next-line no-unused-vars
   deleteCategory: (id: number) => Promise<void>;
 
   // Attachment actions
+  // eslint-disable-next-line no-unused-vars
   fetchAttachments: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchAttachmentById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createAttachment: (data: Partial<NoticeAttachment>) => Promise<NoticeAttachment>;
+  // eslint-disable-next-line no-unused-vars
   updateAttachment: (id: number, data: Partial<NoticeAttachment>) => Promise<NoticeAttachment>;
+  // eslint-disable-next-line no-unused-vars
   deleteAttachment: (id: number) => Promise<void>;
-  uploadAttachment: (noticeId: number, file: File) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
+  uploadAttachment: (noticeId: number, file: File) => Promise<NoticeAttachment>;
 
   // Recipient actions
+  // eslint-disable-next-line no-unused-vars
   fetchRecipients: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchRecipientById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createRecipient: (data: Partial<NoticeRecipient>) => Promise<NoticeRecipient>;
+  // eslint-disable-next-line no-unused-vars
   updateRecipient: (id: number, data: Partial<NoticeRecipient>) => Promise<NoticeRecipient>;
+  // eslint-disable-next-line no-unused-vars
   deleteRecipient: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   markAsRead: (id: number) => Promise<void>;
 
   // Template actions
+  // eslint-disable-next-line no-unused-vars
   fetchTemplates: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTemplateById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createTemplate: (data: Partial<NoticeTemplate>) => Promise<NoticeTemplate>;
+  // eslint-disable-next-line no-unused-vars
   updateTemplate: (id: number, data: Partial<NoticeTemplate>) => Promise<NoticeTemplate>;
+  // eslint-disable-next-line no-unused-vars
   deleteTemplate: (id: number) => Promise<void>;
 
   // Settings actions
+  // eslint-disable-next-line no-unused-vars
   fetchSettings: () => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   updateSettings: (data: Partial<NoticeSettings>) => Promise<NoticeSettings>;
 
   // Utility actions
@@ -198,6 +229,7 @@ const initialState: NoticesState = {
 
 export const useNoticesStore = create<NoticesState & NoticesActions>()(
   devtools(
+    // eslint-disable-next-line no-unused-vars
     (set, get) => ({
       ...initialState,
 
@@ -205,8 +237,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchNotices: async (params = {}) => {
         set({ noticesLoading: true, noticesError: null });
         try {
-          const response = await api.get('/notices/notices/', { params });
-          set({ notices: response.data, noticesLoading: false });
+          const response = await apiService.get<Notice[]>('/notices/notices/', { params });
+          set({ notices: response, noticesLoading: false });
         } catch (error: any) {
           set({ 
             noticesError: error.response?.data?.message || 'Failed to fetch notices',
@@ -218,8 +250,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchNoticeById: async (id: number) => {
         set({ noticesLoading: true, noticesError: null });
         try {
-          const response = await api.get(`/notices/notices/${id}/`);
-          set({ currentNotice: response.data, noticesLoading: false });
+          const response = await apiService.get<Notice>(`/notices/notices/${id}/`);
+          set({ currentNotice: response, noticesLoading: false });
         } catch (error: any) {
           set({ 
             noticesError: error.response?.data?.message || 'Failed to fetch notice',
@@ -231,9 +263,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       createNotice: async (data: Partial<Notice>) => {
         set({ noticesLoading: true, noticesError: null });
         try {
-          const response = await api.post('/notices/notices/', data);
+          const response = await apiService.post<Notice>('/notices/notices/', data);
           set({ noticesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             noticesError: error.response?.data?.message || 'Failed to create notice',
@@ -246,9 +278,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       updateNotice: async (id: number, data: Partial<Notice>) => {
         set({ noticesLoading: true, noticesError: null });
         try {
-          const response = await api.put(`/notices/notices/${id}/`, data);
+          const response = await apiService.put<Notice>(`/notices/notices/${id}/`, data);
           set({ noticesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             noticesError: error.response?.data?.message || 'Failed to update notice',
@@ -261,7 +293,7 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       deleteNotice: async (id: number) => {
         set({ noticesLoading: true, noticesError: null });
         try {
-          await api.delete(`/notices/notices/${id}/`);
+          await apiService.delete(`/notices/notices/${id}/`);
           set({ noticesLoading: false });
         } catch (error: any) {
           set({ 
@@ -275,7 +307,7 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       publishNotice: async (id: number) => {
         set({ noticesLoading: true, noticesError: null });
         try {
-          await api.post(`/notices/notices/${id}/publish/`);
+          await apiService.post(`/notices/notices/${id}/publish/`);
           set({ noticesLoading: false });
         } catch (error: any) {
           set({ 
@@ -289,7 +321,7 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       unpublishNotice: async (id: number) => {
         set({ noticesLoading: true, noticesError: null });
         try {
-          await api.post(`/notices/notices/${id}/unpublish/`);
+          await apiService.post(`/notices/notices/${id}/unpublish/`);
           set({ noticesLoading: false });
         } catch (error: any) {
           set({ 
@@ -304,8 +336,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchCategories: async (params = {}) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.get('/notices/categories/', { params });
-          set({ categories: response.data, categoriesLoading: false });
+          const response = await apiService.get<NoticeCategory[]>('/notices/categories/', { params });
+          set({ categories: response, categoriesLoading: false });
         } catch (error: any) {
           set({ 
             categoriesError: error.response?.data?.message || 'Failed to fetch categories',
@@ -317,8 +349,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchCategoryById: async (id: number) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.get(`/notices/categories/${id}/`);
-          set({ currentCategory: response.data, categoriesLoading: false });
+          const response = await apiService.get<NoticeCategory>(`/notices/categories/${id}/`);
+          set({ currentCategory: response, categoriesLoading: false });
         } catch (error: any) {
           set({ 
             categoriesError: error.response?.data?.message || 'Failed to fetch category',
@@ -330,9 +362,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       createCategory: async (data: Partial<NoticeCategory>) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.post('/notices/categories/', data);
+          const response = await apiService.post<NoticeCategory>('/notices/categories/', data);
           set({ categoriesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             categoriesError: error.response?.data?.message || 'Failed to create category',
@@ -345,9 +377,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       updateCategory: async (id: number, data: Partial<NoticeCategory>) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.put(`/notices/categories/${id}/`, data);
+          const response = await apiService.put<NoticeCategory>(`/notices/categories/${id}/`, data);
           set({ categoriesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             categoriesError: error.response?.data?.message || 'Failed to update category',
@@ -360,7 +392,7 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       deleteCategory: async (id: number) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          await api.delete(`/notices/categories/${id}/`);
+          await apiService.delete(`/notices/categories/${id}/`);
           set({ categoriesLoading: false });
         } catch (error: any) {
           set({ 
@@ -375,8 +407,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchAttachments: async (params = {}) => {
         set({ attachmentsLoading: true, attachmentsError: null });
         try {
-          const response = await api.get('/notices/attachments/', { params });
-          set({ attachments: response.data, attachmentsLoading: false });
+          const response = await apiService.get<NoticeAttachment[]>('/notices/attachments/', { params });
+          set({ attachments: response, attachmentsLoading: false });
         } catch (error: any) {
           set({ 
             attachmentsError: error.response?.data?.message || 'Failed to fetch attachments',
@@ -388,8 +420,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchAttachmentById: async (id: number) => {
         set({ attachmentsLoading: true, attachmentsError: null });
         try {
-          const response = await api.get(`/notices/attachments/${id}/`);
-          set({ currentAttachment: response.data, attachmentsLoading: false });
+          const response = await apiService.get<NoticeAttachment>(`/notices/attachments/${id}/`);
+          set({ currentAttachment: response, attachmentsLoading: false });
         } catch (error: any) {
           set({ 
             attachmentsError: error.response?.data?.message || 'Failed to fetch attachment',
@@ -401,9 +433,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       createAttachment: async (data: Partial<NoticeAttachment>) => {
         set({ attachmentsLoading: true, attachmentsError: null });
         try {
-          const response = await api.post('/notices/attachments/', data);
+          const response = await apiService.post<NoticeAttachment>('/notices/attachments/', data);
           set({ attachmentsLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             attachmentsError: error.response?.data?.message || 'Failed to create attachment',
@@ -416,9 +448,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       updateAttachment: async (id: number, data: Partial<NoticeAttachment>) => {
         set({ attachmentsLoading: true, attachmentsError: null });
         try {
-          const response = await api.put(`/notices/attachments/${id}/`, data);
+          const response = await apiService.put<NoticeAttachment>(`/notices/attachments/${id}/`, data);
           set({ attachmentsLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             attachmentsError: error.response?.data?.message || 'Failed to update attachment',
@@ -431,7 +463,7 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       deleteAttachment: async (id: number) => {
         set({ attachmentsLoading: true, attachmentsError: null });
         try {
-          await api.delete(`/notices/attachments/${id}/`);
+          await apiService.delete(`/notices/attachments/${id}/`);
           set({ attachmentsLoading: false });
         } catch (error: any) {
           set({ 
@@ -449,13 +481,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
           formData.append('file', file);
           formData.append('notice', noticeId.toString());
           
-          const response = await api.post('/notices/attachments/upload/', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+          const response = await apiService.upload<NoticeAttachment>('/notices/attachments/upload/', file);
           set({ attachmentsLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             attachmentsError: error.response?.data?.message || 'Failed to upload attachment',
@@ -469,8 +497,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchRecipients: async (params = {}) => {
         set({ recipientsLoading: true, recipientsError: null });
         try {
-          const response = await api.get('/notices/recipients/', { params });
-          set({ recipients: response.data, recipientsLoading: false });
+          const response = await apiService.get<NoticeRecipient[]>('/notices/recipients/', { params });
+          set({ recipients: response, recipientsLoading: false });
         } catch (error: any) {
           set({ 
             recipientsError: error.response?.data?.message || 'Failed to fetch recipients',
@@ -482,8 +510,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchRecipientById: async (id: number) => {
         set({ recipientsLoading: true, recipientsError: null });
         try {
-          const response = await api.get(`/notices/recipients/${id}/`);
-          set({ currentRecipient: response.data, recipientsLoading: false });
+          const response = await apiService.get<NoticeRecipient>(`/notices/recipients/${id}/`);
+          set({ currentRecipient: response, recipientsLoading: false });
         } catch (error: any) {
           set({ 
             recipientsError: error.response?.data?.message || 'Failed to fetch recipient',
@@ -495,9 +523,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       createRecipient: async (data: Partial<NoticeRecipient>) => {
         set({ recipientsLoading: true, recipientsError: null });
         try {
-          const response = await api.post('/notices/recipients/', data);
+          const response = await apiService.post<NoticeRecipient>('/notices/recipients/', data);
           set({ recipientsLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             recipientsError: error.response?.data?.message || 'Failed to create recipient',
@@ -510,9 +538,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       updateRecipient: async (id: number, data: Partial<NoticeRecipient>) => {
         set({ recipientsLoading: true, recipientsError: null });
         try {
-          const response = await api.put(`/notices/recipients/${id}/`, data);
+          const response = await apiService.put<NoticeRecipient>(`/notices/recipients/${id}/`, data);
           set({ recipientsLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             recipientsError: error.response?.data?.message || 'Failed to update recipient',
@@ -525,7 +553,7 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       deleteRecipient: async (id: number) => {
         set({ recipientsLoading: true, recipientsError: null });
         try {
-          await api.delete(`/notices/recipients/${id}/`);
+          await apiService.delete(`/notices/recipients/${id}/`);
           set({ recipientsLoading: false });
         } catch (error: any) {
           set({ 
@@ -539,7 +567,7 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       markAsRead: async (id: number) => {
         set({ recipientsLoading: true, recipientsError: null });
         try {
-          await api.post(`/notices/recipients/${id}/mark-read/`);
+          await apiService.post(`/notices/recipients/${id}/mark-read/`);
           set({ recipientsLoading: false });
         } catch (error: any) {
           set({ 
@@ -554,8 +582,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchTemplates: async (params = {}) => {
         set({ templatesLoading: true, templatesError: null });
         try {
-          const response = await api.get('/notices/templates/', { params });
-          set({ templates: response.data, templatesLoading: false });
+          const response = await apiService.get<NoticeTemplate[]>('/notices/templates/', { params });
+          set({ templates: response, templatesLoading: false });
         } catch (error: any) {
           set({ 
             templatesError: error.response?.data?.message || 'Failed to fetch templates',
@@ -567,8 +595,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchTemplateById: async (id: number) => {
         set({ templatesLoading: true, templatesError: null });
         try {
-          const response = await api.get(`/notices/templates/${id}/`);
-          set({ currentTemplate: response.data, templatesLoading: false });
+          const response = await apiService.get<NoticeTemplate>(`/notices/templates/${id}/`);
+          set({ currentTemplate: response, templatesLoading: false });
         } catch (error: any) {
           set({ 
             templatesError: error.response?.data?.message || 'Failed to fetch template',
@@ -580,9 +608,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       createTemplate: async (data: Partial<NoticeTemplate>) => {
         set({ templatesLoading: true, templatesError: null });
         try {
-          const response = await api.post('/notices/templates/', data);
+          const response = await apiService.post<NoticeTemplate>('/notices/templates/', data);
           set({ templatesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             templatesError: error.response?.data?.message || 'Failed to create template',
@@ -595,9 +623,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       updateTemplate: async (id: number, data: Partial<NoticeTemplate>) => {
         set({ templatesLoading: true, templatesError: null });
         try {
-          const response = await api.put(`/notices/templates/${id}/`, data);
+          const response = await apiService.put<NoticeTemplate>(`/notices/templates/${id}/`, data);
           set({ templatesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             templatesError: error.response?.data?.message || 'Failed to update template',
@@ -610,7 +638,7 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       deleteTemplate: async (id: number) => {
         set({ templatesLoading: true, templatesError: null });
         try {
-          await api.delete(`/notices/templates/${id}/`);
+          await apiService.delete(`/notices/templates/${id}/`);
           set({ templatesLoading: false });
         } catch (error: any) {
           set({ 
@@ -625,8 +653,8 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       fetchSettings: async () => {
         set({ settingsLoading: true, settingsError: null });
         try {
-          const response = await api.get('/notices/settings/');
-          set({ settings: response.data, settingsLoading: false });
+          const response = await apiService.get<NoticeSettings>('/notices/settings/');
+          set({ settings: response, settingsLoading: false });
         } catch (error: any) {
           set({ 
             settingsError: error.response?.data?.message || 'Failed to fetch settings',
@@ -638,9 +666,9 @@ export const useNoticesStore = create<NoticesState & NoticesActions>()(
       updateSettings: async (data: Partial<NoticeSettings>) => {
         set({ settingsLoading: true, settingsError: null });
         try {
-          const response = await api.put('/notices/settings/', data);
-          set({ settings: response.data, settingsLoading: false });
-          return response.data;
+          const response = await apiService.put<NoticeSettings>('/notices/settings/', data);
+          set({ settings: response, settingsLoading: false });
+          return response;
         } catch (error: any) {
           set({ 
             settingsError: error.response?.data?.message || 'Failed to update settings',

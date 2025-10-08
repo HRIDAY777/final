@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { Button } from '../../components/UI/Button';
-import { apiService } from '../../services/api';
+
 import LanguageSelector from '../../components/UI/LanguageSelector';
 import { useTranslation } from '../../utils/i18n';
 import {
@@ -14,9 +14,7 @@ import {
   KeyIcon,
   DocumentTextIcon,
   ChartBarIcon,
-  ExclamationTriangleIcon,
   CheckCircleIcon,
-  ClockIcon,
   EyeIcon
 } from '@heroicons/react/24/outline';
 

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { apiClient } from '@/lib/api-client';
 
 interface HRStats {
   total_employees: number;
@@ -42,17 +41,7 @@ interface Department {
   created_at: string;
 }
 
-interface Position {
-  id: string;
-  title: string;
-  code: string;
-  department_name: string;
-  description: string;
-  base_salary: number;
-  employee_count: number;
-  is_active: boolean;
-  created_at: string;
-}
+
 
 interface Payroll {
   id: string;
@@ -82,40 +71,7 @@ interface Leave {
   created_at: string;
 }
 
-interface Attendance {
-  id: string;
-  employee_name: string;
-  employee_id: string;
-  date: string;
-  status: string;
-  check_in_time?: string;
-  check_out_time?: string;
-  working_hours?: number;
-  created_at: string;
-}
 
-interface Performance {
-  id: string;
-  employee_name: string;
-  employee_id: string;
-  evaluation_period: string;
-  evaluation_date: string;
-  overall_rating: number;
-  evaluated_by_name: string;
-  created_at: string;
-}
-
-interface Document {
-  id: string;
-  employee_name: string;
-  employee_id: string;
-  document_type: string;
-  title: string;
-  file: string;
-  is_verified: boolean;
-  verified_by_name?: string;
-  created_at: string;
-}
 
 export const useHR = () => {
   const [stats, setStats] = useState<HRStats | null>(null);
@@ -156,10 +112,6 @@ export const useHR = () => {
       };
       
       setStats(mockStats);
-      
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await apiClient.get('/api/hr/dashboard/stats/');
-      // setStats(response.data);
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch HR stats');

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   UserIcon, AcademicCapIcon, CalendarIcon, PhoneIcon, 
-  EnvelopeIcon, MapPinIcon, ClockIcon, CheckCircleIcon 
+  EnvelopeIcon, ClockIcon, CheckCircleIcon 
 } from '@heroicons/react/24/outline';
 import DataTable from '../../components/CRUD/DataTable';
 import FormBuilder from '../../components/Forms/FormBuilder';
-import { apiService } from '../../services/api';
 
 interface Student {
   id: number;
@@ -25,6 +24,61 @@ interface Student {
   created_at: string;
 }
 
+// Sample data for demo
+const sampleStudents: Student[] = [
+  {
+    id: 1,
+    first_name: 'John',
+    last_name: 'Doe',
+    email: 'john.doe@school.com',
+    phone: '+1234567890',
+    date_of_birth: '2005-03-15',
+    gender: 'Male',
+    address: '123 Main St, City, State',
+    enrollment_date: '2023-09-01',
+    grade: '10',
+    section: 'A',
+    parent_name: 'Jane Doe',
+    parent_phone: '+1234567891',
+    status: 'active',
+    created_at: '2023-09-01T00:00:00Z'
+  },
+  {
+    id: 2,
+    first_name: 'Sarah',
+    last_name: 'Smith',
+    email: 'sarah.smith@school.com',
+    phone: '+1234567892',
+    date_of_birth: '2006-07-22',
+    gender: 'Female',
+    address: '456 Oak Ave, City, State',
+    enrollment_date: '2023-09-01',
+    grade: '9',
+    section: 'B',
+    parent_name: 'Mike Smith',
+    parent_phone: '+1234567893',
+    status: 'active',
+    created_at: '2023-09-01T00:00:00Z'
+  },
+  {
+    id: 3,
+    first_name: 'Michael',
+    last_name: 'Johnson',
+    email: 'michael.johnson@school.com',
+    phone: '+1234567894',
+    date_of_birth: '2004-11-08',
+    gender: 'Male',
+    address: '789 Pine Rd, City, State',
+    enrollment_date: '2023-09-01',
+    grade: '11',
+    section: 'C',
+    parent_name: 'Lisa Johnson',
+    parent_phone: '+1234567895',
+    status: 'active',
+    created_at: '2023-09-01T00:00:00Z'
+  }
+];
+
 const Students: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,66 +86,7 @@ const Students: React.FC = () => {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
-  // Sample data for demo
-  const sampleStudents: Student[] = [
-    {
-      id: 1,
-      first_name: 'John',
-      last_name: 'Doe',
-      email: 'john.doe@school.com',
-      phone: '+1234567890',
-      date_of_birth: '2005-03-15',
-      gender: 'Male',
-      address: '123 Main St, City, State',
-      enrollment_date: '2023-09-01',
-      grade: '10',
-      section: 'A',
-      parent_name: 'Jane Doe',
-      parent_phone: '+1234567891',
-      status: 'active',
-      created_at: '2023-09-01T00:00:00Z'
-    },
-    {
-      id: 2,
-      first_name: 'Sarah',
-      last_name: 'Smith',
-      email: 'sarah.smith@school.com',
-      phone: '+1234567892',
-      date_of_birth: '2006-07-22',
-      gender: 'Female',
-      address: '456 Oak Ave, City, State',
-      enrollment_date: '2023-09-01',
-      grade: '9',
-      section: 'B',
-      parent_name: 'Mike Smith',
-      parent_phone: '+1234567893',
-      status: 'active',
-      created_at: '2023-09-01T00:00:00Z'
-    },
-    {
-      id: 3,
-      first_name: 'Michael',
-      last_name: 'Johnson',
-      email: 'michael.johnson@school.com',
-      phone: '+1234567894',
-      date_of_birth: '2004-11-08',
-      gender: 'Male',
-      address: '789 Pine Rd, City, State',
-      enrollment_date: '2023-09-01',
-      grade: '11',
-      section: 'C',
-      parent_name: 'Lisa Johnson',
-      parent_phone: '+1234567895',
-      status: 'active',
-      created_at: '2023-09-01T00:00:00Z'
-    }
-  ];
-
-  useEffect(() => {
-    loadStudents();
-  }, []);
-
-  const loadStudents = async () => {
+  const loadStudents = useCallback(async () => {
     try {
       setLoading(true);
       // In real app, this would be: const data = await apiService.get('/students/');
@@ -102,7 +97,11 @@ const Students: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadStudents();
+  }, [loadStudents]);
 
   const handleAdd = () => {
     setEditingStudent(null);

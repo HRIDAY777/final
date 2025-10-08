@@ -121,6 +121,12 @@ import EcommerceCustomers from './pages/Ecommerce/Customers';
 import EcommerceCart from './pages/Ecommerce/Cart';
 import EcommerceAnalytics from './pages/Ecommerce/Analytics';
 
+// Shop Pages
+import ShopHome from './pages/Shop/ShopHome';
+import ShopProducts from './pages/Shop/ShopProducts';
+import ShopCart from './pages/Shop/ShopCart';
+import ShopCheckout from './pages/Shop/ShopCheckout';
+
 // Elearning Pages
 import ElearningIndex from './pages/Elearning/index';
 import ElearningCourses from './pages/Elearning/Courses';
@@ -151,6 +157,9 @@ import AIToolsModels from './pages/AITools/Models';
 import APIDocumentation from './pages/API/index';
 import AccountsIndex from './pages/Accounts/index';
 import AssignmentsIndex from './pages/Assignments/index';
+
+// RBAC Pages
+import RBACPage from './pages/RBAC/index';
 
 function App() {
   return (
@@ -279,6 +288,12 @@ function App() {
         <Route path="/ecommerce/cart" element={<Layout><EcommerceCart /></Layout>} />
         <Route path="/ecommerce/analytics" element={<Layout><EcommerceAnalytics /></Layout>} />
         
+        {/* Shop Routes */}
+        <Route path="/shop" element={<Layout><ShopHome /></Layout>} />
+        <Route path="/shop/products" element={<Layout><ShopProducts /></Layout>} />
+        <Route path="/shop/cart" element={<Layout><ShopCart /></Layout>} />
+        <Route path="/shop/checkout" element={<Layout><ShopCheckout /></Layout>} />
+        
         {/* Elearning Routes */}
         <Route path="/elearning" element={<Layout><ElearningIndex /></Layout>} />
         <Route path="/elearning/courses" element={<Layout><ElearningCourses /></Layout>} />
@@ -292,6 +307,9 @@ function App() {
         
         {/* Reports Routes */}
         <Route path="/reports" element={<Layout><ReportsIndex /></Layout>} />
+        
+        {/* RBAC Routes */}
+        <Route path="/rbac" element={<Layout><RBACPage /></Layout>} />
         
         {/* Settings Routes */}
         <Route path="/settings" element={<Layout><SettingsIndex /></Layout>} />

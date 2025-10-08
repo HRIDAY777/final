@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import axios from 'axios';
@@ -537,6 +538,750 @@ export const useAIToolsStore = create<AIToolsState>()(
           set({
             quizGeneratorsError: error.response?.data?.message || 'Failed to delete quiz generator',
             quizGeneratorsLoading: false
+          });
+        }
+      },
+
+      // Questions Actions
+      fetchQuestions: async (params = {}) => {
+        set({ questionsLoading: true, questionsError: null });
+        try {
+          const response = await axios.get('/api/ai-tools/questions/', { params });
+          set({ questions: response.data, questionsLoading: false });
+        } catch (error: any) {
+          set({
+            questionsError: error.response?.data?.message || 'Failed to fetch questions',
+            questionsLoading: false
+          });
+        }
+      },
+
+      fetchQuestion: async (id: number) => {
+        set({ questionsLoading: true, questionsError: null });
+        try {
+          const response = await axios.get(`/api/ai-tools/questions/${id}/`);
+          set({ currentQuestion: response.data, questionsLoading: false });
+        } catch (error: any) {
+          set({
+            questionsError: error.response?.data?.message || 'Failed to fetch question',
+            questionsLoading: false
+          });
+        }
+      },
+
+      createQuestion: async (data: Partial<AIQuestion>) => {
+        set({ questionsLoading: true, questionsError: null });
+        try {
+          const response = await axios.post('/api/ai-tools/questions/', data);
+          const newQuestion = response.data;
+          set(state => ({
+            questions: state.questions ? {
+              ...state.questions,
+              results: [newQuestion, ...state.questions.results],
+              count: state.questions.count + 1
+            } : null,
+            currentQuestion: newQuestion,
+            questionsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            questionsError: error.response?.data?.message || 'Failed to create question',
+            questionsLoading: false
+          });
+        }
+      },
+
+      updateQuestion: async (id: number, data: Partial<AIQuestion>) => {
+        set({ questionsLoading: true, questionsError: null });
+        try {
+          const response = await axios.put(`/api/ai-tools/questions/${id}/`, data);
+          const updatedQuestion = response.data;
+          set(state => ({
+            questions: state.questions ? {
+              ...state.questions,
+              results: state.questions.results.map(question =>
+                question.id === id ? updatedQuestion : question
+              )
+            } : null,
+            currentQuestion: updatedQuestion,
+            questionsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            questionsError: error.response?.data?.message || 'Failed to update question',
+            questionsLoading: false
+          });
+        }
+      },
+
+      deleteQuestion: async (id: number) => {
+        set({ questionsLoading: true, questionsError: null });
+        try {
+          await axios.delete(`/api/ai-tools/questions/${id}/`);
+          set(state => ({
+            questions: state.questions ? {
+              ...state.questions,
+              results: state.questions.results.filter(question => question.id !== id),
+              count: state.questions.count - 1
+            } : null,
+            currentQuestion: state.currentQuestion?.id === id ? null : state.currentQuestion,
+            questionsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            questionsError: error.response?.data?.message || 'Failed to delete question',
+            questionsLoading: false
+          });
+        }
+      },
+
+      // Lesson Summarizer Actions
+      fetchLessonSummarizers: async (params = {}) => {
+        set({ lessonSummarizersLoading: true, lessonSummarizersError: null });
+        try {
+          const response = await axios.get('/api/ai-tools/lesson-summarizers/', { params });
+          set({ lessonSummarizers: response.data, lessonSummarizersLoading: false });
+        } catch (error: any) {
+          set({
+            lessonSummarizersError: error.response?.data?.message || 'Failed to fetch lesson summarizers',
+            lessonSummarizersLoading: false
+          });
+        }
+      },
+
+      fetchLessonSummarizer: async (id: number) => {
+        set({ lessonSummarizersLoading: true, lessonSummarizersError: null });
+        try {
+          const response = await axios.get(`/api/ai-tools/lesson-summarizers/${id}/`);
+          set({ currentLessonSummarizer: response.data, lessonSummarizersLoading: false });
+        } catch (error: any) {
+          set({
+            lessonSummarizersError: error.response?.data?.message || 'Failed to fetch lesson summarizer',
+            lessonSummarizersLoading: false
+          });
+        }
+      },
+
+      createLessonSummarizer: async (data: Partial<AILessonSummarizer>) => {
+        set({ lessonSummarizersLoading: true, lessonSummarizersError: null });
+        try {
+          const response = await axios.post('/api/ai-tools/lesson-summarizers/', data);
+          const newLessonSummarizer = response.data;
+          set(state => ({
+            lessonSummarizers: state.lessonSummarizers ? {
+              ...state.lessonSummarizers,
+              results: [newLessonSummarizer, ...state.lessonSummarizers.results],
+              count: state.lessonSummarizers.count + 1
+            } : null,
+            currentLessonSummarizer: newLessonSummarizer,
+            lessonSummarizersLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            lessonSummarizersError: error.response?.data?.message || 'Failed to create lesson summarizer',
+            lessonSummarizersLoading: false
+          });
+        }
+      },
+
+      updateLessonSummarizer: async (id: number, data: Partial<AILessonSummarizer>) => {
+        set({ lessonSummarizersLoading: true, lessonSummarizersError: null });
+        try {
+          const response = await axios.put(`/api/ai-tools/lesson-summarizers/${id}/`, data);
+          const updatedLessonSummarizer = response.data;
+          set(state => ({
+            lessonSummarizers: state.lessonSummarizers ? {
+              ...state.lessonSummarizers,
+              results: state.lessonSummarizers.results.map(summarizer =>
+                summarizer.id === id ? updatedLessonSummarizer : summarizer
+              )
+            } : null,
+            currentLessonSummarizer: updatedLessonSummarizer,
+            lessonSummarizersLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            lessonSummarizersError: error.response?.data?.message || 'Failed to update lesson summarizer',
+            lessonSummarizersLoading: false
+          });
+        }
+      },
+
+      deleteLessonSummarizer: async (id: number) => {
+        set({ lessonSummarizersLoading: true, lessonSummarizersError: null });
+        try {
+          await axios.delete(`/api/ai-tools/lesson-summarizers/${id}/`);
+          set(state => ({
+            lessonSummarizers: state.lessonSummarizers ? {
+              ...state.lessonSummarizers,
+              results: state.lessonSummarizers.results.filter(summarizer => summarizer.id !== id),
+              count: state.lessonSummarizers.count - 1
+            } : null,
+            currentLessonSummarizer: state.currentLessonSummarizer?.id === id ? null : state.currentLessonSummarizer,
+            lessonSummarizersLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            lessonSummarizersError: error.response?.data?.message || 'Failed to delete lesson summarizer',
+            lessonSummarizersLoading: false
+          });
+        }
+      },
+
+      // Performance Predictor Actions
+      fetchPerformancePredictors: async (params = {}) => {
+        set({ performancePredictorsLoading: true, performancePredictorsError: null });
+        try {
+          const response = await axios.get('/api/ai-tools/performance-predictors/', { params });
+          set({ performancePredictors: response.data, performancePredictorsLoading: false });
+        } catch (error: any) {
+          set({
+            performancePredictorsError: error.response?.data?.message || 'Failed to fetch performance predictors',
+            performancePredictorsLoading: false
+          });
+        }
+      },
+
+      fetchPerformancePredictor: async (id: number) => {
+        set({ performancePredictorsLoading: true, performancePredictorsError: null });
+        try {
+          const response = await axios.get(`/api/ai-tools/performance-predictors/${id}/`);
+          set({ currentPerformancePredictor: response.data, performancePredictorsLoading: false });
+        } catch (error: any) {
+          set({
+            performancePredictorsError: error.response?.data?.message || 'Failed to fetch performance predictor',
+            performancePredictorsLoading: false
+          });
+        }
+      },
+
+      createPerformancePredictor: async (data: Partial<AIPerformancePredictor>) => {
+        set({ performancePredictorsLoading: true, performancePredictorsError: null });
+        try {
+          const response = await axios.post('/api/ai-tools/performance-predictors/', data);
+          const newPerformancePredictor = response.data;
+          set(state => ({
+            performancePredictors: state.performancePredictors ? {
+              ...state.performancePredictors,
+              results: [newPerformancePredictor, ...state.performancePredictors.results],
+              count: state.performancePredictors.count + 1
+            } : null,
+            currentPerformancePredictor: newPerformancePredictor,
+            performancePredictorsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            performancePredictorsError: error.response?.data?.message || 'Failed to create performance predictor',
+            performancePredictorsLoading: false
+          });
+        }
+      },
+
+      updatePerformancePredictor: async (id: number, data: Partial<AIPerformancePredictor>) => {
+        set({ performancePredictorsLoading: true, performancePredictorsError: null });
+        try {
+          const response = await axios.put(`/api/ai-tools/performance-predictors/${id}/`, data);
+          const updatedPerformancePredictor = response.data;
+          set(state => ({
+            performancePredictors: state.performancePredictors ? {
+              ...state.performancePredictors,
+              results: state.performancePredictors.results.map(predictor =>
+                predictor.id === id ? updatedPerformancePredictor : predictor
+              )
+            } : null,
+            currentPerformancePredictor: updatedPerformancePredictor,
+            performancePredictorsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            performancePredictorsError: error.response?.data?.message || 'Failed to update performance predictor',
+            performancePredictorsLoading: false
+          });
+        }
+      },
+
+      deletePerformancePredictor: async (id: number) => {
+        set({ performancePredictorsLoading: true, performancePredictorsError: null });
+        try {
+          await axios.delete(`/api/ai-tools/performance-predictors/${id}/`);
+          set(state => ({
+            performancePredictors: state.performancePredictors ? {
+              ...state.performancePredictors,
+              results: state.performancePredictors.results.filter(predictor => predictor.id !== id),
+              count: state.performancePredictors.count - 1
+            } : null,
+            currentPerformancePredictor: state.currentPerformancePredictor?.id === id ? null : state.currentPerformancePredictor,
+            performancePredictorsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            performancePredictorsError: error.response?.data?.message || 'Failed to delete performance predictor',
+            performancePredictorsLoading: false
+          });
+        }
+      },
+
+      // Attendance Anomaly Detector Actions
+      fetchAttendanceAnomalyDetectors: async (params = {}) => {
+        set({ attendanceAnomalyDetectorsLoading: true, attendanceAnomalyDetectorsError: null });
+        try {
+          const response = await axios.get('/api/ai-tools/attendance-anomaly-detectors/', { params });
+          set({ attendanceAnomalyDetectors: response.data, attendanceAnomalyDetectorsLoading: false });
+        } catch (error: any) {
+          set({
+            attendanceAnomalyDetectorsError: error.response?.data?.message || 'Failed to fetch attendance anomaly detectors',
+            attendanceAnomalyDetectorsLoading: false
+          });
+        }
+      },
+
+      fetchAttendanceAnomalyDetector: async (id: number) => {
+        set({ attendanceAnomalyDetectorsLoading: true, attendanceAnomalyDetectorsError: null });
+        try {
+          const response = await axios.get(`/api/ai-tools/attendance-anomaly-detectors/${id}/`);
+          set({ currentAttendanceAnomalyDetector: response.data, attendanceAnomalyDetectorsLoading: false });
+        } catch (error: any) {
+          set({
+            attendanceAnomalyDetectorsError: error.response?.data?.message || 'Failed to fetch attendance anomaly detector',
+            attendanceAnomalyDetectorsLoading: false
+          });
+        }
+      },
+
+      createAttendanceAnomalyDetector: async (data: Partial<AIAttendanceAnomalyDetector>) => {
+        set({ attendanceAnomalyDetectorsLoading: true, attendanceAnomalyDetectorsError: null });
+        try {
+          const response = await axios.post('/api/ai-tools/attendance-anomaly-detectors/', data);
+          const newAnomalyDetector = response.data;
+          set(state => ({
+            attendanceAnomalyDetectors: state.attendanceAnomalyDetectors ? {
+              ...state.attendanceAnomalyDetectors,
+              results: [newAnomalyDetector, ...state.attendanceAnomalyDetectors.results],
+              count: state.attendanceAnomalyDetectors.count + 1
+            } : null,
+            currentAttendanceAnomalyDetector: newAnomalyDetector,
+            attendanceAnomalyDetectorsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            attendanceAnomalyDetectorsError: error.response?.data?.message || 'Failed to create attendance anomaly detector',
+            attendanceAnomalyDetectorsLoading: false
+          });
+        }
+      },
+
+      updateAttendanceAnomalyDetector: async (id: number, data: Partial<AIAttendanceAnomalyDetector>) => {
+        set({ attendanceAnomalyDetectorsLoading: true, attendanceAnomalyDetectorsError: null });
+        try {
+          const response = await axios.put(`/api/ai-tools/attendance-anomaly-detectors/${id}/`, data);
+          const updatedAnomalyDetector = response.data;
+          set(state => ({
+            attendanceAnomalyDetectors: state.attendanceAnomalyDetectors ? {
+              ...state.attendanceAnomalyDetectors,
+              results: state.attendanceAnomalyDetectors.results.map(detector =>
+                detector.id === id ? updatedAnomalyDetector : detector
+              )
+            } : null,
+            currentAttendanceAnomalyDetector: updatedAnomalyDetector,
+            attendanceAnomalyDetectorsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            attendanceAnomalyDetectorsError: error.response?.data?.message || 'Failed to update attendance anomaly detector',
+            attendanceAnomalyDetectorsLoading: false
+          });
+        }
+      },
+
+      deleteAttendanceAnomalyDetector: async (id: number) => {
+        set({ attendanceAnomalyDetectorsLoading: true, attendanceAnomalyDetectorsError: null });
+        try {
+          await axios.delete(`/api/ai-tools/attendance-anomaly-detectors/${id}/`);
+          set(state => ({
+            attendanceAnomalyDetectors: state.attendanceAnomalyDetectors ? {
+              ...state.attendanceAnomalyDetectors,
+              results: state.attendanceAnomalyDetectors.results.filter(detector => detector.id !== id),
+              count: state.attendanceAnomalyDetectors.count - 1
+            } : null,
+            currentAttendanceAnomalyDetector: state.currentAttendanceAnomalyDetector?.id === id ? null : state.currentAttendanceAnomalyDetector,
+            attendanceAnomalyDetectorsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            attendanceAnomalyDetectorsError: error.response?.data?.message || 'Failed to delete attendance anomaly detector',
+            attendanceAnomalyDetectorsLoading: false
+          });
+        }
+      },
+
+      // Natural Language Query Actions
+      fetchNaturalLanguageQueries: async (params = {}) => {
+        set({ naturalLanguageQueriesLoading: true, naturalLanguageQueriesError: null });
+        try {
+          const response = await axios.get('/api/ai-tools/natural-language-queries/', { params });
+          set({ naturalLanguageQueries: response.data, naturalLanguageQueriesLoading: false });
+        } catch (error: any) {
+          set({
+            naturalLanguageQueriesError: error.response?.data?.message || 'Failed to fetch natural language queries',
+            naturalLanguageQueriesLoading: false
+          });
+        }
+      },
+
+      fetchNaturalLanguageQuery: async (id: number) => {
+        set({ naturalLanguageQueriesLoading: true, naturalLanguageQueriesError: null });
+        try {
+          const response = await axios.get(`/api/ai-tools/natural-language-queries/${id}/`);
+          set({ currentNaturalLanguageQuery: response.data, naturalLanguageQueriesLoading: false });
+        } catch (error: any) {
+          set({
+            naturalLanguageQueriesError: error.response?.data?.message || 'Failed to fetch natural language query',
+            naturalLanguageQueriesLoading: false
+          });
+        }
+      },
+
+      createNaturalLanguageQuery: async (data: Partial<AINaturalLanguageQuery>) => {
+        set({ naturalLanguageQueriesLoading: true, naturalLanguageQueriesError: null });
+        try {
+          const response = await axios.post('/api/ai-tools/natural-language-queries/', data);
+          const newQuery = response.data;
+          set(state => ({
+            naturalLanguageQueries: state.naturalLanguageQueries ? {
+              ...state.naturalLanguageQueries,
+              results: [newQuery, ...state.naturalLanguageQueries.results],
+              count: state.naturalLanguageQueries.count + 1
+            } : null,
+            currentNaturalLanguageQuery: newQuery,
+            naturalLanguageQueriesLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            naturalLanguageQueriesError: error.response?.data?.message || 'Failed to create natural language query',
+            naturalLanguageQueriesLoading: false
+          });
+        }
+      },
+
+      updateNaturalLanguageQuery: async (id: number, data: Partial<AINaturalLanguageQuery>) => {
+        set({ naturalLanguageQueriesLoading: true, naturalLanguageQueriesError: null });
+        try {
+          const response = await axios.put(`/api/ai-tools/natural-language-queries/${id}/`, data);
+          const updatedQuery = response.data;
+          set(state => ({
+            naturalLanguageQueries: state.naturalLanguageQueries ? {
+              ...state.naturalLanguageQueries,
+              results: state.naturalLanguageQueries.results.map(query =>
+                query.id === id ? updatedQuery : query
+              )
+            } : null,
+            currentNaturalLanguageQuery: updatedQuery,
+            naturalLanguageQueriesLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            naturalLanguageQueriesError: error.response?.data?.message || 'Failed to update natural language query',
+            naturalLanguageQueriesLoading: false
+          });
+        }
+      },
+
+      deleteNaturalLanguageQuery: async (id: number) => {
+        set({ naturalLanguageQueriesLoading: true, naturalLanguageQueriesError: null });
+        try {
+          await axios.delete(`/api/ai-tools/natural-language-queries/${id}/`);
+          set(state => ({
+            naturalLanguageQueries: state.naturalLanguageQueries ? {
+              ...state.naturalLanguageQueries,
+              results: state.naturalLanguageQueries.results.filter(query => query.id !== id),
+              count: state.naturalLanguageQueries.count - 1
+            } : null,
+            currentNaturalLanguageQuery: state.currentNaturalLanguageQuery?.id === id ? null : state.currentNaturalLanguageQuery,
+            naturalLanguageQueriesLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            naturalLanguageQueriesError: error.response?.data?.message || 'Failed to delete natural language query',
+            naturalLanguageQueriesLoading: false
+          });
+        }
+      },
+
+      // Training Jobs Actions
+      fetchTrainingJobs: async (params = {}) => {
+        set({ trainingJobsLoading: true, trainingJobsError: null });
+        try {
+          const response = await axios.get('/api/ai-tools/training-jobs/', { params });
+          set({ trainingJobs: response.data, trainingJobsLoading: false });
+        } catch (error: any) {
+          set({
+            trainingJobsError: error.response?.data?.message || 'Failed to fetch training jobs',
+            trainingJobsLoading: false
+          });
+        }
+      },
+
+      fetchTrainingJob: async (id: number) => {
+        set({ trainingJobsLoading: true, trainingJobsError: null });
+        try {
+          const response = await axios.get(`/api/ai-tools/training-jobs/${id}/`);
+          set({ currentTrainingJob: response.data, trainingJobsLoading: false });
+        } catch (error: any) {
+          set({
+            trainingJobsError: error.response?.data?.message || 'Failed to fetch training job',
+            trainingJobsLoading: false
+          });
+        }
+      },
+
+      createTrainingJob: async (data: Partial<AITrainingJob>) => {
+        set({ trainingJobsLoading: true, trainingJobsError: null });
+        try {
+          const response = await axios.post('/api/ai-tools/training-jobs/', data);
+          const newTrainingJob = response.data;
+          set(state => ({
+            trainingJobs: state.trainingJobs ? {
+              ...state.trainingJobs,
+              results: [newTrainingJob, ...state.trainingJobs.results],
+              count: state.trainingJobs.count + 1
+            } : null,
+            currentTrainingJob: newTrainingJob,
+            trainingJobsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            trainingJobsError: error.response?.data?.message || 'Failed to create training job',
+            trainingJobsLoading: false
+          });
+        }
+      },
+
+      updateTrainingJob: async (id: number, data: Partial<AITrainingJob>) => {
+        set({ trainingJobsLoading: true, trainingJobsError: null });
+        try {
+          const response = await axios.put(`/api/ai-tools/training-jobs/${id}/`, data);
+          const updatedTrainingJob = response.data;
+          set(state => ({
+            trainingJobs: state.trainingJobs ? {
+              ...state.trainingJobs,
+              results: state.trainingJobs.results.map(job =>
+                job.id === id ? updatedTrainingJob : job
+              )
+            } : null,
+            currentTrainingJob: updatedTrainingJob,
+            trainingJobsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            trainingJobsError: error.response?.data?.message || 'Failed to update training job',
+            trainingJobsLoading: false
+          });
+        }
+      },
+
+      deleteTrainingJob: async (id: number) => {
+        set({ trainingJobsLoading: true, trainingJobsError: null });
+        try {
+          await axios.delete(`/api/ai-tools/training-jobs/${id}/`);
+          set(state => ({
+            trainingJobs: state.trainingJobs ? {
+              ...state.trainingJobs,
+              results: state.trainingJobs.results.filter(job => job.id !== id),
+              count: state.trainingJobs.count - 1
+            } : null,
+            currentTrainingJob: state.currentTrainingJob?.id === id ? null : state.currentTrainingJob,
+            trainingJobsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            trainingJobsError: error.response?.data?.message || 'Failed to delete training job',
+            trainingJobsLoading: false
+          });
+        }
+      },
+
+      // Data Sources Actions
+      fetchDataSources: async (params = {}) => {
+        set({ dataSourcesLoading: true, dataSourcesError: null });
+        try {
+          const response = await axios.get('/api/ai-tools/data-sources/', { params });
+          set({ dataSources: response.data, dataSourcesLoading: false });
+        } catch (error: any) {
+          set({
+            dataSourcesError: error.response?.data?.message || 'Failed to fetch data sources',
+            dataSourcesLoading: false
+          });
+        }
+      },
+
+      fetchDataSource: async (id: number) => {
+        set({ dataSourcesLoading: true, dataSourcesError: null });
+        try {
+          const response = await axios.get(`/api/ai-tools/data-sources/${id}/`);
+          set({ currentDataSource: response.data, dataSourcesLoading: false });
+        } catch (error: any) {
+          set({
+            dataSourcesError: error.response?.data?.message || 'Failed to fetch data source',
+            dataSourcesLoading: false
+          });
+        }
+      },
+
+      createDataSource: async (data: Partial<AIDataSource>) => {
+        set({ dataSourcesLoading: true, dataSourcesError: null });
+        try {
+          const response = await axios.post('/api/ai-tools/data-sources/', data);
+          const newDataSource = response.data;
+          set(state => ({
+            dataSources: state.dataSources ? {
+              ...state.dataSources,
+              results: [newDataSource, ...state.dataSources.results],
+              count: state.dataSources.count + 1
+            } : null,
+            currentDataSource: newDataSource,
+            dataSourcesLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            dataSourcesError: error.response?.data?.message || 'Failed to create data source',
+            dataSourcesLoading: false
+          });
+        }
+      },
+
+      updateDataSource: async (id: number, data: Partial<AIDataSource>) => {
+        set({ dataSourcesLoading: true, dataSourcesError: null });
+        try {
+          const response = await axios.put(`/api/ai-tools/data-sources/${id}/`, data);
+          const updatedDataSource = response.data;
+          set(state => ({
+            dataSources: state.dataSources ? {
+              ...state.dataSources,
+              results: state.dataSources.results.map(source =>
+                source.id === id ? updatedDataSource : source
+              )
+            } : null,
+            currentDataSource: updatedDataSource,
+            dataSourcesLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            dataSourcesError: error.response?.data?.message || 'Failed to update data source',
+            dataSourcesLoading: false
+          });
+        }
+      },
+
+      deleteDataSource: async (id: number) => {
+        set({ dataSourcesLoading: true, dataSourcesError: null });
+        try {
+          await axios.delete(`/api/ai-tools/data-sources/${id}/`);
+          set(state => ({
+            dataSources: state.dataSources ? {
+              ...state.dataSources,
+              results: state.dataSources.results.filter(source => source.id !== id),
+              count: state.dataSources.count - 1
+            } : null,
+            currentDataSource: state.currentDataSource?.id === id ? null : state.currentDataSource,
+            dataSourcesLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            dataSourcesError: error.response?.data?.message || 'Failed to delete data source',
+            dataSourcesLoading: false
+          });
+        }
+      },
+
+      // Usage Logs Actions
+      fetchUsageLogs: async (params = {}) => {
+        set({ usageLogsLoading: true, usageLogsError: null });
+        try {
+          const response = await axios.get('/api/ai-tools/usage-logs/', { params });
+          set({ usageLogs: response.data, usageLogsLoading: false });
+        } catch (error: any) {
+          set({
+            usageLogsError: error.response?.data?.message || 'Failed to fetch usage logs',
+            usageLogsLoading: false
+          });
+        }
+      },
+
+      fetchUsageLog: async (id: number) => {
+        set({ usageLogsLoading: true, usageLogsError: null });
+        try {
+          const response = await axios.get(`/api/ai-tools/usage-logs/${id}/`);
+          set({ currentUsageLog: response.data, usageLogsLoading: false });
+        } catch (error: any) {
+          set({
+            usageLogsError: error.response?.data?.message || 'Failed to fetch usage log',
+            usageLogsLoading: false
+          });
+        }
+      },
+
+      createUsageLog: async (data: Partial<AIUsageLog>) => {
+        set({ usageLogsLoading: true, usageLogsError: null });
+        try {
+          const response = await axios.post('/api/ai-tools/usage-logs/', data);
+          const newUsageLog = response.data;
+          set(state => ({
+            usageLogs: state.usageLogs ? {
+              ...state.usageLogs,
+              results: [newUsageLog, ...state.usageLogs.results],
+              count: state.usageLogs.count + 1
+            } : null,
+            currentUsageLog: newUsageLog,
+            usageLogsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            usageLogsError: error.response?.data?.message || 'Failed to create usage log',
+            usageLogsLoading: false
+          });
+        }
+      },
+
+      updateUsageLog: async (id: number, data: Partial<AIUsageLog>) => {
+        set({ usageLogsLoading: true, usageLogsError: null });
+        try {
+          const response = await axios.put(`/api/ai-tools/usage-logs/${id}/`, data);
+          const updatedUsageLog = response.data;
+          set(state => ({
+            usageLogs: state.usageLogs ? {
+              ...state.usageLogs,
+              results: state.usageLogs.results.map(log =>
+                log.id === id ? updatedUsageLog : log
+              )
+            } : null,
+            currentUsageLog: updatedUsageLog,
+            usageLogsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            usageLogsError: error.response?.data?.message || 'Failed to update usage log',
+            usageLogsLoading: false
+          });
+        }
+      },
+
+      deleteUsageLog: async (id: number) => {
+        set({ usageLogsLoading: true, usageLogsError: null });
+        try {
+          await axios.delete(`/api/ai-tools/usage-logs/${id}/`);
+          set(state => ({
+            usageLogs: state.usageLogs ? {
+              ...state.usageLogs,
+              results: state.usageLogs.results.filter(log => log.id !== id),
+              count: state.usageLogs.count - 1
+            } : null,
+            currentUsageLog: state.currentUsageLog?.id === id ? null : state.currentUsageLog,
+            usageLogsLoading: false
+          }));
+        } catch (error: any) {
+          set({
+            usageLogsError: error.response?.data?.message || 'Failed to delete usage log',
+            usageLogsLoading: false
           });
         }
       },

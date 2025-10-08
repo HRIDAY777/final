@@ -87,7 +87,9 @@ class User(AbstractUser):
     user_type = models.CharField(
         max_length=20,
         choices=[
+            ('super_admin', 'Super Administrator'),
             ('admin', 'Administrator'),
+            ('institute_admin', 'Institute Administrator'),
             ('teacher', 'Teacher'),
             ('student', 'Student'),
             ('parent', 'Parent'),
@@ -104,6 +106,38 @@ class User(AbstractUser):
         blank=True,
         related_name='users',
         verbose_name=_('Tenant')
+    )
+
+    # Admin Hierarchy and Permissions
+    admin_level = models.CharField(
+        max_length=20,
+        choices=[
+            ('super_admin', 'Super Administrator'),
+            ('system_admin', 'System Administrator'),
+            ('institute_admin', 'Institute Administrator'),
+            ('department_admin', 'Department Administrator'),
+            ('faculty_admin', 'Faculty Administrator'),
+            ('none', 'No Admin Rights'),
+        ],
+        default='none'
+    )
+
+    # Admin Permissions
+    can_manage_users = models.BooleanField(default=False)
+    can_manage_admins = models.BooleanField(default=False)
+    can_manage_institutes = models.BooleanField(default=False)
+    can_manage_tenants = models.BooleanField(default=False)
+    can_view_analytics = models.BooleanField(default=False)
+    can_manage_settings = models.BooleanField(default=False)
+    can_manage_billing = models.BooleanField(default=False)
+    can_manage_security = models.BooleanField(default=False)
+
+    # Admin Scope
+    admin_institutes = models.ManyToManyField(
+        'tenants.Tenant',
+        blank=True,
+        related_name='administered_by',
+        verbose_name=_('Institutes Administered')
     )
 
     # Status
@@ -175,6 +209,346 @@ class User(AbstractUser):
         """Update last activity timestamp."""
         self.last_activity = timezone.now()
         self.save(update_fields=['last_activity'])
+
+    # Admin Methods
+    def is_super_admin(self):
+        """Check if user is a super administrator."""
+        return (self.admin_level == 'super_admin' or
+                self.user_type == 'super_admin')
+
+    def is_system_admin(self):
+        """Check if user is a system administrator."""
+        return self.admin_level == 'system_admin' or self.user_type == 'admin'
+
+    def is_institute_admin(self):
+        """Check if user is an institute administrator."""
+        return (self.admin_level == 'institute_admin' or
+                self.user_type == 'institute_admin')
+
+    def is_admin(self):
+        """Check if user has any admin rights."""
+        return (self.admin_level != 'none' or
+                self.user_type in ['super_admin', 'admin', 'institute_admin'])
+
+    def can_administer_institute(self, institute):
+        """Check if user can administer a specific institute."""
+        if self.is_super_admin():
+            return True
+        if self.is_system_admin():
+            return True
+        if self.is_institute_admin():
+            institutes = self.admin_institutes.all()
+            return institute in institutes
+        return False
+
+    def get_admin_permissions(self):
+        """Get list of admin permissions."""
+        permissions = []
+        if self.can_manage_users:
+            permissions.append('manage_users')
+        if self.can_manage_admins:
+            permissions.append('manage_admins')
+        if self.can_manage_institutes:
+            permissions.append('manage_institutes')
+        if self.can_manage_tenants:
+            permissions.append('manage_tenants')
+        if self.can_view_analytics:
+            permissions.append('view_analytics')
+        if self.can_manage_settings:
+            permissions.append('manage_settings')
+        if self.can_manage_billing:
+            permissions.append('manage_billing')
+        if self.can_manage_security:
+            permissions.append('manage_security')
+        return permissions
+
+    def set_admin_level(self, level, permissions=None):
+        """Set admin level and permissions."""
+        self.admin_level = level
+
+        # Set default permissions based on level
+        if level == 'super_admin':
+            self.can_manage_users = True
+            self.can_manage_admins = True
+            self.can_manage_institutes = True
+            self.can_manage_tenants = True
+            self.can_view_analytics = True
+            self.can_manage_settings = True
+            self.can_manage_billing = True
+            self.can_manage_security = True
+        elif level == 'system_admin':
+            self.can_manage_users = True
+            self.can_manage_admins = False
+            self.can_manage_institutes = True
+            self.can_manage_tenants = False
+            self.can_view_analytics = True
+            self.can_manage_settings = True
+            self.can_manage_billing = True
+            self.can_manage_security = False
+        elif level == 'institute_admin':
+            self.can_manage_users = True
+            self.can_manage_admins = False
+            self.can_manage_institutes = False
+            self.can_manage_tenants = False
+            self.can_view_analytics = True
+            self.can_manage_settings = False
+            self.can_manage_billing = False
+            self.can_manage_security = False
+        elif level == 'department_admin':
+            self.can_manage_users = True
+            self.can_manage_admins = False
+            self.can_manage_institutes = False
+            self.can_manage_tenants = False
+            self.can_view_analytics = True
+            self.can_manage_settings = False
+            self.can_manage_billing = False
+            self.can_manage_security = False
+        else:
+            # Reset all permissions
+            self.can_manage_users = False
+            self.can_manage_admins = False
+            self.can_manage_institutes = False
+            self.can_manage_tenants = False
+            self.can_view_analytics = False
+            self.can_manage_settings = False
+            self.can_manage_billing = False
+            self.can_manage_security = False
+
+        # Override with custom permissions if provided
+        if permissions:
+            for permission, value in permissions.items():
+                if hasattr(self, permission):
+                    setattr(self, permission, value)
+
+        self.save()
+
+    # RBAC Methods
+    def has_permission(self, permission):
+        """Check if user has a specific permission."""
+        # Super admins have all permissions
+        if self.is_super_admin():
+            return True
+
+        # Check specific permission
+        permission_map = {
+            'manage_users': self.can_manage_users,
+            'manage_admins': self.can_manage_admins,
+            'manage_institutes': self.can_manage_institutes,
+            'manage_tenants': self.can_manage_tenants,
+            'view_analytics': self.can_view_analytics,
+            'manage_settings': self.can_manage_settings,
+            'manage_billing': self.can_manage_billing,
+            'manage_security': self.can_manage_security,
+        }
+
+        return permission_map.get(permission, False)
+
+    def has_resource_permission(self, resource, action):
+        """Check if user can perform action on resource."""
+        # Super admins have access to all resources
+        if self.is_super_admin():
+            return True
+
+        # Map resources to permissions
+        resource_permissions = {
+            'users': {
+                'create': self.can_manage_users,
+                'read': self.can_manage_users,
+                'update': self.can_manage_users,
+                'delete': self.can_manage_users,
+            },
+            'admins': {
+                'create': self.can_manage_admins,
+                'read': self.can_manage_admins,
+                'update': self.can_manage_admins,
+                'delete': self.can_manage_admins,
+            },
+            'institutes': {
+                'create': self.can_manage_institutes,
+                'read': self.can_manage_institutes,
+                'update': self.can_manage_institutes,
+                'delete': self.can_manage_institutes,
+            },
+            'analytics': {
+                'read': self.can_view_analytics,
+            },
+            'settings': {
+                'create': self.can_manage_settings,
+                'read': self.can_manage_settings,
+                'update': self.can_manage_settings,
+                'delete': self.can_manage_settings,
+            },
+            'billing': {
+                'create': self.can_manage_billing,
+                'read': self.can_manage_billing,
+                'update': self.can_manage_billing,
+                'delete': self.can_manage_billing,
+            },
+            'security': {
+                'create': self.can_manage_security,
+                'read': self.can_manage_security,
+                'update': self.can_manage_security,
+                'delete': self.can_manage_security,
+            },
+        }
+
+        resource_perms = resource_permissions.get(resource, {})
+        return resource_perms.get(action, False)
+
+    def can_access_resource(self, resource, action, resource_id=None,
+                            institute_id=None):
+        """Check if user can access specific resource with context."""
+        # Basic permission check
+        if not self.has_resource_permission(resource, action):
+            return False
+
+        # Institute-level access check
+        if institute_id and self.is_institute_admin():
+            institutes = self.admin_institutes.values_list('id', flat=True)
+            if institute_id not in institutes:
+                return False
+
+        # Resource-specific checks
+        if resource == 'users' and resource_id:
+            # Users can always access their own data
+            if str(resource_id) == str(self.id):
+                return True
+
+            # Institute admins can only access users in their institutes
+            if self.is_institute_admin():
+                try:
+                    target_user = User.objects.get(id=resource_id)
+                    return target_user.tenant in self.admin_institutes.all()
+                except User.DoesNotExist:
+                    return False
+
+        return True
+
+    def get_accessible_institutes(self):
+        """Get list of institutes user can access."""
+        if self.is_super_admin():
+            from apps.tenants.models import Tenant
+            return Tenant.objects.all()
+        elif self.is_system_admin():
+            from apps.tenants.models import Tenant
+            return Tenant.objects.all()
+        elif self.is_institute_admin():
+            return self.admin_institutes.all()
+        return []
+
+    def get_role_permissions(self):
+        """Get comprehensive role permissions."""
+        permissions = {
+            'user_type': self.user_type,
+            'admin_level': self.admin_level,
+            'permissions': self.get_admin_permissions(),
+            'institutes': list(
+                self.admin_institutes.values_list('id', flat=True)
+            ),
+            'is_super_admin': self.is_super_admin(),
+            'is_system_admin': self.is_system_admin(),
+            'is_institute_admin': self.is_institute_admin(),
+            'is_admin': self.is_admin(),
+        }
+        return permissions
+
+    def assign_admin_role(self, role, institute=None, assigned_by=None,
+                          expires_at=None):
+        """Assign an admin role to the user."""
+        from .models import AdminAssignment
+
+        assignment = AdminAssignment.objects.create(
+            user=self,
+            role=role,
+            institute=institute,
+            assigned_by=assigned_by or self,
+            expires_at=expires_at,
+            is_active=True
+        )
+
+        # Update user permissions based on role
+        self.can_manage_users = (self.can_manage_users or
+                                 role.can_manage_users)
+        self.can_manage_admins = (self.can_manage_admins or
+                                  role.can_manage_admins)
+        self.can_manage_institutes = (self.can_manage_institutes or
+                                      role.can_manage_institutes)
+        self.can_manage_tenants = (self.can_manage_tenants or
+                                   role.can_manage_tenants)
+        self.can_view_analytics = (self.can_view_analytics or
+                                   role.can_view_analytics)
+        self.can_manage_settings = (self.can_manage_settings or
+                                    role.can_manage_settings)
+        self.can_manage_billing = (self.can_manage_billing or
+                                   role.can_manage_billing)
+        self.can_manage_security = (self.can_manage_security or
+                                    role.can_manage_security)
+
+        self.save()
+        return assignment
+
+    def remove_admin_role(self, role, institute=None):
+        """Remove an admin role assignment."""
+        from .models import AdminAssignment
+
+        try:
+            assignment = AdminAssignment.objects.get(
+                user=self,
+                role=role,
+                institute=institute,
+                is_active=True
+            )
+            assignment.is_active = False
+            assignment.save()
+
+            # Recalculate permissions based on remaining active assignments
+            self._recalculate_permissions()
+            return True
+        except AdminAssignment.DoesNotExist:
+            return False
+
+    def _recalculate_permissions(self):
+        """Recalculate user permissions based on active role assignments."""
+        from .models import AdminAssignment
+
+        # Reset permissions
+        self.can_manage_users = False
+        self.can_manage_admins = False
+        self.can_manage_institutes = False
+        self.can_manage_tenants = False
+        self.can_view_analytics = False
+        self.can_manage_settings = False
+        self.can_manage_billing = False
+        self.can_manage_security = False
+
+        # Get active assignments
+        active_assignments = AdminAssignment.objects.filter(
+            user=self,
+            is_active=True
+        ).select_related('role')
+
+        # Aggregate permissions from all active roles
+        for assignment in active_assignments:
+            if assignment.is_valid():
+                role = assignment.role
+                self.can_manage_users = (self.can_manage_users or
+                                         role.can_manage_users)
+                self.can_manage_admins = (self.can_manage_admins or
+                                          role.can_manage_admins)
+                self.can_manage_institutes = (self.can_manage_institutes or
+                                              role.can_manage_institutes)
+                self.can_manage_tenants = (self.can_manage_tenants or
+                                           role.can_manage_tenants)
+                self.can_view_analytics = (self.can_view_analytics or
+                                           role.can_view_analytics)
+                self.can_manage_settings = (self.can_manage_settings or
+                                            role.can_manage_settings)
+                self.can_manage_billing = (self.can_manage_billing or
+                                           role.can_manage_billing)
+                self.can_manage_security = (self.can_manage_security or
+                                            role.can_manage_security)
+
+        self.save()
 
 
 class UserProfile(models.Model):
@@ -274,3 +648,133 @@ class AuditLog(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.action} at {self.timestamp}"
+
+
+class AdminRole(models.Model):
+    """
+    Predefined admin roles with specific permissions.
+    """
+    ROLE_TYPES = [
+        ('super_admin', 'Super Administrator'),
+        ('system_admin', 'System Administrator'),
+        ('institute_admin', 'Institute Administrator'),
+        ('department_admin', 'Department Administrator'),
+        ('faculty_admin', 'Faculty Administrator'),
+        ('custom', 'Custom Role'),
+    ]
+
+    name = models.CharField(max_length=100, unique=True)
+    role_type = models.CharField(max_length=20, choices=ROLE_TYPES)
+    description = models.TextField(blank=True)
+
+    # Permissions
+    can_manage_users = models.BooleanField(default=False)
+    can_manage_admins = models.BooleanField(default=False)
+    can_manage_institutes = models.BooleanField(default=False)
+    can_manage_tenants = models.BooleanField(default=False)
+    can_view_analytics = models.BooleanField(default=False)
+    can_manage_settings = models.BooleanField(default=False)
+    can_manage_billing = models.BooleanField(default=False)
+    can_manage_security = models.BooleanField(default=False)
+
+    # Scope
+    applicable_institutes = models.ManyToManyField(
+        'tenants.Tenant',
+        blank=True,
+        related_name='admin_roles',
+        verbose_name=_('Applicable Institutes')
+    )
+
+    # Metadata
+    is_active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='created_admin_roles'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Admin Role'
+        verbose_name_plural = 'Admin Roles'
+        ordering = ['name']
+
+    def __str__(self):
+        return f"{self.name} ({self.get_role_type_display()})"
+
+    def get_permissions(self):
+        """Get list of permissions for this role."""
+        permissions = []
+        if self.can_manage_users:
+            permissions.append('manage_users')
+        if self.can_manage_admins:
+            permissions.append('manage_admins')
+        if self.can_manage_institutes:
+            permissions.append('manage_institutes')
+        if self.can_manage_tenants:
+            permissions.append('manage_tenants')
+        if self.can_view_analytics:
+            permissions.append('view_analytics')
+        if self.can_manage_settings:
+            permissions.append('manage_settings')
+        if self.can_manage_billing:
+            permissions.append('manage_billing')
+        if self.can_manage_security:
+            permissions.append('manage_security')
+        return permissions
+
+
+class AdminAssignment(models.Model):
+    """
+    Track admin role assignments to users.
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='admin_assignments'
+    )
+    role = models.ForeignKey(
+        AdminRole,
+        on_delete=models.CASCADE,
+        related_name='assignments'
+    )
+    institute = models.ForeignKey(
+        'tenants.Tenant',
+        on_delete=models.CASCADE,
+        related_name='admin_assignments',
+        null=True,
+        blank=True
+    )
+
+    # Assignment details
+    assigned_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='admin_assignments_given'
+    )
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    # Notes
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Admin Assignment'
+        verbose_name_plural = 'Admin Assignments'
+        unique_together = ['user', 'role', 'institute']
+        ordering = ['-assigned_at']
+
+    def __str__(self):
+        return f"{self.user.email} - {self.role.name}"
+
+    def is_expired(self):
+        """Check if assignment has expired."""
+        if self.expires_at:
+            return timezone.now() > self.expires_at
+        return False
+
+    def is_valid(self):
+        """Check if assignment is valid and active."""
+        return self.is_active and not self.is_expired()

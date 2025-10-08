@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { useBillingStore } from '../../stores/billingStore';
@@ -32,15 +32,23 @@ const Plans: React.FC = () => {
     is_active: true
   });
 
-  useEffect(() => {
+  const loadPlans = useCallback(() => {
     fetchPlans({ page: currentPage, search: searchTerm });
-  }, [currentPage, searchTerm]);
+  }, [fetchPlans, currentPage, searchTerm]);
 
   useEffect(() => {
+    loadPlans();
+  }, [loadPlans]);
+
+  const handleClearErrors = useCallback(() => {
     if (plansError) {
       setTimeout(() => clearErrors(), 5000);
     }
-  }, [plansError]);
+  }, [plansError, clearErrors]);
+
+  useEffect(() => {
+    handleClearErrors();
+  }, [handleClearErrors]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

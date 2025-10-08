@@ -36,7 +36,7 @@ const Timetable: React.FC = () => {
 
   const fetchDashboardStats = async () => {
     try {
-      const data = await apiService.get('/timetable/dashboard/stats/');
+      const data = await apiService.get('/timetable/dashboard/stats/') as DashboardStats;
       setStats(data);
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
@@ -86,7 +86,7 @@ const Timetable: React.FC = () => {
         <PageHeader 
           title="Timetable" 
           subtitle="Comprehensive schedule and timetable management"
-          right={
+          actions={
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => window.location.href = '/timetable/schedules'}>
                 View Schedules

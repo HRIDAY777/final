@@ -8,11 +8,9 @@ import {
   DevicePhoneMobileIcon,
   ComputerDesktopIcon,
   ExclamationTriangleIcon,
-  CheckCircleIcon,
   XMarkIcon,
   EyeIcon,
   EyeSlashIcon,
-  QrCodeIcon,
 } from '@heroicons/react/24/outline';
 
 interface SecuritySettings {

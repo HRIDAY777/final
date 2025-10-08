@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
   CurrencyDollarIcon, CalendarIcon, ClockIcon, CheckCircleIcon,
   XCircleIcon, ExclamationTriangleIcon, ChartBarIcon,
-  UserIcon, BuildingOfficeIcon, CreditCardIcon
+  UserIcon, CreditCardIcon
 } from '@heroicons/react/24/outline';
 import DataTable from '../../components/CRUD/DataTable';
 import FormBuilder from '../../components/Forms/FormBuilder';
-import { apiService } from '../../services/api';
 
-interface Finance {
+interface FinanceRecord {
   id: number;
   transaction_type: 'income' | 'expense' | 'refund' | 'fee';
   category: string;
@@ -28,14 +27,14 @@ interface Finance {
 }
 
 const Finance: React.FC = () => {
-  const [finances, setFinances] = useState<Finance[]>([]);
+  const [finances, setFinances] = useState<FinanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingFinance, setEditingFinance] = useState<Finance | null>(null);
+  const [editingFinance, setEditingFinance] = useState<FinanceRecord | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
   // Sample data for demo
-  const sampleFinances: Finance[] = [
+  const sampleFinances: FinanceRecord[] = useMemo(() => [
     {
       id: 1,
       transaction_type: 'income',
@@ -90,13 +89,9 @@ const Finance: React.FC = () => {
       notes: 'Fine pending payment',
       created_at: '2024-02-12T09:15:00Z'
     }
-  ];
+  ], []);
 
-  useEffect(() => {
-    loadFinances();
-  }, []);
-
-  const loadFinances = async () => {
+  const loadFinances = useCallback(async () => {
     try {
       setLoading(true);
       // In real app, this would be: const data = await apiService.get('/finance/');
@@ -107,19 +102,23 @@ const Finance: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sampleFinances]);
+
+  useEffect(() => {
+    loadFinances();
+  }, [loadFinances]);
 
   const handleAdd = () => {
     setEditingFinance(null);
     setShowForm(true);
   };
 
-  const handleEdit = (finance: Finance) => {
+  const handleEdit = (finance: FinanceRecord) => {
     setEditingFinance(finance);
     setShowForm(true);
   };
 
-  const handleDelete = async (finance: Finance) => {
+  const handleDelete = async (finance: FinanceRecord) => {
     if (window.confirm(`Are you sure you want to delete this ${finance.transaction_type} transaction?`)) {
       try {
         // In real app, this would be: await apiService.delete(`/finance/${finance.id}/`);
@@ -130,7 +129,7 @@ const Finance: React.FC = () => {
     }
   };
 
-  const handleView = (finance: Finance) => {
+  const handleView = (finance: FinanceRecord) => {
     // Navigate to finance detail page or show modal
     alert(`Viewing details for ${finance.transaction_type} transaction`);
   };
@@ -164,7 +163,7 @@ const Finance: React.FC = () => {
       key: 'transaction',
       label: 'Transaction',
       sortable: true,
-      render: (value: any, row: Finance) => (
+      render: (value: any, row: FinanceRecord) => (
         <div className="flex items-center">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
             row.transaction_type === 'income' ? 'bg-green-100' : 'bg-red-100'
@@ -184,7 +183,7 @@ const Finance: React.FC = () => {
       key: 'amount',
       label: 'Amount',
       sortable: true,
-      render: (value: any, row: Finance) => (
+      render: (value: any, row: FinanceRecord) => (
         <div className={`font-medium ${
           row.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'
         }`}>
@@ -195,7 +194,7 @@ const Finance: React.FC = () => {
     {
       key: 'student',
       label: 'Student',
-      render: (value: any, row: Finance) => (
+      render: (value: any, row: FinanceRecord) => (
         <div className="space-y-1">
           <div className="flex items-center">
             <UserIcon className="w-4 h-4 text-blue-600 mr-2" />
@@ -209,7 +208,7 @@ const Finance: React.FC = () => {
       key: 'date',
       label: 'Date',
       sortable: true,
-      render: (value: any, row: Finance) => (
+      render: (value: any, row: FinanceRecord) => (
         <div className="space-y-1">
           <div className="flex items-center text-sm">
             <CalendarIcon className="w-3 h-3 text-gray-400 mr-1" />
@@ -226,7 +225,7 @@ const Finance: React.FC = () => {
     {
       key: 'payment_method',
       label: 'Payment Method',
-      render: (value: any, row: Finance) => (
+      render: (value: any, row: FinanceRecord) => (
         <div className="flex items-center">
           <CreditCardIcon className="w-4 h-4 text-gray-400 mr-2" />
           <span className="text-sm">{row.payment_method}</span>
@@ -236,7 +235,7 @@ const Finance: React.FC = () => {
     {
       key: 'reference',
       label: 'Reference',
-      render: (value: any, row: Finance) => (
+      render: (value: any, row: FinanceRecord) => (
         <span className="text-sm font-mono text-gray-600">{row.reference_number}</span>
       )
     },
@@ -244,7 +243,7 @@ const Finance: React.FC = () => {
       key: 'status',
       label: 'Status',
       sortable: true,
-      render: (value: any, row: Finance) => {
+      render: (value: any, row: FinanceRecord) => {
         const statusConfig = {
           pending: { color: 'bg-yellow-100 text-yellow-800', icon: ClockIcon },
           paid: { color: 'bg-green-100 text-green-800', icon: CheckCircleIcon },

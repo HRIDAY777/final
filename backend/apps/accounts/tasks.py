@@ -25,7 +25,7 @@ def cleanup_expired_sessions():
         deleted_count = UserSession.objects.filter(
             last_activity__lt=cutoff_date
         ).delete()[0]
-        
+
         logger.info(f"Cleaned up {deleted_count} expired sessions")
         return f"Cleaned up {deleted_count} expired sessions"
     except Exception as e:
@@ -45,21 +45,21 @@ def send_reminder_emails():
             last_login__lt=cutoff_date,
             is_active=True
         )
-        
+
         sent_count = 0
         for user in inactive_users:
             try:
                 subject = 'Welcome back to EduCore Ultra!'
                 message = f"""
                 Hello {user.get_full_name()},
-                
-                We noticed you haven't logged in for a while. 
+
+                We noticed you haven't logged in for a while.
                 Come back and check out the latest updates!
-                
+
                 Best regards,
                 EduCore Ultra Team
                 """
-                
+
                 send_mail(
                     subject,
                     message,
@@ -69,8 +69,10 @@ def send_reminder_emails():
                 )
                 sent_count += 1
             except Exception as e:
-                logger.error(f"Failed to send reminder email to {user.email}: {e}")
-        
+                logger.error(
+                    f"Failed to send reminder email to {user.email}: {e}"
+                )
+
         logger.info(f"Sent {sent_count} reminder emails")
         return f"Sent {sent_count} reminder emails"
     except Exception as e:
@@ -85,19 +87,19 @@ def send_welcome_email_task(user_id):
     """
     try:
         user = User.objects.get(id=user_id)
-        
+
         subject = 'Welcome to EduCore Ultra!'
         message = f"""
         Hello {user.get_full_name()},
-        
+
         Welcome to EduCore Ultra! Your account has been created successfully.
-        
+
         Please verify your email address to activate your account.
-        
+
         Best regards,
         EduCore Ultra Team
         """
-        
+
         send_mail(
             subject,
             message,
@@ -105,7 +107,7 @@ def send_welcome_email_task(user_id):
             [user.email],
             fail_silently=False,
         )
-        
+
         logger.info(f"Welcome email sent to {user.email}")
         return f"Welcome email sent to {user.email}"
     except User.DoesNotExist:
@@ -123,22 +125,22 @@ def send_password_reset_email_task(user_id, reset_token):
     """
     try:
         user = User.objects.get(id=user_id)
-        
+
         subject = 'Password Reset Request'
         message = f"""
         Hello {user.get_full_name()},
-        
+
         You have requested a password reset for your EduCore Ultra account.
-        
+
         Click the following link to reset your password:
         {settings.FRONTEND_URL}/reset-password?token={reset_token}
-        
+
         If you didn't request this, please ignore this email.
-        
+
         Best regards,
         EduCore Ultra Team
         """
-        
+
         send_mail(
             subject,
             message,
@@ -146,7 +148,7 @@ def send_password_reset_email_task(user_id, reset_token):
             [user.email],
             fail_silently=False,
         )
-        
+
         logger.info(f"Password reset email sent to {user.email}")
         return f"Password reset email sent to {user.email}"
     except User.DoesNotExist:

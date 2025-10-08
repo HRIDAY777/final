@@ -131,7 +131,7 @@ const Vehicles: React.FC = () => {
         responseType: 'blob'
       });
       
-      const url = window.URL.createObjectURL(new Blob([response as BlobPart]));
+      const url = window.URL.createObjectURL(new Blob([response as Blob]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'vehicles.csv');
@@ -299,35 +299,30 @@ const Vehicles: React.FC = () => {
                         <Button 
                           variant="outline" 
                           onClick={() => openVehicle(row)}
-                          title={t('common.view')}
                         >
                           <EyeIcon className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="outline" 
                           onClick={() => window.location.href = `/transport/vehicles/${row.id}/edit`}
-                          title={t('common.edit')}
                         >
                           <PencilIcon className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="outline" 
                           onClick={() => window.location.href = `/transport/vehicles/${row.id}/maintenance`}
-                          title={t('transport.maintenance')}
                         >
                           <WrenchScrewdriverIcon className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="outline" 
                           onClick={() => toggleActive(row)}
-                          title={row.is_active ? t('transport.deactivate') : t('transport.activate')}
                         >
                           {row.is_active ? t('transport.deactivate') : t('transport.activate')}
                         </Button>
                         <Button 
                           variant="outline" 
                           onClick={() => remove(row)}
-                          title={t('common.delete')}
                           className="text-red-600 hover:text-red-700"
                         >
                           <TrashIcon className="w-4 h-4" />

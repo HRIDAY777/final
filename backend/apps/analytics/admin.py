@@ -1,9 +1,5 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.db.models import Count, Sum, Q, Avg
-from django.utils import timezone
 from .models import (
     StudentPerformance, AttendanceAnalytics, ExamAnalytics, SystemUsage,
     LearningAnalytics, PredictiveAnalytics, AnalyticsDashboard
@@ -13,8 +9,9 @@ from .models import (
 @admin.register(StudentPerformance)
 class StudentPerformanceAdmin(admin.ModelAdmin):
     list_display = [
-        'student', 'subject', 'academic_year', 'semester', 'overall_performance_score',
-        'attendance_rate', 'average_score', 'risk_level', 'predicted_grade'
+        'student', 'subject', 'academic_year', 'semester',
+        'overall_performance_score', 'attendance_rate', 'average_score',
+        'risk_level', 'predicted_grade'
     ]
     list_filter = [
         'academic_year', 'semester', 'risk_level', 'subject', 'created_at'
@@ -25,7 +22,8 @@ class StudentPerformanceAdmin(admin.ModelAdmin):
     ]
     ordering = ['-updated_at']
     readonly_fields = [
-        'created_at', 'updated_at', 'overall_performance_score', 'assignment_completion_rate'
+        'created_at', 'updated_at', 'overall_performance_score',
+        'assignment_completion_rate'
     ]
     date_hierarchy = 'created_at'
 
@@ -34,14 +32,22 @@ class StudentPerformanceAdmin(admin.ModelAdmin):
             'fields': ('student', 'subject', 'academic_year', 'semester')
         }),
         ('Performance Metrics', {
-            'fields': ('attendance_rate', 'average_score', 'total_assignments', 'completed_assignments')
+            'fields': (
+                'attendance_rate', 'average_score', 'total_assignments',
+                'completed_assignments'
+            )
         }),
         ('Calculated Fields', {
-            'fields': ('overall_performance_score', 'assignment_completion_rate'),
+            'fields': (
+                'overall_performance_score', 'assignment_completion_rate'
+            ),
             'classes': ('collapse',)
         }),
         ('Predictions & Insights', {
-            'fields': ('predicted_grade', 'risk_level', 'improvement_areas', 'recommendations')
+            'fields': (
+                'predicted_grade', 'risk_level', 'improvement_areas',
+                'recommendations'
+            )
         }),
         ('Additional Data', {
             'fields': ('exam_scores', 'participation_score'),
@@ -86,8 +92,13 @@ class StudentPerformanceAdmin(admin.ModelAdmin):
         for performance in queryset:
             # Recalculate performance scores
             performance.save()
-        self.message_user(request, f"Recalculated performance scores for {queryset.count()} records")
-    calculate_performance_scores.short_description = "Recalculate performance scores"
+        self.message_user(
+            request,
+            f"Recalculated performance scores for {queryset.count()} records"
+        )
+    calculate_performance_scores.short_description = (
+        "Recalculate performance scores"
+    )
 
     def update_risk_levels(self, request, queryset):
         for performance in queryset:
@@ -99,7 +110,10 @@ class StudentPerformanceAdmin(admin.ModelAdmin):
             else:
                 performance.risk_level = 'high'
             performance.save()
-        self.message_user(request, f"Updated risk levels for {queryset.count()} records")
+        self.message_user(
+            request,
+            f"Updated risk levels for {queryset.count()} records"
+        )
     update_risk_levels.short_description = "Update risk levels"
 
 
@@ -167,13 +181,19 @@ class ExamAnalyticsAdmin(admin.ModelAdmin):
             'fields': ('exam',)
         }),
         ('Performance Metrics', {
-            'fields': ('total_students', 'average_score', 'highest_score', 'lowest_score', 'median_score')
+            'fields': (
+                'total_students', 'average_score', 'highest_score',
+                'lowest_score', 'median_score'
+            )
         }),
         ('Grade Distribution', {
             'fields': ('grade_distribution', 'pass_rate')
         }),
         ('Analysis', {
-            'fields': ('question_analysis', 'time_analysis', 'difficulty_level', 'recommendations')
+            'fields': (
+                'question_analysis', 'time_analysis', 'difficulty_level',
+                'recommendations'
+            )
         }),
         ('Metadata', {
             'fields': ('created_at', 'updated_at'),
@@ -302,13 +322,18 @@ class LearningAnalyticsAdmin(admin.ModelAdmin):
             'fields': ('student', 'subject')
         }),
         ('Learning Metrics', {
-            'fields': ('study_time', 'resources_accessed', 'learning_path_progress')
+            'fields': (
+                'study_time', 'resources_accessed', 'learning_path_progress'
+            )
         }),
         ('Engagement', {
             'fields': ('engagement_score', 'participation_level')
         }),
         ('Learning Analysis', {
-            'fields': ('learning_style', 'skill_levels', 'knowledge_gaps', 'learning_objectives')
+            'fields': (
+                'learning_style', 'skill_levels', 'knowledge_gaps',
+                'learning_objectives'
+            )
         }),
         ('Recommendations', {
             'fields': ('recommended_resources', 'study_suggestions')
@@ -359,7 +384,8 @@ class PredictiveAnalyticsAdmin(admin.ModelAdmin):
         'intervention_needed', 'intervention_priority', 'confidence_score'
     ]
     list_filter = [
-        'intervention_needed', 'intervention_priority', 'model_version', 'created_at'
+        'intervention_needed', 'intervention_priority', 'model_version',
+        'created_at'
     ]
     search_fields = [
         'student__first_name', 'student__last_name', 'intervention_type'
@@ -375,13 +401,23 @@ class PredictiveAnalyticsAdmin(admin.ModelAdmin):
             'fields': ('student',)
         }),
         ('Predictions', {
-            'fields': ('predicted_gpa', 'graduation_probability', 'dropout_risk')
+            'fields': (
+                'predicted_gpa', 'graduation_probability', 'dropout_risk'
+            )
         }),
         ('Career & Academic', {
-            'fields': ('career_recommendations', 'skill_gaps', 'development_areas', 'course_recommendations', 'subject_performance_predictions')
+            'fields': (
+                'career_recommendations', 'skill_gaps',
+                'development_areas',
+                'course_recommendations',
+                'subject_performance_predictions'
+            )
         }),
         ('Intervention', {
-            'fields': ('intervention_needed', 'intervention_type', 'intervention_priority')
+            'fields': (
+                'intervention_needed', 'intervention_type',
+                'intervention_priority'
+            )
         }),
         ('Model Information', {
             'fields': ('model_version', 'confidence_score'),

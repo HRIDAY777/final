@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { apiClient } from '@/lib/api-client';
 
 interface GeneratedReport {
   id: string;

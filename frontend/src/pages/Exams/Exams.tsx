@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
-  AcademicCapIcon, CalendarIcon, ClockIcon, CheckCircleIcon,
-  XCircleIcon, ExclamationTriangleIcon, ChartBarIcon,
+  CalendarIcon, ClockIcon, CheckCircleIcon,
+  XCircleIcon, ExclamationTriangleIcon,
   DocumentTextIcon, UserIcon
 } from '@heroicons/react/24/outline';
 import DataTable from '../../components/CRUD/DataTable';
 import FormBuilder from '../../components/Forms/FormBuilder';
-import { apiService } from '../../services/api';
 
 interface Exam {
   id: number;
@@ -34,7 +33,7 @@ const Exams: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
 
   // Sample data for demo
-  const sampleExams: Exam[] = [
+  const sampleExams = useMemo<Exam[]>(() => [
     {
       id: 1,
       title: 'Mathematics Midterm',
@@ -86,13 +85,9 @@ const Exams: React.FC = () => {
       description: 'Comprehensive final examination',
       created_at: '2024-01-20T00:00:00Z'
     }
-  ];
+  ], []);
 
-  useEffect(() => {
-    loadExams();
-  }, []);
-
-  const loadExams = async () => {
+  const loadExams = useCallback(async () => {
     try {
       setLoading(true);
       // In real app, this would be: const data = await apiService.get('/exams/');
@@ -103,7 +98,11 @@ const Exams: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [sampleExams]);
+
+  useEffect(() => {
+    loadExams();
+  }, [loadExams]);
 
   const handleAdd = () => {
     setEditingExam(null);

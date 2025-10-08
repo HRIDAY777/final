@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAnalyticsStore } from '../../stores/analyticsStore';
 
 const Dashboard: React.FC = () => {
@@ -20,18 +20,7 @@ const Dashboard: React.FC = () => {
   const [examData, setExamData] = useState<any>(null);
   const [financialData, setFinancialData] = useState<any>(null);
 
-  useEffect(() => {
-    fetchDashboards();
-    loadDashboardData();
-  }, [selectedTimeRange]);
-
-  useEffect(() => {
-    if (analyticsDashboardsError) {
-      setTimeout(() => clearErrors(), 5000);
-    }
-  }, [analyticsDashboardsError]);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     try {
       const [performance, attendance, exams, financial] = await Promise.all([
         getStudentPerformance(1, { time_range: selectedTimeRange }), // Using student ID 1 as default
@@ -47,7 +36,22 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     }
-  };
+  }, [selectedTimeRange, getStudentPerformance, getAttendanceAnalytics, getExamTrends, getFinancialSummary]);
+
+  useEffect(() => {
+    fetchDashboards();
+    loadDashboardData();
+  }, [fetchDashboards, loadDashboardData]);
+
+  const memoizedClearErrors = useCallback(() => {
+    clearErrors();
+  }, [clearErrors]);
+
+  useEffect(() => {
+    if (analyticsDashboardsError) {
+      setTimeout(() => memoizedClearErrors(), 5000);
+    }
+  }, [analyticsDashboardsError, memoizedClearErrors]);
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat().format(num);

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { 
   Exam, ExamSchedule, Question, Answer, ExamResult, 
@@ -171,7 +172,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchExams: async (params?: any) => {
     set({ examsLoading: true, examsError: null });
     try {
-      const exams = await examAPI.getExams(params);
+      const exams = await examAPI.getExams(params) as PaginatedResponse<Exam>;
       set({ exams, examsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -182,7 +183,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchExam: async (id: string) => {
     set({ examsLoading: true, examsError: null });
     try {
-      const currentExam = await examAPI.getExam(id);
+      const currentExam = await examAPI.getExam(id) as Exam;
       set({ currentExam, examsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -249,7 +250,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchSchedules: async (params?: any) => {
     set({ schedulesLoading: true, schedulesError: null });
     try {
-      const schedules = await examAPI.getSchedules(params);
+      const schedules = await examAPI.getSchedules(params) as PaginatedResponse<ExamSchedule>;
       set({ schedules, schedulesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -260,7 +261,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchSchedule: async (id: string) => {
     set({ schedulesLoading: true, schedulesError: null });
     try {
-      const currentSchedule = await examAPI.getSchedule(id);
+      const currentSchedule = await examAPI.getSchedule(id) as ExamSchedule;
       set({ currentSchedule, schedulesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -314,7 +315,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchQuestions: async (params?: any) => {
     set({ questionsLoading: true, questionsError: null });
     try {
-      const questions = await examAPI.getQuestions(params);
+      const questions = await examAPI.getQuestions(params) as PaginatedResponse<Question>;
       set({ questions, questionsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -325,7 +326,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchQuestion: async (id: string) => {
     set({ questionsLoading: true, questionsError: null });
     try {
-      const currentQuestion = await examAPI.getQuestion(id);
+      const currentQuestion = await examAPI.getQuestion(id) as Question;
       set({ currentQuestion, questionsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -379,7 +380,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchAnswers: async (params?: any) => {
     set({ answersLoading: true, answersError: null });
     try {
-      const answers = await examAPI.getAnswers(params);
+      const answers = await examAPI.getAnswers(params) as PaginatedResponse<Answer>;
       set({ answers, answersLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -390,7 +391,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchAnswer: async (id: string) => {
     set({ answersLoading: true, answersError: null });
     try {
-      const currentAnswer = await examAPI.getAnswer(id);
+      const currentAnswer = await examAPI.getAnswer(id) as Answer;
       set({ currentAnswer, answersLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -444,7 +445,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchResults: async (params?: any) => {
     set({ resultsLoading: true, resultsError: null });
     try {
-      const results = await examAPI.getResults(params);
+      const results = await examAPI.getResults(params) as PaginatedResponse<ExamResult>;
       set({ results, resultsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -455,7 +456,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchResult: async (id: string) => {
     set({ resultsLoading: true, resultsError: null });
     try {
-      const currentResult = await examAPI.getResult(id);
+      const currentResult = await examAPI.getResult(id) as ExamResult;
       set({ currentResult, resultsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -535,7 +536,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchStudentAnswers: async (params?: any) => {
     set({ studentAnswersLoading: true, studentAnswersError: null });
     try {
-      const studentAnswers = await examAPI.getStudentAnswers(params);
+      const studentAnswers = await examAPI.getStudentAnswers(params) as PaginatedResponse<StudentAnswer>;
       set({ studentAnswers, studentAnswersLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -546,7 +547,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchStudentAnswer: async (id: string) => {
     set({ studentAnswersLoading: true, studentAnswersError: null });
     try {
-      const currentStudentAnswer = await examAPI.getStudentAnswer(id);
+      const currentStudentAnswer = await examAPI.getStudentAnswer(id) as StudentAnswer;
       set({ currentStudentAnswer, studentAnswersLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -600,7 +601,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchQuizzes: async (params?: any) => {
     set({ quizzesLoading: true, quizzesError: null });
     try {
-      const quizzes = await examAPI.getQuizzes(params);
+      const quizzes = await examAPI.getQuizzes(params) as PaginatedResponse<Quiz>;
       set({ quizzes, quizzesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -611,7 +612,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchQuiz: async (id: string) => {
     set({ quizzesLoading: true, quizzesError: null });
     try {
-      const currentQuiz = await examAPI.getQuiz(id);
+      const currentQuiz = await examAPI.getQuiz(id) as Quiz;
       set({ currentQuiz, quizzesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -665,7 +666,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchSettings: async (params?: any) => {
     set({ settingsLoading: true, settingsError: null });
     try {
-      const settings = await examAPI.getSettings(params);
+      const settings = await examAPI.getSettings(params) as PaginatedResponse<ExamSettings>;
       set({ settings, settingsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -676,7 +677,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
   fetchSetting: async (id: string) => {
     set({ settingsLoading: true, settingsError: null });
     try {
-      const currentSetting = await examAPI.getSetting(id);
+      const currentSetting = await examAPI.getSetting(id) as ExamSettings;
       set({ currentSetting, settingsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);

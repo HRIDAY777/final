@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardHeader } from '../../components/UI/Card';
+import { Card } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
+import { apiService } from '../../services/api';
+import toast from 'react-hot-toast';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   EyeIcon,
-  ClockIcon,
-  CheckCircleIcon,
   ExclamationTriangleIcon,
   DocumentTextIcon,
   UserGroupIcon,
   ChartBarIcon,
-  CalendarIcon,
-  AcademicCapIcon,
   ArrowDownTrayIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
@@ -76,6 +73,7 @@ const Assignments: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showGradeModal, setShowGradeModal] = useState(false);
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
 
   const [formData, setFormData] = useState({
     course: '',
@@ -191,6 +189,32 @@ const Assignments: React.FC = () => {
     }, 1000);
   }, []);
 
+  // Function to fetch assignments from API
+  const fetchAssignments = async () => {
+    try {
+      setLoading(true);
+      const data = await apiService.get<Assignment[]>('/assignments/');
+      setAssignments(data || []);
+    } catch (error) {
+      console.error('Failed to fetch assignments:', error);
+      toast.error('Failed to fetch assignments');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to fetch submissions for an assignment
+  const fetchSubmissions = async (assignmentId?: string) => {
+    try {
+      const url = assignmentId ? `/assignment-submissions/?assignment=${assignmentId}` : '/assignment-submissions/';
+      const data = await apiService.get<Submission[]>(url);
+      setSubmissions(data || []);
+    } catch (error) {
+      console.error('Failed to fetch submissions:', error);
+      toast.error('Failed to fetch submissions');
+    }
+  };
+
   const filteredAssignments = assignments.filter(assignment => {
     const matchesSearch = assignment.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          assignment.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -222,6 +246,7 @@ const Assignments: React.FC = () => {
       max_marks: 100,
       weightage: 10
     });
+    setEditingAssignment(null);
     setShowCreateModal(true);
   };
 
@@ -234,6 +259,7 @@ const Assignments: React.FC = () => {
       max_marks: assignment.max_marks,
       weightage: assignment.weightage
     });
+    setEditingAssignment(assignment);
     setSelectedAssignment(assignment);
     setShowEditModal(true);
   };
@@ -252,23 +278,49 @@ const Assignments: React.FC = () => {
     setShowGradeModal(true);
   };
 
-  const handleSaveAssignment = () => {
-    // TODO: Implement API call
-    console.log('Saving assignment:', formData);
-    setShowCreateModal(false);
-    setShowEditModal(false);
+  const handleSaveAssignment = async () => {
+    try {
+      if (editingAssignment) {
+        await apiService.put(`/assignments/${editingAssignment.id}/`, formData);
+        toast.success('Assignment updated successfully');
+      } else {
+        await apiService.post('/assignments/', formData);
+        toast.success('Assignment created successfully');
+      }
+      fetchAssignments();
+      setShowCreateModal(false);
+      setShowEditModal(false);
+      setEditingAssignment(null);
+    } catch (error) {
+      console.error('Failed to save assignment:', error);
+      toast.error('Failed to save assignment');
+    }
   };
 
-  const handleSaveGrade = () => {
-    // TODO: Implement API call
-    console.log('Saving grade:', gradeData);
-    setShowGradeModal(false);
+  const handleSaveGrade = async () => {
+    try {
+      if (selectedSubmission) {
+        await apiService.put(`/assignment-submissions/${selectedSubmission.id}/`, gradeData);
+        toast.success('Grade saved successfully');
+        fetchSubmissions();
+      }
+      setShowGradeModal(false);
+    } catch (error) {
+      console.error('Failed to save grade:', error);
+      toast.error('Failed to save grade');
+    }
   };
 
-  const handleDeleteAssignment = (id: string) => {
+  const handleDeleteAssignment = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this assignment?')) {
-      // TODO: Implement API call
-      console.log('Deleting assignment:', id);
+      try {
+        await apiService.delete(`/assignments/${id}/`);
+        toast.success('Assignment deleted successfully');
+        fetchAssignments();
+      } catch (error) {
+        console.error('Failed to delete assignment:', error);
+        toast.error('Failed to delete assignment');
+      }
     }
   };
 

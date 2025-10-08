@@ -1,3 +1,6 @@
+// Import RBAC types
+import { AdminAssignment } from './rbac';
+
 // User and Authentication Types
 export interface User {
   id: string;
@@ -5,13 +8,20 @@ export interface User {
   first_name: string;
   last_name: string;
   phone_number?: string;
-  user_type: 'student' | 'teacher' | 'admin' | 'parent';
+  user_type: 'student' | 'teacher' | 'admin' | 'parent' | 'super_admin' | 'institute_admin' | 'staff';
   is_active: boolean;
   mfa_enabled: boolean;
   last_login_ip?: string;
   date_joined: string;
   profile?: UserProfile;
   full_name?: string;
+  // RBAC-related properties
+  admin_level?: 'none' | 'basic' | 'intermediate' | 'advanced' | 'super_admin';
+  admin_assignments?: AdminAssignment[];
+  admin_institutes?: string[];
+  departments?: string[];
+  classes?: string[];
+  subjects?: string[];
 }
 
 export interface UserProfile {

@@ -213,9 +213,9 @@ class PWA {
 
   // Sync data when back online
   private async syncData(): Promise<void> {
-    if (this.registration && this.registration.sync) {
+    if (this.registration && 'sync' in this.registration) {
       try {
-        await this.registration.sync.register('sync-data');
+        await (this.registration as any).sync.register('sync-data');
         console.log('Background sync registered');
       } catch (error) {
         console.error('Background sync registration failed:', error);

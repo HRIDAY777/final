@@ -4,19 +4,13 @@ import { Button } from '../../components/UI/Button';
 import {
   ChartBarIcon,
   LightBulbIcon,
-  ExclamationTriangleIcon,
   CheckCircleIcon,
   XCircleIcon,
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
   MinusIcon,
-  UserGroupIcon,
-  CalendarIcon,
-  ClockIcon,
   AcademicCapIcon,
-  EyeIcon,
   DocumentChartBarIcon,
-  CpuChipIcon,
   BeakerIcon
 } from '@heroicons/react/24/outline';
 

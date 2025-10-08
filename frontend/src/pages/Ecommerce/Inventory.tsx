@@ -5,16 +5,12 @@ import {
   TagIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
-  PencilIcon,
   TrashIcon,
   EyeIcon,
   PlusIcon,
   ExclamationTriangleIcon,
-  CheckCircleIcon,
   ClockIcon,
-  ArrowDownTrayIcon,
   ShoppingBagIcon,
-  CurrencyDollarIcon,
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
   XCircleIcon
@@ -79,7 +75,6 @@ const Inventory: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   // Mock data for demonstration
@@ -305,7 +300,7 @@ const Inventory: React.FC = () => {
 
   const handleRestock = (item: InventoryItem) => {
     setSelectedItem(item);
-    setIsRestockModalOpen(true);
+    // TODO: Implement restock modal
   };
 
   const handleDeleteItem = (id: string) => {
@@ -332,7 +327,7 @@ const Inventory: React.FC = () => {
             Track stock levels, manage inventory, and handle reordering
           </p>
         </div>
-        <Button onClick={() => setIsRestockModalOpen(true)} className="flex items-center gap-2">
+        <Button className="flex items-center gap-2">
           <PlusIcon className="h-4 w-4" />
           Add Item
         </Button>
@@ -600,7 +595,7 @@ const Inventory: React.FC = () => {
               </p>
               {!searchQuery && statusFilter === 'all' && categoryFilter === 'all' && (
                 <div className="mt-6">
-                  <Button onClick={() => setIsRestockModalOpen(true)} className="flex items-center gap-2">
+                  <Button className="flex items-center gap-2">
                     <PlusIcon className="h-4 w-4" />
                     Add Item
                   </Button>

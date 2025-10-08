@@ -1,26 +1,22 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import { Card, CardContent, CardHeader } from '@/components/UI/Card';
 import { Button } from '@/components/UI/Button';
 import { Badge } from '@/components/UI/Badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/Tabs';
 import Progress from '@/components/UI/Progress';
 import { useCourseDetails, useEnrollments } from '@/hooks/useElearning';
 import { 
-  BookOpen, 
   Clock, 
-  Users, 
   Star, 
   PlayCircle, 
   CheckCircle, 
   Lock,
   ArrowLeft,
-  Calendar,
   Award,
   FileText,
   Video,
-  MessageSquare,
-  Download
+  MessageSquare
 } from 'lucide-react';
 
 const CourseDetails: React.FC = () => {
@@ -47,7 +43,7 @@ const CourseDetails: React.FC = () => {
   const handleEnroll = async () => {
     if (!courseId) return;
     
-    const result = await enrollInCourse(courseId);
+    const result = await enrollInCourse();
     if (result.success) {
       // Handle successful enrollment
       console.log('Successfully enrolled in course');
@@ -137,7 +133,7 @@ const CourseDetails: React.FC = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">What you'll learn</h3>
+                  <h3 className="text-lg font-semibold mb-2">What you&apos;ll learn</h3>
                   <ul className="space-y-2">
                     {course.learning_objectives.map((objective, index) => (
                       <li key={index} className="flex items-start gap-2">

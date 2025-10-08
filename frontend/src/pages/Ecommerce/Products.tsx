@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
@@ -25,7 +25,7 @@ const Products: React.FC = () => {
   const [libSearch, setLibSearch] = useState('');
   const [libPage, setLibPage] = useState(1);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true); setError(null);
     try {
       const data: any = await apiService.get('/shop/products/', { params: { search, page, category } });
@@ -33,9 +33,9 @@ const Products: React.FC = () => {
       setTotal(data.count || 0);
     } catch (e: any) { setError('Failed to load products'); }
     finally { setLoading(false); }
-  };
+  }, [search, page, category]);
 
-  useEffect(() => { fetchProducts(); }, [page, search, category]);
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   // Sync category with URL query param
   useEffect(() => {
@@ -74,17 +74,19 @@ const Products: React.FC = () => {
   };
 
   // Library book import helpers
-  const fetchLibraryBooks = async () => {
+  const fetchLibraryBooks = useCallback(async () => {
     try {
       const data: any = await apiService.get('/library/books/', { params: { search: libSearch, page: libPage } });
       setLibBooks(data.results || []);
       setLibTotal(data.count || 0);
-    } catch {}
-  };
+    } catch (error) {
+      console.error('Failed to fetch library books:', error);
+    }
+  }, [libSearch, libPage]);
 
-  useEffect(() => { if (libOpen) fetchLibraryBooks(); }, [libOpen, libSearch, libPage]);
+  useEffect(() => { if (libOpen) fetchLibraryBooks(); }, [libOpen, fetchLibraryBooks]);
 
-  const useBook = (book: any) => {
+  const selectBook = (book: any) => {
     setForm({
       name: book.title,
       sku: book.isbn || '',
@@ -227,7 +229,7 @@ const Products: React.FC = () => {
                         <td className="py-3 pr-4">{b.author?.name || '-'}</td>
                         <td className="py-3 pr-4">{b.available_copies ?? '-'}</td>
                         <td className="py-3 pr-0 text-right">
-                          <Button variant="outline" className="px-3 py-1" onClick={() => useBook(b)}>Select</Button>
+                          <Button variant="outline" className="px-3 py-1" onClick={() => selectBook(b)}>Select</Button>
                         </td>
                       </tr>
                     ))

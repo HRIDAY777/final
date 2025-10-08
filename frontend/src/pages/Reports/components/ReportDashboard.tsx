@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/UI/Card';
 import { Badge } from '@/components/UI/Badge';
 import { 
   BarChart3, 
   TrendingUp, 
-  TrendingDown, 
   FileText, 
   Download, 
   Clock,
@@ -48,11 +47,7 @@ const ReportDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { getReportAnalytics } = useReportAnalytics();
 
-  useEffect(() => {
-    loadAnalytics();
-  }, []);
-
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getReportAnalytics();
@@ -62,7 +57,11 @@ const ReportDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getReportAnalytics]);
+
+  useEffect(() => {
+    loadAnalytics();
+  }, [loadAnalytics]);
 
   if (loading) {
     return (
@@ -165,9 +164,7 @@ const ReportDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Reports by Type */}
         <Card>
-          <CardHeader>
-            <CardTitle>Reports by Type</CardTitle>
-          </CardHeader>
+          <CardHeader title="Reports by Type" />
           <CardContent>
             <div className="space-y-4">
               {Object.entries(analytics.reports_by_type).map(([type, count]) => (
@@ -194,9 +191,7 @@ const ReportDashboard: React.FC = () => {
 
         {/* Reports by Status */}
         <Card>
-          <CardHeader>
-            <CardTitle>Reports by Status</CardTitle>
-          </CardHeader>
+          <CardHeader title="Reports by Status" />
           <CardContent>
             <div className="space-y-4">
               {Object.entries(analytics.reports_by_status).map(([status, count]) => (
@@ -223,9 +218,7 @@ const ReportDashboard: React.FC = () => {
       {/* Top Performers */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Top Performers</CardTitle>
-          </CardHeader>
+          <CardHeader title="Top Performers" />
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -247,9 +240,7 @@ const ReportDashboard: React.FC = () => {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
+          <CardHeader title="Recent Activity" />
           <CardContent>
             <div className="space-y-3">
               {analytics.recent_activity.slice(0, 5).map((activity) => (
@@ -274,9 +265,7 @@ const ReportDashboard: React.FC = () => {
 
       {/* Quick Actions */}
       <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
+        <CardHeader title="Quick Actions" />
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">

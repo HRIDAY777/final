@@ -9,13 +9,15 @@ export const Card: React.FC<CardProps> = ({ className = '', children }) => (
   <div className={`bg-white dark:bg-secondary-800 rounded-lg shadow-soft p-6 transition-transform duration-200 hover:shadow-medium hover:-translate-y-0.5 ${className}`}>{children}</div>
 );
 
-export const CardHeader: React.FC<{ title: string; subtitle?: string; right?: React.ReactNode }>
-  = ({ title, subtitle, right }) => (
+export const CardHeader: React.FC<{ title?: string; subtitle?: string; right?: React.ReactNode; children?: React.ReactNode }>
+  = ({ title, subtitle, right, children }) => (
   <div className="flex items-center justify-between mb-4">
-    <div>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
-      {subtitle && <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{subtitle}</p>}
-    </div>
+    {title ? (
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+        {subtitle && <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{subtitle}</p>}
+      </div>
+    ) : children}
     {right}
   </div>
 );

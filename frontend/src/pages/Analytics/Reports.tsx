@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/UI/Card';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import { Badge } from '../../components/UI/Badge';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '../../components/UI/Select';
@@ -73,10 +73,7 @@ import {
   Clock,
   MoreHorizontal,
   Search,
-  Filter,
   BarChart3,
-  PieChart,
-  LineChart,
   Download as DownloadIcon,
   Share2,
   Printer,
@@ -245,7 +242,7 @@ const Reports: React.FC = () => {
     }
   };
 
-  const handleGenerateReport = async (templateId: string) => {
+  const handleGenerateReport = async (_templateId: string) => { // eslint-disable-line no-unused-vars
     setLoading(true);
     // Simulate report generation
     setTimeout(() => {

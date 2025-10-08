@@ -3,10 +3,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   HomeIcon, AcademicCapIcon, ClockIcon, 
   DocumentTextIcon, BookOpenIcon, CreditCardIcon, 
-  ChartBarIcon, CogIcon, BellIcon, UserIcon, 
-  ChevronLeftIcon, ChevronRightIcon, BuildingStorefrontIcon, PlayCircleIcon,
-  XMarkIcon, CalendarIcon, CubeIcon, TruckIcon, BuildingOfficeIcon, HomeModernIcon,
-  ServerIcon, SparklesIcon
+  ChartBarIcon, CogIcon, UserIcon, 
+  ChevronRightIcon,
+  XMarkIcon, CalendarIcon, TruckIcon, BuildingOfficeIcon, HomeModernIcon,
+  SparklesIcon, ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../stores/authStore';
 import { useTranslation } from '../../utils/i18n';
@@ -22,7 +22,6 @@ const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
   const { t } = useTranslation();
   const location = useLocation();
   const { user } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
 
   const sidebarItems: SidebarItem[] = [
     {
@@ -158,6 +157,16 @@ const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
       path: '/analytics',
       icon: ChartBarIcon,
     },
+                {
+              name: t('nav.reports'),
+              path: '/reports',
+              icon: DocumentTextIcon,
+            },
+            {
+              name: t('nav.rbac'),
+              path: '/rbac',
+              icon: ShieldCheckIcon,
+            },
     {
       name: t('nav.ai_tools'),
       path: '/ai-tools',
@@ -200,19 +209,22 @@ const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white/90 backdrop-blur-md border-r border-gray-200/50 shadow-xl
+        fixed inset-y-0 left-0 z-50 w-64 sm:w-72 lg:w-80 bg-white/90 backdrop-blur-md border-r border-gray-200/50 shadow-xl
         transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200/50">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200/50">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">EU</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm sm:text-base">EU</span>
             </div>
-            <div>
+            <div className="hidden sm:block">
               <h1 className="text-lg font-bold text-gray-900">EduCore Ultra</h1>
               <p className="text-xs text-gray-600">School Management</p>
+            </div>
+            <div className="sm:hidden">
+              <h1 className="text-base font-bold text-gray-900">EU</h1>
             </div>
           </div>
           <button
@@ -224,7 +236,7 @@ const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <nav className="flex-1 px-3 sm:px-4 py-4 sm:py-6 space-y-2 overflow-y-auto thin-scrollbar">
           {sidebarItems.map((item) => {
             const hasChildren = item.children && item.children.length > 0;
             const isExpanded = expandedItems.includes(item.name);
@@ -236,7 +248,7 @@ const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                 <button
                   onClick={() => hasChildren ? toggleItem(item.name) : undefined}
                   className={`
-                    w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all duration-200
+                    w-full flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-left transition-all duration-200
                     ${isItemActive || isAnyChildActive 
                       ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border border-blue-200/50' 
                       : 'text-gray-700 hover:bg-gray-50/80'
@@ -244,25 +256,25 @@ const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
                   `}
                 >
                   <div className="flex items-center space-x-3">
-                    <item.icon className={`w-5 h-5 ${isItemActive || isAnyChildActive ? 'text-blue-600' : 'text-gray-500'}`} />
-                    <span className="font-medium">{item.name}</span>
+                    <item.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isItemActive || isAnyChildActive ? 'text-blue-600' : 'text-gray-500'}`} />
+                    <span className="font-medium text-sm sm:text-base">{item.name}</span>
                   </div>
                   {hasChildren && (
                     <ChevronRightIcon 
-                      className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} 
+                      className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} 
                     />
                   )}
                 </button>
 
                 {/* Children */}
                 {hasChildren && isExpanded && (
-                  <div className="mt-2 ml-4 space-y-1">
+                  <div className="mt-2 ml-3 sm:ml-4 space-y-1">
                     {item.children!.map((child) => (
                       <Link
                         key={child.path}
                         to={child.path}
                         className={`
-                          block px-4 py-2.5 rounded-lg text-sm transition-all duration-200
+                          block px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm transition-all duration-200
                           ${isActive(child.path)
                             ? 'bg-blue-100/80 text-blue-700 font-medium'
                             : 'text-gray-600 hover:bg-gray-50/80 hover:text-gray-900'
@@ -280,19 +292,24 @@ const Sidebar: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, o
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200/50">
+        <div className="p-3 sm:p-4 border-t border-gray-200/50">
           <div className="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-r from-gray-50 to-blue-50/50">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm sm:text-base font-medium">
                 {user?.first_name?.charAt(0) || 'A'}
               </span>
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 hidden sm:block">
               <p className="text-sm font-medium text-gray-900 truncate">
                 {user?.first_name} {user?.last_name}
               </p>
               <p className="text-xs text-gray-600 truncate">
                 {user?.user_type || 'Administrator'}
+              </p>
+            </div>
+            <div className="sm:hidden">
+              <p className="text-xs font-medium text-gray-900">
+                {user?.first_name?.charAt(0)}.{user?.last_name?.charAt(0)}
               </p>
             </div>
           </div>

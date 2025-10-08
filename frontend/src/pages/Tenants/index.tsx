@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { Button } from '../../components/UI/Button';
-import { apiService } from '../../services/api';
+
 import { 
   BuildingOfficeIcon, 
   UserGroupIcon, 
@@ -131,7 +131,7 @@ const Tenants: React.FC = () => {
         <PageHeader 
           title="Tenants" 
           subtitle="Multi-tenant organization and subscription management"
-          right={
+          actions={
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => window.location.href = '/tenants/list'}>
                 View All Tenants

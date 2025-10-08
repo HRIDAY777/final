@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
@@ -79,13 +79,7 @@ const StudentDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    if (id) {
-      fetchStudent();
-    }
-  }, [id]);
-
-  const fetchStudent = async () => {
+  const fetchStudent = useCallback(async () => {
     try {
       const data = await apiService.get(`/students/${id}/`) as any;
       setStudent(data);
@@ -94,7 +88,13 @@ const StudentDetail: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchStudent();
+    }
+  }, [id, fetchStudent]);
 
   if (loading) {
     return (

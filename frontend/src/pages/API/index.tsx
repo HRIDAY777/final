@@ -3,7 +3,7 @@ import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { Button } from '../../components/UI/Button';
 import { Badge } from '../../components/UI/Badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/UI/Tabs';
+
 import { 
   CodeBracketIcon, 
   DocumentTextIcon, 
@@ -17,7 +17,6 @@ import {
   ChartBarIcon,
   BellIcon,
   CogIcon,
-  ArrowRightIcon,
   ClipboardDocumentIcon,
   PlayIcon
 } from '@heroicons/react/24/outline';

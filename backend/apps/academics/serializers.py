@@ -67,7 +67,7 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = [
-            'id', 'user', 'student_id', 'class_enrolled', 'roll_number',
+            'id', 'user', 'student_id', 'class_enrolled', 'admission_number',
             'admission_date', 'parent_name', 'parent_phone', 'parent_email',
             'address', 'emergency_contact', 'blood_group', 'is_active',
             'full_name', 'email', 'created_at', 'updated_at'
@@ -81,9 +81,10 @@ class StudentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = [
-            'id', 'user', 'student_id', 'class_enrolled_id', 'roll_number',
-            'admission_date', 'parent_name', 'parent_phone', 'parent_email',
-            'address', 'emergency_contact', 'blood_group'
+            'id', 'user', 'student_id', 'class_enrolled_id',
+            'admission_number', 'admission_date', 'parent_name',
+            'parent_phone', 'parent_email', 'address',
+            'emergency_contact', 'blood_group'
         ]
 
     def create(self, validated_data):
@@ -215,7 +216,7 @@ class StudentPerformanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = [
-            'id', 'user', 'student_id', 'class_enrolled', 'roll_number',
+            'id', 'user', 'student_id', 'class_enrolled', 'admission_number',
             'average_percentage', 'total_assignments', 'completed_assignments',
             'is_active'
         ]

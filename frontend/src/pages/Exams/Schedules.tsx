@@ -6,8 +6,6 @@ import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   EyeIcon,
@@ -15,8 +13,6 @@ import {
   ClockIcon,
   MapPinIcon,
   UserGroupIcon,
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 
 interface ExamSchedule {
@@ -464,7 +460,7 @@ const Schedules: React.FC = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Schedule</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete the schedule for "{selectedSchedule.exam.title}"? This action cannot be undone.
+              Are you sure you want to delete the schedule for &quot;{selectedSchedule.exam.title}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-3">
               <Button

@@ -78,28 +78,47 @@ interface ReportsState {
   generatedReportsError: string | null;
 
   // Actions
+  // eslint-disable-next-line no-unused-vars
   fetchTemplates: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTemplate: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createTemplate: (data: Partial<ReportTemplate>) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   updateTemplate: (id: number, data: Partial<ReportTemplate>) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTemplate: (id: number) => Promise<void>;
 
+  // eslint-disable-next-line no-unused-vars
   fetchScheduledReports: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchScheduledReport: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createScheduledReport: (data: Partial<ScheduledReport>) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   updateScheduledReport: (id: number, data: Partial<ScheduledReport>) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteScheduledReport: (id: number) => Promise<void>;
 
+  // eslint-disable-next-line no-unused-vars
   fetchGeneratedReports: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchGeneratedReport: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createGeneratedReport: (data: Partial<GeneratedReport>) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   updateGeneratedReport: (id: number, data: Partial<GeneratedReport>) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteGeneratedReport: (id: number) => Promise<void>;
 
   // Special Actions
+  // eslint-disable-next-line no-unused-vars
   generateReport: (templateId: number, parameters?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   scheduleReport: (templateId: number, scheduleData: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   downloadReport: (reportId: number, format?: string) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   shareReport: (reportId: number, recipients: string[]) => Promise<void>;
 
   // Utility actions
@@ -110,6 +129,7 @@ interface ReportsState {
 // Store Implementation
 export const useReportsStore = create<ReportsState>()(
   devtools(
+    // eslint-disable-next-line no-unused-vars
     (set, get) => ({
       // Initial State
       templates: null,

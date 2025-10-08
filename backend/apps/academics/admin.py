@@ -3,8 +3,6 @@ from django.utils.html import format_html
 from .models import (
     Course, Lesson, Grade
 )
-from apps.teachers.models import Teacher
-from apps.students.models import Student
 # Class model moved to apps.classes
 
 
@@ -28,7 +26,8 @@ class CourseAdmin(admin.ModelAdmin):
         'semester', 'is_active', 'created_at'
     ]
     search_fields = [
-        'subject__name', 'teacher__user__first_name',
+        'subject__name',
+        'teacher__user__first_name',
         'teacher__user__last_name'
     ]
     list_editable = ['is_active']
@@ -42,12 +41,16 @@ class LessonAdmin(admin.ModelAdmin):
         'is_published', 'created_at'
     ]
     list_filter = ['course', 'is_published', 'created_at']
-    search_fields = ['title', 'description', 'course__subject__name']
+    search_fields = [
+        'title', 'description',
+        'course__subject__name'
+    ]
     list_editable = ['is_published']
     ordering = ['course', 'order']
 
 
-# Assignment and AssignmentSubmission admin registrations moved to assignments app
+# Assignment and AssignmentSubmission admin registrations moved to
+# assignments app
 
 
 @admin.register(Grade)
@@ -60,7 +63,8 @@ class GradeAdmin(admin.ModelAdmin):
         'course', 'letter_grade', 'academic_year', 'semester', 'created_at'
     ]
     search_fields = [
-        'student__user__first_name', 'student__user__last_name',
+        'student__user__first_name',
+        'student__user__last_name',
         'course__subject__name'
     ]
     readonly_fields = ['letter_grade']

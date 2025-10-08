@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.utils import timezone
 import uuid
 
 User = get_user_model()
@@ -71,13 +70,15 @@ class Grade(models.Model):
     """Grade model for student grades"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     student = models.ForeignKey(
-        'students.Student', on_delete=models.CASCADE, related_name='academic_grades'
+        'students.Student', on_delete=models.CASCADE,
+        related_name='academic_grades'
     )
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name='grades'
     )
     assignment = models.ForeignKey(
-        'assignments.Assignment', on_delete=models.CASCADE, related_name='grades', blank=True, null=True
+        'assignments.Assignment', on_delete=models.CASCADE,
+        related_name='grades', blank=True, null=True
     )
     score = models.DecimalField(
         max_digits=5, decimal_places=2,
@@ -95,7 +96,9 @@ class Grade(models.Model):
     )
     weight = models.DecimalField(
         max_digits=5, decimal_places=2, default=100.00,
-        help_text="Weight of this grade in the final calculation (%)"
+        help_text=(
+            "Weight of this grade in the final calculation (%)"
+        )
     )
     academic_year = models.CharField(max_length=20)
     semester = models.CharField(max_length=20, blank=True)
@@ -109,7 +112,10 @@ class Grade(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.student.full_name} - {self.course.subject.name} - {self.score}%"
+        return (
+            f"{self.student.full_name} - {self.course.subject.name} - "
+            f"{self.score}%"
+        )
 
     def save(self, *args, **kwargs):
         # Calculate letter grade based on score

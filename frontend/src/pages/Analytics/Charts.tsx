@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '../../components/UI/Select';
@@ -111,14 +111,7 @@ const Charts: React.FC = () => {
     { id: 'financial', label: 'Financial Overview', icon: DollarSign }
   ];
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
+
 
   const getChartData = () => {
     switch (selectedChart) {
@@ -137,50 +130,9 @@ const Charts: React.FC = () => {
     }
   };
 
-  const getChartType = () => {
-    switch (selectedChart) {
-      case 'performance':
-      case 'enrollment':
-        return 'line';
-      case 'attendance':
-        return 'bar';
-      case 'subjects':
-      case 'financial':
-        return 'doughnut';
-      default:
-        return 'line';
-    }
-  };
 
-  const getChartOptions = () => {
-    const baseOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'top' as const,
-        },
-        title: {
-          display: true,
-          text: chartTypes.find(c => c.id === selectedChart)?.label
-        }
-      }
-    };
 
-    if (selectedChart === 'performance' || selectedChart === 'enrollment') {
-      return {
-        ...baseOptions,
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: selectedChart === 'performance' ? 100 : undefined
-          }
-        }
-      };
-    }
 
-    return baseOptions;
-  };
 
   return (
     <div className="space-y-6">

@@ -5,7 +5,6 @@ import {
   ChartBarIcon,
   CalendarIcon,
   ClockIcon,
-  UserGroupIcon,
   AcademicCapIcon,
   TrophyIcon,
   MusicalNoteIcon,

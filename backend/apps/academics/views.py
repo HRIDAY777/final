@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status, filters
+from rest_framework import viewsets, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -18,6 +18,9 @@ from .serializers import (
     CourseSerializer, CourseCreateSerializer, LessonSerializer,
     LessonCreateSerializer, GradeSerializer, GradeCreateSerializer,
     ClassDashboardSerializer, StudentPerformanceSerializer
+)
+from apps.assignments.serializers import (
+    AssignmentSerializer, AssignmentSubmissionSerializer
 )
 
 
@@ -326,7 +329,7 @@ class GradeViewSet(viewsets.ModelViewSet):
     filter_backends = [
         DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter
     ]
-    filterset_fields = ['student', 'course', 'assignment', 'grade']
+    filterset_fields = ['student', 'course', 'assignment', 'letter_grade']
     search_fields = [
         'student__user__first_name', 'student__user__last_name'
     ]

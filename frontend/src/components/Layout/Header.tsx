@@ -48,15 +48,15 @@ const Header: React.FC<HeaderProps> = ({ onSidebarToggle }) => {
 
   return (
     <>
-    <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm px-4 sm:px-6 py-4">
+    <header className="header-responsive">
       <div className="flex items-center justify-between">
         {/* Left side */}
-        <div className="flex items-center space-x-3 sm:space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
           <button
             onClick={onSidebarToggle}
             className="p-2 rounded-xl hover:bg-gray-100/80 transition-all duration-200 lg:hidden"
           >
-            <Bars3Icon className="w-5 h-5 text-gray-700" />
+            <Bars3Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
           </button>
 
           {/* Search - hidden on mobile, shown on tablet+ */}
@@ -68,31 +68,32 @@ const Header: React.FC<HeaderProps> = ({ onSidebarToggle }) => {
                 placeholder="Search students, teachers, classes..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2.5 w-64 lg:w-80 border border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm transition-all duration-200"
+                className="pl-10 pr-4 py-2 sm:py-2.5 w-48 sm:w-64 lg:w-80 border border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm transition-all duration-200"
               />
             </div>
           </form>
         </div>
 
         {/* Right side */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
           {/* Language Selector */}
           <LanguageSelector className="hidden sm:block" />
 
           {/* EduBot Assistant - hidden on mobile */}
           <button
             onClick={() => setBotOpen(true)}
-            className="hidden sm:inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="hidden sm:inline-flex items-center px-3 sm:px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
-            <SparklesIcon className="w-4 h-4 mr-2" />
-            AI Assistant
+            <SparklesIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="hidden lg:inline">AI Assistant</span>
+            <span className="lg:hidden">AI</span>
           </button>
 
           {/* Cart */}
-          <Link to="/shop/cart" className="relative p-2.5 rounded-xl hover:bg-gray-100/80 transition-all duration-200">
-            <ShoppingCartIcon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+          <Link to="/shop/cart" className="relative p-2 sm:p-2.5 rounded-xl hover:bg-gray-100/80 transition-all duration-200">
+            <ShoppingCartIcon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-gray-700" />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[10px] leading-[18px] text-white bg-gradient-to-r from-red-500 to-pink-500 rounded-full text-center font-medium shadow-lg">{cartCount}</span>
+              <span className="absolute -top-1 -right-1 min-w-[16px] sm:min-w-[18px] h-[16px] sm:h-[18px] px-1 text-[8px] sm:text-[10px] leading-[16px] sm:leading-[18px] text-white bg-gradient-to-r from-red-500 to-pink-500 rounded-full text-center font-medium shadow-lg">{cartCount}</span>
             )}
           </Link>
 

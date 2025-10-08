@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import { Button } from '../../components/UI/Button';
 import { Modal } from '../../components/UI/Modal';
-import { Input } from '../../components/UI/Input';
+import Input from '../../components/UI/Input';
 import { Select } from '../../components/UI/Select';
 import { Textarea } from '../../components/UI/Textarea';
-import { apiService } from '../../services/api';
 import {
   DocumentTextIcon,
   EyeIcon,
   PlusIcon,
   PencilIcon,
-  TrashIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon
+  TrashIcon
 } from '@heroicons/react/24/outline';
 
 interface HostelRule {
@@ -32,9 +29,7 @@ interface HostelRule {
 
 const Rules: React.FC = () => {
   const [rules, setRules] = useState<HostelRule[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [showRuleModal, setShowRuleModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -50,19 +45,10 @@ const Rules: React.FC = () => {
   });
 
   // Filter states
-  const [filters, setFilters] = useState({
-    category: '',
-    status: '',
-    search: '',
-  });
+  const [searchValue, setSearchValue] = useState('');
 
-  useEffect(() => {
-    fetchRules();
-  }, [currentPage, filters]);
-
-  const fetchRules = async () => {
+  const fetchRules = useCallback(async () => {
     try {
-      setLoading(true);
       // Mock data for demonstration
       const mockRules: HostelRule[] = [
         {
@@ -107,19 +93,9 @@ const Rules: React.FC = () => {
         },
         {
           id: 5,
-          title: 'Smoking Policy',
-          description: 'Smoking is strictly prohibited in all hostel buildings and common areas. Designated smoking areas are available outside the buildings.',
-          category: 'Health & Safety',
-          is_active: true,
-          created_by: 'Admin User',
-          created_at: '2024-01-01T10:00:00Z',
-          updated_at: '2024-01-01T10:00:00Z',
-        },
-        {
-          id: 6,
-          title: 'Pet Policy',
-          description: 'Pets are not allowed in hostel rooms or common areas. This policy is in place to ensure the comfort and safety of all residents.',
-          category: 'General Conduct',
+          title: 'Laundry Schedule',
+          description: 'Laundry facilities are available from 6:00 AM to 10:00 PM. Students must follow the assigned schedule to avoid conflicts.',
+          category: 'Facilities',
           is_active: false,
           created_by: 'Admin User',
           created_at: '2024-01-01T10:00:00Z',
@@ -127,21 +103,16 @@ const Rules: React.FC = () => {
         }
       ];
 
-      // Apply filters
-      let filteredRules = mockRules.filter(rule => {
-        if (filters.category && rule.category !== filters.category) return false;
-        if (filters.status === 'active' && !rule.is_active) return false;
-        if (filters.status === 'inactive' && rule.is_active) return false;
-        if (filters.search) {
-          const searchLower = filters.search.toLowerCase();
-          return (
-            rule.title.toLowerCase().includes(searchLower) ||
-            rule.description.toLowerCase().includes(searchLower) ||
-            rule.category.toLowerCase().includes(searchLower)
-          );
-        }
-        return true;
-      });
+      // Apply search filter
+      let filteredRules = mockRules;
+      if (searchValue) {
+        const searchLower = searchValue.toLowerCase();
+        filteredRules = mockRules.filter(rule => 
+          rule.title.toLowerCase().includes(searchLower) ||
+          rule.description.toLowerCase().includes(searchLower) ||
+          rule.category.toLowerCase().includes(searchLower)
+        );
+      }
 
       // Pagination
       const itemsPerPage = 10;
@@ -151,18 +122,18 @@ const Rules: React.FC = () => {
 
       setRules(paginatedRules);
       setTotalCount(filteredRules.length);
-      setTotalPages(Math.ceil(filteredRules.length / itemsPerPage));
     } catch (error) {
       console.error('Error fetching rules:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentPage, searchValue]);
 
-  const handleFilterChange = (newFilters: any) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-  };
+  useEffect(() => {
+    fetchRules();
+  }, [fetchRules]);
+
+
+
+
 
   const handleCreateRule = async () => {
     try {
@@ -236,20 +207,7 @@ const Rules: React.FC = () => {
     return colors[category] || 'bg-gray-100 text-gray-800';
   };
 
-  const filterOptions = [
-    { label: 'All Categories', value: '' },
-    { label: 'General Conduct', value: 'General Conduct' },
-    { label: 'Visitors', value: 'Visitors' },
-    { label: 'Maintenance', value: 'Maintenance' },
-    { label: 'Safety', value: 'Safety' },
-    { label: 'Health & Safety', value: 'Health & Safety' },
-  ];
 
-  const statusOptions = [
-    { label: 'All Rules', value: '' },
-    { label: 'Active', value: 'active' },
-    { label: 'Inactive', value: 'inactive' },
-  ];
 
   const categoryOptions = [
     { label: 'General Conduct', value: 'General Conduct' },
@@ -263,9 +221,9 @@ const Rules: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title="Hostel Rules & Regulations"
-        description="Manage hostel rules, policies, and regulations for student conduct"
+        subtitle="Manage hostel rules, policies, and regulations for student conduct"
         actions={
-          <Button variant="primary" size="sm" onClick={() => setShowRuleModal(true)}>
+          <Button variant="default" size="sm" onClick={() => setShowRuleModal(true)}>
             <PlusIcon className="h-4 w-4 mr-2" />
             Add Rule
           </Button>
@@ -273,13 +231,9 @@ const Rules: React.FC = () => {
       />
 
       <FilterBar
-        filters={filters}
-        onFilterChange={handleFilterChange}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
         searchPlaceholder="Search by rule title, description, or category..."
-        filterOptions={[
-          { key: 'category', label: 'Category', options: filterOptions },
-          { key: 'status', label: 'Status', options: statusOptions },
-        ]}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -352,9 +306,9 @@ const Rules: React.FC = () => {
 
       <div className="flex justify-center">
         <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalCount={totalCount}
+          page={currentPage}
+          pageSize={10}
+          total={totalCount}
           onPageChange={setCurrentPage}
         />
       </div>
@@ -375,29 +329,47 @@ const Rules: React.FC = () => {
         title={isEditing ? 'Edit Rule' : 'Add New Rule'}
         size="lg"
       >
-        <div className="space-y-4">
-          <Input
-            label="Rule Title"
-            value={ruleForm.title}
-            onChange={(e) => setRuleForm({ ...ruleForm, title: e.target.value })}
-            required
-          />
+                 <div className="space-y-4">
+           <div>
+             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+               Rule Title
+             </label>
+             <Input
+               id="title"
+               value={ruleForm.title}
+               onChange={(e) => setRuleForm({ ...ruleForm, title: e.target.value })}
+               required
+             />
+           </div>
 
-          <Select
-            label="Category"
-            value={ruleForm.category}
-            onChange={(value) => setRuleForm({ ...ruleForm, category: value })}
-            options={categoryOptions}
-            required
-          />
+           <div>
+             <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+               Category
+             </label>
+             <Select
+               value={ruleForm.category}
+               onValueChange={(value) => setRuleForm({ ...ruleForm, category: value })}
+             >
+               {categoryOptions.map((option) => (
+                 <option key={option.value} value={option.value}>
+                   {option.label}
+                 </option>
+               ))}
+             </Select>
+           </div>
 
-          <Textarea
-            label="Description"
-            value={ruleForm.description}
-            onChange={(e) => setRuleForm({ ...ruleForm, description: e.target.value })}
-            rows={6}
-            required
-          />
+           <div>
+             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+               Description
+             </label>
+             <Textarea
+               id="description"
+               value={ruleForm.description}
+               onChange={(e) => setRuleForm({ ...ruleForm, description: e.target.value })}
+               rows={6}
+               required
+             />
+           </div>
 
           <div className="flex items-center">
             <input
@@ -429,12 +401,12 @@ const Rules: React.FC = () => {
           >
             Cancel
           </Button>
-          <Button
-            variant="primary"
-            onClick={isEditing ? handleUpdateRule : handleCreateRule}
-          >
-            {isEditing ? 'Update Rule' : 'Create Rule'}
-          </Button>
+                     <Button
+             variant="default"
+             onClick={isEditing ? handleUpdateRule : handleCreateRule}
+           >
+             {isEditing ? 'Update Rule' : 'Create Rule'}
+           </Button>
         </div>
       </Modal>
 
@@ -500,10 +472,10 @@ const Rules: React.FC = () => {
                 <PencilIcon className="h-4 w-4 mr-2" />
                 Edit Rule
               </Button>
-              <Button variant="primary">
-                <DocumentTextIcon className="h-4 w-4 mr-2" />
-                Print Rule
-              </Button>
+                             <Button variant="default">
+                 <DocumentTextIcon className="h-4 w-4 mr-2" />
+                 Print Rule
+               </Button>
             </div>
           </div>
         )}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { api } from '../services/api';
@@ -307,7 +308,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchEmployees: async (params = {}) => {
         set({ employeesLoading: true, employeesError: null });
         try {
-          const response = await api.get('/hr/employees/', { params });
+          const response = await api.get('/hr/employees/', { params }) as any as any;
           set({ employees: response.data, employeesLoading: false });
         } catch (error: any) {
           set({ 
@@ -320,7 +321,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchEmployeeById: async (id: number) => {
         set({ employeesLoading: true, employeesError: null });
         try {
-          const response = await api.get(`/hr/employees/${id}/`);
+          const response = await api.get(`/hr/employees/${id}/`) as any as any;
           set({ currentEmployee: response.data, employeesLoading: false });
         } catch (error: any) {
           set({ 
@@ -333,7 +334,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createEmployee: async (data: Partial<Employee>) => {
         set({ employeesLoading: true, employeesError: null });
         try {
-          const response = await api.post('/hr/employees/', data);
+          const response = await api.post('/hr/employees/', data) as any as any;
           set({ employeesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -348,7 +349,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updateEmployee: async (id: number, data: Partial<Employee>) => {
         set({ employeesLoading: true, employeesError: null });
         try {
-          const response = await api.put(`/hr/employees/${id}/`, data);
+          const response = await api.put(`/hr/employees/${id}/`, data) as any as any;
           set({ employeesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -363,7 +364,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deleteEmployee: async (id: number) => {
         set({ employeesLoading: true, employeesError: null });
         try {
-          await api.delete(`/hr/employees/${id}/`);
+          await api.delete(`/hr/employees/${id}/`) as any;
           set({ employeesLoading: false });
         } catch (error: any) {
           set({ 
@@ -378,7 +379,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchDepartments: async (params = {}) => {
         set({ departmentsLoading: true, departmentsError: null });
         try {
-          const response = await api.get('/hr/departments/', { params });
+          const response = await api.get('/hr/departments/', { params }) as any;
           set({ departments: response.data, departmentsLoading: false });
         } catch (error: any) {
           set({ 
@@ -391,7 +392,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchDepartmentById: async (id: number) => {
         set({ departmentsLoading: true, departmentsError: null });
         try {
-          const response = await api.get(`/hr/departments/${id}/`);
+          const response = await api.get(`/hr/departments/${id}/`) as any;
           set({ currentDepartment: response.data, departmentsLoading: false });
         } catch (error: any) {
           set({ 
@@ -404,7 +405,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createDepartment: async (data: Partial<Department>) => {
         set({ departmentsLoading: true, departmentsError: null });
         try {
-          const response = await api.post('/hr/departments/', data);
+          const response = await api.post('/hr/departments/', data) as any;
           set({ departmentsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -419,7 +420,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updateDepartment: async (id: number, data: Partial<Department>) => {
         set({ departmentsLoading: true, departmentsError: null });
         try {
-          const response = await api.put(`/hr/departments/${id}/`, data);
+          const response = await api.put(`/hr/departments/${id}/`, data) as any;
           set({ departmentsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -434,7 +435,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deleteDepartment: async (id: number) => {
         set({ departmentsLoading: true, departmentsError: null });
         try {
-          await api.delete(`/hr/departments/${id}/`);
+          await api.delete(`/hr/departments/${id}/`) as any;
           set({ departmentsLoading: false });
         } catch (error: any) {
           set({ 
@@ -449,7 +450,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchPositions: async (params = {}) => {
         set({ positionsLoading: true, positionsError: null });
         try {
-          const response = await api.get('/hr/positions/', { params });
+          const response = await api.get('/hr/positions/', { params }) as any;
           set({ positions: response.data, positionsLoading: false });
         } catch (error: any) {
           set({ 
@@ -462,7 +463,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchPositionById: async (id: number) => {
         set({ positionsLoading: true, positionsError: null });
         try {
-          const response = await api.get(`/hr/positions/${id}/`);
+          const response = await api.get(`/hr/positions/${id}/`) as any;
           set({ currentPosition: response.data, positionsLoading: false });
         } catch (error: any) {
           set({ 
@@ -475,7 +476,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createPosition: async (data: Partial<Position>) => {
         set({ positionsLoading: true, positionsError: null });
         try {
-          const response = await api.post('/hr/positions/', data);
+          const response = await api.post('/hr/positions/', data) as any;
           set({ positionsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -490,7 +491,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updatePosition: async (id: number, data: Partial<Position>) => {
         set({ positionsLoading: true, positionsError: null });
         try {
-          const response = await api.put(`/hr/positions/${id}/`, data);
+          const response = await api.put(`/hr/positions/${id}/`, data) as any;
           set({ positionsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -505,7 +506,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deletePosition: async (id: number) => {
         set({ positionsLoading: true, positionsError: null });
         try {
-          await api.delete(`/hr/positions/${id}/`);
+          await api.delete(`/hr/positions/${id}/`) as any;
           set({ positionsLoading: false });
         } catch (error: any) {
           set({ 
@@ -520,7 +521,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchLeaveRequests: async (params = {}) => {
         set({ leaveRequestsLoading: true, leaveRequestsError: null });
         try {
-          const response = await api.get('/hr/leave-requests/', { params });
+          const response = await api.get('/hr/leave-requests/', { params }) as any;
           set({ leaveRequests: response.data, leaveRequestsLoading: false });
         } catch (error: any) {
           set({ 
@@ -533,7 +534,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchLeaveRequestById: async (id: number) => {
         set({ leaveRequestsLoading: true, leaveRequestsError: null });
         try {
-          const response = await api.get(`/hr/leave-requests/${id}/`);
+          const response = await api.get(`/hr/leave-requests/${id}/`) as any;
           set({ currentLeaveRequest: response.data, leaveRequestsLoading: false });
         } catch (error: any) {
           set({ 
@@ -546,7 +547,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createLeaveRequest: async (data: Partial<LeaveRequest>) => {
         set({ leaveRequestsLoading: true, leaveRequestsError: null });
         try {
-          const response = await api.post('/hr/leave-requests/', data);
+          const response = await api.post('/hr/leave-requests/', data) as any;
           set({ leaveRequestsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -561,7 +562,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updateLeaveRequest: async (id: number, data: Partial<LeaveRequest>) => {
         set({ leaveRequestsLoading: true, leaveRequestsError: null });
         try {
-          const response = await api.put(`/hr/leave-requests/${id}/`, data);
+          const response = await api.put(`/hr/leave-requests/${id}/`, data) as any;
           set({ leaveRequestsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -576,7 +577,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deleteLeaveRequest: async (id: number) => {
         set({ leaveRequestsLoading: true, leaveRequestsError: null });
         try {
-          await api.delete(`/hr/leave-requests/${id}/`);
+          await api.delete(`/hr/leave-requests/${id}/`) as any;
           set({ leaveRequestsLoading: false });
         } catch (error: any) {
           set({ 
@@ -590,7 +591,7 @@ export const useHRStore = create<HRState & HRActions>()(
       approveLeaveRequest: async (id: number) => {
         set({ leaveRequestsLoading: true, leaveRequestsError: null });
         try {
-          await api.post(`/hr/leave-requests/${id}/approve/`);
+          await api.post(`/hr/leave-requests/${id}/approve/`) as any;
           set({ leaveRequestsLoading: false });
         } catch (error: any) {
           set({ 
@@ -604,7 +605,7 @@ export const useHRStore = create<HRState & HRActions>()(
       rejectLeaveRequest: async (id: number, reason: string) => {
         set({ leaveRequestsLoading: true, leaveRequestsError: null });
         try {
-          await api.post(`/hr/leave-requests/${id}/reject/`, { reason });
+          await api.post(`/hr/leave-requests/${id}/reject/`, { reason }) as any;
           set({ leaveRequestsLoading: false });
         } catch (error: any) {
           set({ 
@@ -619,7 +620,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchAttendance: async (params = {}) => {
         set({ attendanceLoading: true, attendanceError: null });
         try {
-          const response = await api.get('/hr/attendance/', { params });
+          const response = await api.get('/hr/attendance/', { params }) as any;
           set({ attendance: response.data, attendanceLoading: false });
         } catch (error: any) {
           set({ 
@@ -632,7 +633,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchAttendanceById: async (id: number) => {
         set({ attendanceLoading: true, attendanceError: null });
         try {
-          const response = await api.get(`/hr/attendance/${id}/`);
+          const response = await api.get(`/hr/attendance/${id}/`) as any;
           set({ currentAttendance: response.data, attendanceLoading: false });
         } catch (error: any) {
           set({ 
@@ -645,7 +646,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createAttendance: async (data: Partial<Attendance>) => {
         set({ attendanceLoading: true, attendanceError: null });
         try {
-          const response = await api.post('/hr/attendance/', data);
+          const response = await api.post('/hr/attendance/', data) as any;
           set({ attendanceLoading: false });
           return response.data;
         } catch (error: any) {
@@ -660,7 +661,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updateAttendance: async (id: number, data: Partial<Attendance>) => {
         set({ attendanceLoading: true, attendanceError: null });
         try {
-          const response = await api.put(`/hr/attendance/${id}/`, data);
+          const response = await api.put(`/hr/attendance/${id}/`, data) as any;
           set({ attendanceLoading: false });
           return response.data;
         } catch (error: any) {
@@ -675,7 +676,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deleteAttendance: async (id: number) => {
         set({ attendanceLoading: true, attendanceError: null });
         try {
-          await api.delete(`/hr/attendance/${id}/`);
+          await api.delete(`/hr/attendance/${id}/`) as any;
           set({ attendanceLoading: false });
         } catch (error: any) {
           set({ 
@@ -690,7 +691,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchPayroll: async (params = {}) => {
         set({ payrollLoading: true, payrollError: null });
         try {
-          const response = await api.get('/hr/payroll/', { params });
+          const response = await api.get('/hr/payroll/', { params }) as any;
           set({ payroll: response.data, payrollLoading: false });
         } catch (error: any) {
           set({ 
@@ -703,7 +704,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchPayrollById: async (id: number) => {
         set({ payrollLoading: true, payrollError: null });
         try {
-          const response = await api.get(`/hr/payroll/${id}/`);
+          const response = await api.get(`/hr/payroll/${id}/`) as any;
           set({ currentPayroll: response.data, payrollLoading: false });
         } catch (error: any) {
           set({ 
@@ -716,7 +717,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createPayroll: async (data: Partial<Payroll>) => {
         set({ payrollLoading: true, payrollError: null });
         try {
-          const response = await api.post('/hr/payroll/', data);
+          const response = await api.post('/hr/payroll/', data) as any;
           set({ payrollLoading: false });
           return response.data;
         } catch (error: any) {
@@ -731,7 +732,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updatePayroll: async (id: number, data: Partial<Payroll>) => {
         set({ payrollLoading: true, payrollError: null });
         try {
-          const response = await api.put(`/hr/payroll/${id}/`, data);
+          const response = await api.put(`/hr/payroll/${id}/`, data) as any;
           set({ payrollLoading: false });
           return response.data;
         } catch (error: any) {
@@ -746,7 +747,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deletePayroll: async (id: number) => {
         set({ payrollLoading: true, payrollError: null });
         try {
-          await api.delete(`/hr/payroll/${id}/`);
+          await api.delete(`/hr/payroll/${id}/`) as any;
           set({ payrollLoading: false });
         } catch (error: any) {
           set({ 
@@ -761,7 +762,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchPerformanceReviews: async (params = {}) => {
         set({ performanceReviewsLoading: true, performanceReviewsError: null });
         try {
-          const response = await api.get('/hr/performance-reviews/', { params });
+          const response = await api.get('/hr/performance-reviews/', { params }) as any;
           set({ performanceReviews: response.data, performanceReviewsLoading: false });
         } catch (error: any) {
           set({ 
@@ -774,7 +775,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchPerformanceReviewById: async (id: number) => {
         set({ performanceReviewsLoading: true, performanceReviewsError: null });
         try {
-          const response = await api.get(`/hr/performance-reviews/${id}/`);
+          const response = await api.get(`/hr/performance-reviews/${id}/`) as any;
           set({ currentPerformanceReview: response.data, performanceReviewsLoading: false });
         } catch (error: any) {
           set({ 
@@ -787,7 +788,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createPerformanceReview: async (data: Partial<PerformanceReview>) => {
         set({ performanceReviewsLoading: true, performanceReviewsError: null });
         try {
-          const response = await api.post('/hr/performance-reviews/', data);
+          const response = await api.post('/hr/performance-reviews/', data) as any;
           set({ performanceReviewsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -802,7 +803,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updatePerformanceReview: async (id: number, data: Partial<PerformanceReview>) => {
         set({ performanceReviewsLoading: true, performanceReviewsError: null });
         try {
-          const response = await api.put(`/hr/performance-reviews/${id}/`, data);
+          const response = await api.put(`/hr/performance-reviews/${id}/`, data) as any;
           set({ performanceReviewsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -817,7 +818,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deletePerformanceReview: async (id: number) => {
         set({ performanceReviewsLoading: true, performanceReviewsError: null });
         try {
-          await api.delete(`/hr/performance-reviews/${id}/`);
+          await api.delete(`/hr/performance-reviews/${id}/`) as any;
           set({ performanceReviewsLoading: false });
         } catch (error: any) {
           set({ 
@@ -832,7 +833,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchTraining: async (params = {}) => {
         set({ trainingLoading: true, trainingError: null });
         try {
-          const response = await api.get('/hr/training/', { params });
+          const response = await api.get('/hr/training/', { params }) as any;
           set({ training: response.data, trainingLoading: false });
         } catch (error: any) {
           set({ 
@@ -845,7 +846,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchTrainingById: async (id: number) => {
         set({ trainingLoading: true, trainingError: null });
         try {
-          const response = await api.get(`/hr/training/${id}/`);
+          const response = await api.get(`/hr/training/${id}/`) as any;
           set({ currentTraining: response.data, trainingLoading: false });
         } catch (error: any) {
           set({ 
@@ -858,7 +859,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createTraining: async (data: Partial<Training>) => {
         set({ trainingLoading: true, trainingError: null });
         try {
-          const response = await api.post('/hr/training/', data);
+          const response = await api.post('/hr/training/', data) as any;
           set({ trainingLoading: false });
           return response.data;
         } catch (error: any) {
@@ -873,7 +874,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updateTraining: async (id: number, data: Partial<Training>) => {
         set({ trainingLoading: true, trainingError: null });
         try {
-          const response = await api.put(`/hr/training/${id}/`, data);
+          const response = await api.put(`/hr/training/${id}/`, data) as any;
           set({ trainingLoading: false });
           return response.data;
         } catch (error: any) {
@@ -888,7 +889,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deleteTraining: async (id: number) => {
         set({ trainingLoading: true, trainingError: null });
         try {
-          await api.delete(`/hr/training/${id}/`);
+          await api.delete(`/hr/training/${id}/`) as any;
           set({ trainingLoading: false });
         } catch (error: any) {
           set({ 
@@ -902,7 +903,7 @@ export const useHRStore = create<HRState & HRActions>()(
       enrollEmployee: async (trainingId: number, employeeId: number) => {
         set({ trainingLoading: true, trainingError: null });
         try {
-          await api.post(`/hr/training/${trainingId}/enroll/`, { employee_id: employeeId });
+          await api.post(`/hr/training/${trainingId}/enroll/`, { employee_id: employeeId }) as any;
           set({ trainingLoading: false });
         } catch (error: any) {
           set({ 
@@ -917,7 +918,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchRecruitment: async (params = {}) => {
         set({ recruitmentLoading: true, recruitmentError: null });
         try {
-          const response = await api.get('/hr/recruitment/', { params });
+          const response = await api.get('/hr/recruitment/', { params }) as any;
           set({ recruitment: response.data, recruitmentLoading: false });
         } catch (error: any) {
           set({ 
@@ -930,7 +931,7 @@ export const useHRStore = create<HRState & HRActions>()(
       fetchRecruitmentById: async (id: number) => {
         set({ recruitmentLoading: true, recruitmentError: null });
         try {
-          const response = await api.get(`/hr/recruitment/${id}/`);
+          const response = await api.get(`/hr/recruitment/${id}/`) as any;
           set({ currentRecruitment: response.data, recruitmentLoading: false });
         } catch (error: any) {
           set({ 
@@ -943,7 +944,7 @@ export const useHRStore = create<HRState & HRActions>()(
       createRecruitment: async (data: Partial<Recruitment>) => {
         set({ recruitmentLoading: true, recruitmentError: null });
         try {
-          const response = await api.post('/hr/recruitment/', data);
+          const response = await api.post('/hr/recruitment/', data) as any;
           set({ recruitmentLoading: false });
           return response.data;
         } catch (error: any) {
@@ -958,7 +959,7 @@ export const useHRStore = create<HRState & HRActions>()(
       updateRecruitment: async (id: number, data: Partial<Recruitment>) => {
         set({ recruitmentLoading: true, recruitmentError: null });
         try {
-          const response = await api.put(`/hr/recruitment/${id}/`, data);
+          const response = await api.put(`/hr/recruitment/${id}/`, data) as any;
           set({ recruitmentLoading: false });
           return response.data;
         } catch (error: any) {
@@ -973,7 +974,7 @@ export const useHRStore = create<HRState & HRActions>()(
       deleteRecruitment: async (id: number) => {
         set({ recruitmentLoading: true, recruitmentError: null });
         try {
-          await api.delete(`/hr/recruitment/${id}/`);
+          await api.delete(`/hr/recruitment/${id}/`) as any;
           set({ recruitmentLoading: false });
         } catch (error: any) {
           set({ 
@@ -1008,3 +1009,4 @@ export const useHRStore = create<HRState & HRActions>()(
     }
   )
 );
+

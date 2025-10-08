@@ -4,12 +4,11 @@ import { PageHeader } from '../../components/UI/Page';
 import { Button } from '../../components/UI/Button';
 import { Badge } from '../../components/UI/Badge';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '../../components/UI/Select';
-import { apiService } from '../../services/api';
+
 import {
   DocumentTextIcon,
   ClockIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon,
   PlusIcon,
   ChartBarIcon,
   UserGroupIcon,
@@ -17,7 +16,6 @@ import {
   CalendarIcon,
   DocumentArrowDownIcon,
   MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   DocumentDuplicateIcon,
@@ -90,7 +88,7 @@ const Assignments: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showGradeModal, setShowGradeModal] = useState(false);
-  const [selectedAssignment, setSelectedAssignment] = useState<string | null>(null);
+
 
   useEffect(() => {
     fetchAssignmentStats();
@@ -296,7 +294,6 @@ const Assignments: React.FC = () => {
         console.log('Duplicate assignment:', assignmentId);
         break;
       case 'grade':
-        setSelectedAssignment(assignmentId);
         setShowGradeModal(true);
         break;
     }

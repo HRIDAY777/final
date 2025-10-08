@@ -4,16 +4,13 @@ import { PageHeader } from '../../components/UI/Page';
 import { Button } from '../../components/UI/Button';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '../../components/UI/Select';
 import { Textarea } from '../../components/UI/Textarea';
-import { apiService } from '../../services/api';
+
 import {
   CogIcon,
   ShieldCheckIcon,
   ServerIcon,
   CircleStackIcon,
-  BellIcon,
-  GlobeAltIcon,
-  KeyIcon,
-  DocumentTextIcon
+  BellIcon
 } from '@heroicons/react/24/outline';
 
 interface SystemSetting {

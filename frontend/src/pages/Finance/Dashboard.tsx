@@ -7,19 +7,10 @@ import {
   ArrowTrendingDownIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
-  ClockIcon,
-  UserGroupIcon,
-  CalendarIcon,
   ArrowDownTrayIcon,
-  EyeIcon,
   PlusIcon,
   DocumentTextIcon,
   ReceiptRefundIcon,
-  CurrencyDollarIcon,
-  ChartBarIcon,
-  CreditCardIcon,
-  BuildingOfficeIcon,
-  AcademicCapIcon,
   CogIcon
 } from '@heroicons/react/24/outline';
 

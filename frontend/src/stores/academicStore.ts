@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { 
   Class, Subject, Teacher, Student, Course, Lesson, Assignment, 
@@ -186,10 +187,10 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   gradesError: null,
 
   // Classes actions
-  fetchClasses: async (params?: any) => {
+  fetchClasses: async (params?: any) => { // eslint-disable-line no-unused-vars
     set({ classesLoading: true, classesError: null });
     try {
-      const classes = await academicAPI.getClasses(params);
+      const classes = await academicAPI.getClasses(params) as PaginatedResponse<Class>;
       set({ classes, classesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -200,7 +201,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchClass: async (id: string) => {
     set({ classesLoading: true, classesError: null });
     try {
-      const currentClass = await academicAPI.getClass(id);
+      const currentClass = await academicAPI.getClass(id) as Class;
       set({ currentClass, classesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -252,7 +253,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
 
   getClassStudents: async (id: string) => {
     try {
-      return await academicAPI.getClassStudents(id);
+      return await academicAPI.getClassStudents(id) as Student[];
     } catch (error) {
       const errorResponse = handleApiError(error);
       set({ classesError: errorResponse.message });
@@ -274,7 +275,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchSubjects: async (params?: any) => {
     set({ subjectsLoading: true, subjectsError: null });
     try {
-      const subjects = await academicAPI.getSubjects(params);
+      const subjects = await academicAPI.getSubjects(params) as PaginatedResponse<Subject>;
       set({ subjects, subjectsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -285,7 +286,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchSubject: async (id: string) => {
     set({ subjectsLoading: true, subjectsError: null });
     try {
-      const currentSubject = await academicAPI.getSubject(id);
+      const currentSubject = await academicAPI.getSubject(id) as Subject;
       set({ currentSubject, subjectsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -339,7 +340,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchTeachers: async (params?: any) => {
     set({ teachersLoading: true, teachersError: null });
     try {
-      const teachers = await academicAPI.getTeachers(params);
+      const teachers = await academicAPI.getTeachers(params) as PaginatedResponse<Teacher>;
       set({ teachers, teachersLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -350,7 +351,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchTeacher: async (id: string) => {
     set({ teachersLoading: true, teachersError: null });
     try {
-      const currentTeacher = await academicAPI.getTeacher(id);
+      const currentTeacher = await academicAPI.getTeacher(id) as Teacher;
       set({ currentTeacher, teachersLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -402,7 +403,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
 
   getTeacherCourses: async (id: string) => {
     try {
-      return await academicAPI.getTeacherCourses(id);
+      return await academicAPI.getTeacherCourses(id) as Course[];
     } catch (error) {
       const errorResponse = handleApiError(error);
       set({ teachersError: errorResponse.message });
@@ -424,7 +425,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchStudents: async (params?: any) => {
     set({ studentsLoading: true, studentsError: null });
     try {
-      const students = await academicAPI.getStudents(params);
+      const students = await academicAPI.getStudents(params) as PaginatedResponse<Student>;
       set({ students, studentsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -435,7 +436,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchStudent: async (id: string) => {
     set({ studentsLoading: true, studentsError: null });
     try {
-      const currentStudent = await academicAPI.getStudent(id);
+      const currentStudent = await academicAPI.getStudent(id) as Student;
       set({ currentStudent, studentsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -487,7 +488,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
 
   getStudentGrades: async (id: string) => {
     try {
-      return await academicAPI.getStudentGrades(id);
+      return await academicAPI.getStudentGrades(id) as Grade[];
     } catch (error) {
       const errorResponse = handleApiError(error);
       set({ studentsError: errorResponse.message });
@@ -509,7 +510,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchCourses: async (params?: any) => {
     set({ coursesLoading: true, coursesError: null });
     try {
-      const courses = await academicAPI.getCourses(params);
+      const courses = await academicAPI.getCourses(params) as PaginatedResponse<Course>;
       set({ courses, coursesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -520,7 +521,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchCourse: async (id: string) => {
     set({ coursesLoading: true, coursesError: null });
     try {
-      const currentCourse = await academicAPI.getCourse(id);
+      const currentCourse = await academicAPI.getCourse(id) as Course;
       set({ currentCourse, coursesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -572,7 +573,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
 
   getCourseLessons: async (id: string) => {
     try {
-      return await academicAPI.getCourseLessons(id);
+      return await academicAPI.getCourseLessons(id) as Lesson[];
     } catch (error) {
       const errorResponse = handleApiError(error);
       set({ coursesError: errorResponse.message });
@@ -582,7 +583,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
 
   getCourseAssignments: async (id: string) => {
     try {
-      return await academicAPI.getCourseAssignments(id);
+      return await academicAPI.getCourseAssignments(id) as Assignment[];
     } catch (error) {
       const errorResponse = handleApiError(error);
       set({ coursesError: errorResponse.message });
@@ -594,7 +595,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchLessons: async (params?: any) => {
     set({ lessonsLoading: true, lessonsError: null });
     try {
-      const lessons = await academicAPI.getLessons(params);
+      const lessons = await academicAPI.getLessons(params) as PaginatedResponse<Lesson>;
       set({ lessons, lessonsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -605,7 +606,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchLesson: async (id: string) => {
     set({ lessonsLoading: true, lessonsError: null });
     try {
-      const currentLesson = await academicAPI.getLesson(id);
+      const currentLesson = await academicAPI.getLesson(id) as Lesson;
       set({ currentLesson, lessonsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -659,7 +660,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchAssignments: async (params?: any) => {
     set({ assignmentsLoading: true, assignmentsError: null });
     try {
-      const assignments = await academicAPI.getAssignments(params);
+      const assignments = await academicAPI.getAssignments(params) as PaginatedResponse<Assignment>;
       set({ assignments, assignmentsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -670,7 +671,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchAssignment: async (id: string) => {
     set({ assignmentsLoading: true, assignmentsError: null });
     try {
-      const currentAssignment = await academicAPI.getAssignment(id);
+      const currentAssignment = await academicAPI.getAssignment(id) as Assignment;
       set({ currentAssignment, assignmentsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -722,7 +723,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
 
   getAssignmentSubmissions: async (id: string) => {
     try {
-      return await academicAPI.getAssignmentSubmissions(id);
+      return await academicAPI.getAssignmentSubmissions(id) as AssignmentSubmission[];
     } catch (error) {
       const errorResponse = handleApiError(error);
       set({ assignmentsError: errorResponse.message });
@@ -734,7 +735,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchSubmissions: async (params?: any) => {
     set({ submissionsLoading: true, submissionsError: null });
     try {
-      const submissions = await academicAPI.getSubmissions(params);
+      const submissions = await academicAPI.getSubmissions(params) as PaginatedResponse<AssignmentSubmission>;
       set({ submissions, submissionsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -745,7 +746,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchSubmission: async (id: string) => {
     set({ submissionsLoading: true, submissionsError: null });
     try {
-      const currentSubmission = await academicAPI.getSubmission(id);
+      const currentSubmission = await academicAPI.getSubmission(id) as AssignmentSubmission;
       set({ currentSubmission, submissionsLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -799,7 +800,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchGrades: async (params?: any) => {
     set({ gradesLoading: true, gradesError: null });
     try {
-      const grades = await academicAPI.getGrades(params);
+      const grades = await academicAPI.getGrades(params) as PaginatedResponse<Grade>;
       set({ grades, gradesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);
@@ -810,7 +811,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
   fetchGrade: async (id: string) => {
     set({ gradesLoading: true, gradesError: null });
     try {
-      const currentGrade = await academicAPI.getGrade(id);
+      const currentGrade = await academicAPI.getGrade(id) as Grade;
       set({ currentGrade, gradesLoading: false });
     } catch (error) {
       const errorResponse = handleApiError(error);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
-import { Pagination } from '../../components/UI/Pagination';
+
 import { Button } from '../../components/UI/Button';
 import { useTranslation } from '../../utils/i18n';
 import { 
@@ -43,7 +43,7 @@ const Drivers: React.FC = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
+
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Driver | null>(null);
   const [formData, setFormData] = useState({
@@ -123,12 +123,13 @@ const Drivers: React.FC = () => {
     e.preventDefault();
     // Mock save - in real app, this would be API call
     if (editing) {
-      setDrivers(prev => prev.map(d => d.id === editing.id ? { ...d, ...formData, experience_years: parseInt(formData.experience_years) } : d));
+      setDrivers(prev => prev.map(d => d.id === editing.id ? { ...d, ...formData, experience_years: parseInt(formData.experience_years), status: formData.status as 'active' | 'inactive' | 'on_leave' } : d));
     } else {
       const newDriver: Driver = {
         id: Date.now(),
         ...formData,
-        experience_years: parseInt(formData.experience_years)
+        experience_years: parseInt(formData.experience_years),
+        status: formData.status as 'active' | 'inactive' | 'on_leave'
       };
       setDrivers(prev => [...prev, newDriver]);
     }

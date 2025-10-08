@@ -1,17 +1,25 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
-    AttendanceSession, AttendanceRecord, LeaveRequest, 
+    AttendanceSession, AttendanceRecord, LeaveRequest,
     AttendanceReport, AttendanceSettings
 )
 
 
 @admin.register(AttendanceSession)
 class AttendanceSessionAdmin(admin.ModelAdmin):
-    list_display = ['course', 'date', 'start_time', 'end_time', 'session_type', 'total_students', 'attendance_percentage', 'is_active']
+    list_display = [
+        'course', 'date', 'start_time', 'end_time', 'session_type',
+        'total_students', 'attendance_percentage', 'is_active'
+    ]
     list_filter = ['date', 'session_type', 'is_active', 'created_at']
-    search_fields = ['course__subject__name', 'course__class_enrolled__name']
-    readonly_fields = ['duration_minutes', 'total_students', 'present_count', 'absent_count', 'late_count', 'attendance_percentage']
+    search_fields = [
+        'course__subject__name', 'course__class_enrolled__name'
+    ]
+    readonly_fields = [
+        'duration_minutes', 'total_students', 'present_count',
+        'absent_count', 'late_count', 'attendance_percentage'
+    ]
     list_editable = ['is_active']
     ordering = ['-date', '-start_time']
 
@@ -26,9 +34,15 @@ class AttendanceSessionAdmin(admin.ModelAdmin):
 
 @admin.register(AttendanceRecord)
 class AttendanceRecordAdmin(admin.ModelAdmin):
-    list_display = ['student', 'session', 'status', 'arrival_time', 'marked_by', 'marked_at']
+    list_display = [
+        'student', 'session', 'status', 'arrival_time', 'marked_by',
+        'marked_at'
+    ]
     list_filter = ['status', 'session__date', 'marked_at']
-    search_fields = ['student__user__first_name', 'student__user__last_name', 'session__course__subject__name']
+    search_fields = [
+        'student__user__first_name', 'student__user__last_name',
+        'session__course__subject__name'
+    ]
     readonly_fields = ['marked_at']
     ordering = ['-session__date', 'student__user__first_name']
 
@@ -41,15 +55,25 @@ class AttendanceRecordAdmin(admin.ModelAdmin):
             'half_day': 'purple'
         }
         color = status_colors.get(obj.status, 'black')
-        return format_html(f'<span style="color: {color}; font-weight: bold;">{obj.status.title()}</span>')
+        return format_html(
+            f'<span style="color: {color}; font-weight: bold;">'
+            f'{obj.status.title()}</span>'
+        )
     status.short_description = 'Status'
 
 
 @admin.register(LeaveRequest)
 class LeaveRequestAdmin(admin.ModelAdmin):
-    list_display = ['student', 'leave_type', 'start_date', 'end_date', 'duration_days', 'status', 'approved_by', 'created_at']
-    list_filter = ['leave_type', 'status', 'start_date', 'end_date', 'created_at']
-    search_fields = ['student__user__first_name', 'student__user__last_name', 'reason']
+    list_display = [
+        'student', 'leave_type', 'start_date', 'end_date', 'duration_days',
+        'status', 'approved_by', 'created_at'
+    ]
+    list_filter = [
+        'leave_type', 'status', 'start_date', 'end_date', 'created_at'
+    ]
+    search_fields = [
+        'student__user__first_name', 'student__user__last_name', 'reason'
+    ]
     readonly_fields = ['duration_days', 'is_approved', 'is_pending']
     list_editable = ['status']
     ordering = ['-created_at']
@@ -66,7 +90,10 @@ class LeaveRequestAdmin(admin.ModelAdmin):
             'cancelled': 'gray'
         }
         color = status_colors.get(obj.status, 'black')
-        return format_html(f'<span style="color: {color}; font-weight: bold;">{obj.status.title()}</span>')
+        return format_html(
+            f'<span style="color: {color}; font-weight: bold;">'
+            f'{obj.status.title()}</span>'
+        )
     status.short_description = 'Status'
 
     def is_approved(self, obj):
@@ -82,9 +109,15 @@ class LeaveRequestAdmin(admin.ModelAdmin):
 
 @admin.register(AttendanceReport)
 class AttendanceReportAdmin(admin.ModelAdmin):
-    list_display = ['student', 'class_enrolled', 'academic_year', 'month', 'total_days', 'present_days', 'attendance_percentage', 'generated_at']
+    list_display = [
+        'student', 'class_enrolled', 'academic_year', 'month', 'total_days',
+        'present_days', 'attendance_percentage', 'generated_at'
+    ]
     list_filter = ['academic_year', 'month', 'generated_at']
-    search_fields = ['student__user__first_name', 'student__user__last_name', 'class_enrolled__name']
+    search_fields = [
+        'student__user__first_name', 'student__user__last_name',
+        'class_enrolled__name'
+    ]
     readonly_fields = ['attendance_percentage']
     ordering = ['-academic_year', '-month']
 
@@ -95,10 +128,20 @@ class AttendanceReportAdmin(admin.ModelAdmin):
 
 @admin.register(AttendanceSettings)
 class AttendanceSettingsAdmin(admin.ModelAdmin):
-    list_display = ['class_enrolled', 'late_threshold_minutes', 'absent_threshold_minutes', 'auto_mark_absent', 'send_notifications', 'require_excuse_notes']
-    list_filter = ['auto_mark_absent', 'send_notifications', 'require_excuse_notes', 'created_at']
+    list_display = [
+        'class_enrolled', 'late_threshold_minutes', 'absent_threshold_minutes',
+        'auto_mark_absent', 'send_notifications', 'require_excuse_notes'
+    ]
+    list_filter = [
+        'auto_mark_absent', 'send_notifications', 'require_excuse_notes',
+        'created_at'
+    ]
     search_fields = ['class_enrolled__name']
-    list_editable = ['late_threshold_minutes', 'absent_threshold_minutes', 'auto_mark_absent', 'send_notifications', 'require_excuse_notes']
+    list_editable = [
+        'late_threshold_minutes', 'absent_threshold_minutes',
+        'auto_mark_absent',
+        'send_notifications', 'require_excuse_notes'
+    ]
     ordering = ['class_enrolled__name']
 
     def auto_mark_absent(self, obj):

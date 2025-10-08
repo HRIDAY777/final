@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import { Button } from '../../components/UI/Button';
 import { Modal } from '../../components/UI/Modal';
-import { Input } from '../../components/UI/Input';
+import Input from '../../components/UI/Input';
 import { Select } from '../../components/UI/Select';
 import { Textarea } from '../../components/UI/Textarea';
-import { apiService } from '../../services/api';
 import {
   UserGroupIcon,
   ClockIcon,
@@ -16,8 +15,7 @@ import {
   ExclamationTriangleIcon,
   EyeIcon,
   PlusIcon,
-  ArrowRightIcon,
-  ArrowLeftIcon
+  ArrowRightIcon
 } from '@heroicons/react/24/outline';
 
 interface VisitorLog {
@@ -46,9 +44,7 @@ interface Student {
 const Visitors: React.FC = () => {
   const [visitorLogs, setVisitorLogs] = useState<VisitorLog[]>([]);
   const [availableStudents, setAvailableStudents] = useState<Student[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
@@ -69,11 +65,7 @@ const Visitors: React.FC = () => {
   });
 
   // Filter states
-  const [filters, setFilters] = useState({
-    status: '',
-    building: '',
-    search: '',
-  });
+  const [searchValue, setSearchValue] = useState('');
 
   // Stats
   const [stats, setStats] = useState({
@@ -83,85 +75,62 @@ const Visitors: React.FC = () => {
     monthly_visitors: 0
   });
 
-  useEffect(() => {
-    fetchVisitorLogs();
-    fetchAvailableStudents();
-    fetchStats();
-  }, [currentPage, filters]);
-
-  const fetchVisitorLogs = async () => {
+  const fetchVisitorLogs = useCallback(async () => {
     try {
-      setLoading(true);
       // Mock data for demonstration
       const mockVisitors: VisitorLog[] = [
         {
           id: 1,
           visitor_name: 'John Smith',
           visitor_phone: '+1234567890',
-          student_name: 'Alice Brown',
+          student_name: 'Alice Johnson',
           student_id: 'STU001',
           purpose: 'Family visit',
-          entry_time: '2024-01-15T10:00:00Z',
-          exit_time: '2024-01-15T14:30:00Z',
-          approved_by: 'Security Guard',
+          entry_time: '2024-01-15T14:30:00Z',
+          exit_time: '2024-01-15T16:30:00Z',
+          approved_by: 'Admin User',
           notes: 'Regular family visit',
           is_inside: false,
-          duration: '4h 30m'
+          duration: '2 hours'
         },
         {
           id: 2,
-          visitor_name: 'Mary Johnson',
+          visitor_name: 'Sarah Wilson',
           visitor_phone: '+1234567891',
-          student_name: 'Bob Wilson',
+          student_name: 'Bob Brown',
           student_id: 'STU002',
-          purpose: 'Academic consultation',
-          entry_time: '2024-01-15T13:00:00Z',
+          purpose: 'Study group',
+          entry_time: '2024-01-15T15:00:00Z',
           approved_by: 'Admin User',
-          notes: 'Meeting with professor',
+          notes: 'Study session in common room',
           is_inside: true
         },
         {
           id: 3,
-          visitor_name: 'David Lee',
+          visitor_name: 'Mike Davis',
           visitor_phone: '+1234567892',
-          student_name: 'Carol Davis',
+          student_name: 'Carol White',
           student_id: 'STU003',
           purpose: 'Delivery',
-          entry_time: '2024-01-15T09:00:00Z',
-          exit_time: '2024-01-15T09:15:00Z',
+          entry_time: '2024-01-15T10:00:00Z',
+          exit_time: '2024-01-15T10:15:00Z',
           approved_by: 'Security Guard',
           notes: 'Package delivery',
           is_inside: false,
-          duration: '15m'
-        },
-        {
-          id: 4,
-          visitor_name: 'Sarah Miller',
-          visitor_phone: '+1234567893',
-          student_name: 'Mike Johnson',
-          student_id: 'STU004',
-          purpose: 'Friend visit',
-          entry_time: '2024-01-15T16:00:00Z',
-          approved_by: 'Admin User',
-          notes: 'Weekend visit',
-          is_inside: true
+          duration: '15 minutes'
         }
       ];
 
-      // Apply filters
-      let filteredVisitors = mockVisitors.filter(visitor => {
-        if (filters.status === 'inside' && !visitor.is_inside) return false;
-        if (filters.status === 'outside' && visitor.is_inside) return false;
-        if (filters.search) {
-          const searchLower = filters.search.toLowerCase();
-          return (
-            visitor.visitor_name.toLowerCase().includes(searchLower) ||
-            visitor.student_name.toLowerCase().includes(searchLower) ||
-            visitor.purpose.toLowerCase().includes(searchLower)
-          );
-        }
-        return true;
-      });
+      // Apply search filter
+      let filteredVisitors = mockVisitors;
+      if (searchValue) {
+        const searchLower = searchValue.toLowerCase();
+        filteredVisitors = mockVisitors.filter(visitor => 
+          visitor.visitor_name.toLowerCase().includes(searchLower) ||
+          visitor.student_name.toLowerCase().includes(searchLower) ||
+          visitor.purpose.toLowerCase().includes(searchLower)
+        );
+      }
 
       // Pagination
       const itemsPerPage = 10;
@@ -171,13 +140,18 @@ const Visitors: React.FC = () => {
 
       setVisitorLogs(paginatedVisitors);
       setTotalCount(filteredVisitors.length);
-      setTotalPages(Math.ceil(filteredVisitors.length / itemsPerPage));
     } catch (error) {
       console.error('Error fetching visitor logs:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentPage, searchValue]);
+
+  useEffect(() => {
+    fetchVisitorLogs();
+    fetchAvailableStudents();
+    fetchStats();
+  }, [fetchVisitorLogs]);
+
+
 
   const fetchAvailableStudents = async () => {
     try {
@@ -208,10 +182,7 @@ const Visitors: React.FC = () => {
     }
   };
 
-  const handleFilterChange = (newFilters: any) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-  };
+
 
   const handleRecordEntry = async () => {
     try {
@@ -253,26 +224,15 @@ const Visitors: React.FC = () => {
     return isInside ? 'Inside' : 'Left';
   };
 
-  const filterOptions = [
-    { label: 'All Visitors', value: '' },
-    { label: 'Currently Inside', value: 'inside' },
-    { label: 'Left', value: 'outside' },
-  ];
 
-  const buildingOptions = [
-    { label: 'All Buildings', value: '' },
-    { label: 'Building A', value: 'Building A' },
-    { label: 'Building B', value: 'Building B' },
-    { label: 'Building C', value: 'Building C' },
-  ];
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Visitor Management"
-        description="Manage visitor entry and exit logs for hostel security"
+        subtitle="Manage visitor entry and exit logs for hostel security"
         actions={
-          <Button variant="primary" size="sm" onClick={() => setShowEntryModal(true)}>
+          <Button variant="default" size="sm" onClick={() => setShowEntryModal(true)}>
             <PlusIcon className="h-4 w-4 mr-2" />
             Record Entry
           </Button>
@@ -287,7 +247,7 @@ const Visitors: React.FC = () => {
               <UserGroupIcon className="h-6 w-6 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Today's Visitors</p>
+              <p className="text-sm font-medium text-gray-600">Today&apos;s Visitors</p>
               <p className="text-2xl font-bold text-gray-900">{stats.today_visitors}</p>
             </div>
           </div>
@@ -331,13 +291,9 @@ const Visitors: React.FC = () => {
       </div>
 
       <FilterBar
-        filters={filters}
-        onFilterChange={handleFilterChange}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
         searchPlaceholder="Search by visitor name, student name, or purpose..."
-        filterOptions={[
-          { key: 'status', label: 'Status', options: filterOptions },
-          { key: 'building', label: 'Building', options: buildingOptions },
-        ]}
       />
 
       <Card>
@@ -431,9 +387,9 @@ const Visitors: React.FC = () => {
 
         <div className="px-6 py-4 border-t border-gray-200">
           <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalCount={totalCount}
+            page={currentPage}
+            pageSize={10}
+            total={totalCount}
             onPageChange={setCurrentPage}
           />
         </div>
@@ -446,56 +402,68 @@ const Visitors: React.FC = () => {
         title="Record Visitor Entry"
         size="lg"
       >
-        <div className="space-y-4">
-          <Input
-            label="Visitor Name"
-            value={entryForm.visitor_name}
-            onChange={(e) => setEntryForm({ ...entryForm, visitor_name: e.target.value })}
-            required
-          />
+                 <div className="space-y-4">
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Visitor Name</label>
+             <Input
+               value={entryForm.visitor_name}
+               onChange={(e) => setEntryForm({ ...entryForm, visitor_name: e.target.value })}
+               required
+             />
+           </div>
 
-          <Input
-            label="Visitor Phone"
-            value={entryForm.visitor_phone}
-            onChange={(e) => setEntryForm({ ...entryForm, visitor_phone: e.target.value })}
-            required
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Visitor Phone</label>
+             <Input
+               value={entryForm.visitor_phone}
+               onChange={(e) => setEntryForm({ ...entryForm, visitor_phone: e.target.value })}
+               required
+             />
+           </div>
 
-          <Select
-            label="Visiting Student"
-            value={entryForm.student_id}
-            onChange={(value) => setEntryForm({ ...entryForm, student_id: value })}
-            options={availableStudents.map(student => ({
-              value: student.id.toString(),
-              label: `${student.full_name} (${student.student_id}) - ${student.room_number}`
-            }))}
-            required
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Visiting Student</label>
+             <Select
+               value={entryForm.student_id}
+               onValueChange={(value) => setEntryForm({ ...entryForm, student_id: value })}
+             >
+               <option value="">Select a student</option>
+               {availableStudents.map(student => (
+                 <option key={student.id} value={student.id.toString()}>
+                   {student.full_name} ({student.student_id}) - {student.room_number}
+                 </option>
+               ))}
+             </Select>
+           </div>
 
-          <Textarea
-            label="Purpose of Visit"
-            value={entryForm.purpose}
-            onChange={(e) => setEntryForm({ ...entryForm, purpose: e.target.value })}
-            rows={3}
-            required
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Purpose of Visit</label>
+             <Textarea
+               value={entryForm.purpose}
+               onChange={(e) => setEntryForm({ ...entryForm, purpose: e.target.value })}
+               rows={3}
+               required
+             />
+           </div>
 
-          <Textarea
-            label="Notes"
-            value={entryForm.notes}
-            onChange={(e) => setEntryForm({ ...entryForm, notes: e.target.value })}
-            rows={3}
-          />
-        </div>
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+             <Textarea
+               value={entryForm.notes}
+               onChange={(e) => setEntryForm({ ...entryForm, notes: e.target.value })}
+               rows={3}
+             />
+           </div>
+         </div>
 
-        <div className="flex justify-end space-x-3 mt-6">
-          <Button variant="secondary" onClick={() => setShowEntryModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleRecordEntry}>
-            Record Entry
-          </Button>
-        </div>
+         <div className="flex justify-end space-x-3 mt-6">
+           <Button variant="secondary" onClick={() => setShowEntryModal(false)}>
+             Cancel
+           </Button>
+           <Button variant="default" onClick={handleRecordEntry}>
+             Record Entry
+           </Button>
+         </div>
       </Modal>
 
       {/* Exit Modal */}
@@ -529,9 +497,9 @@ const Visitors: React.FC = () => {
           <Button variant="secondary" onClick={() => setShowExitModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleRecordExit}>
-            Record Exit
-          </Button>
+                     <Button variant="default" onClick={handleRecordExit}>
+             Record Exit
+           </Button>
         </div>
       </Modal>
 

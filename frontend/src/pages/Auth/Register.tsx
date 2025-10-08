@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../stores/authStore';
-import { EyeIcon, EyeSlashIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
 interface RegisterForm {
   firstName: string;

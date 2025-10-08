@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -20,7 +20,7 @@ const Courses: React.FC = () => {
   const [classes, setClasses] = useState<any[]>([]);
   const [teachers, setTeachers] = useState<any[]>([]);
 
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     setLoading(true); setError(null);
     try {
       const data: any = await academicAPI.getCourses({ search, page });
@@ -28,9 +28,9 @@ const Courses: React.FC = () => {
       setTotal(data.count || 0);
     } catch (e) { setError('Failed to load courses'); }
     finally { setLoading(false); }
-  };
+  }, [search, page]);
 
-  useEffect(() => { fetchCourses(); }, [page, search]);
+  useEffect(() => { fetchCourses(); }, [fetchCourses]);
 
   const onOpen = (c?: any) => {
     if (c) {
@@ -57,7 +57,9 @@ const Courses: React.FC = () => {
         // getClasses may not exist in academicAPI helper; fallback handled above
         setClasses((cls as any)?.results || (cls as any)?.results || []);
         setTeachers(tchs?.results || []);
-      } catch {}
+      } catch (error) {
+        console.error('Failed to load dropdown options:', error);
+      }
     })();
   }, [open]);
 

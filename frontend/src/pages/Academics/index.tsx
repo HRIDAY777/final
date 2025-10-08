@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
@@ -10,11 +10,8 @@ import {
   DocumentTextIcon,
   ChartBarIcon,
   ClockIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
   PlusIcon,
   ArrowRightIcon,
-  UsersIcon,
   ClipboardDocumentListIcon,
   StarIcon,
   CalendarIcon
@@ -42,6 +39,12 @@ const AcademicsPage: React.FC = () => {
     averageGrade: 0,
     attendanceRate: 0
   });
+
+  const calculateAverageGrade = useCallback(() => {
+    if (!grades?.results) return 0;
+    const totalPercentage = grades.results.reduce((sum, grade) => sum + grade.percentage, 0);
+    return grades.results.length > 0 ? totalPercentage / grades.results.length : 0;
+  }, [grades]);
 
   useEffect(() => {
     // Fetch all academic data
@@ -78,13 +81,7 @@ const AcademicsPage: React.FC = () => {
         attendanceRate: 95.2 // Mock data - would come from attendance system
       });
     }
-  }, [classes, students, teachers, courses, assignments, submissions, grades]);
-
-  const calculateAverageGrade = () => {
-    if (!grades?.results) return 0;
-    const totalPercentage = grades.results.reduce((sum, grade) => sum + grade.percentage, 0);
-    return grades.results.length > 0 ? totalPercentage / grades.results.length : 0;
-  };
+  }, [classes, students, teachers, courses, assignments, submissions, grades, calculateAverageGrade]);
 
   const recentActivities = [
     {

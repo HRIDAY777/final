@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Input, Select, Table, Badge, PageHeader } from '../../../components/UI';
+import { Card, Button, Select, Table, Badge, PageHeader } from '../../../components/UI';
+import { TableHeader, TableBody, TableRow, TableHead, TableCell } from '../../../components/UI/Table';
 import { 
   PlusIcon, 
   PencilIcon, 
-  TrashIcon, 
   EyeIcon,
   DocumentArrowDownIcon,
   CurrencyDollarIcon,
@@ -28,8 +28,6 @@ interface PayrollRecord {
 const Payroll: React.FC = () => {
   const [payrolls, setPayrolls] = useState<PayrollRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [editingPayroll, setEditingPayroll] = useState<PayrollRecord | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
@@ -88,11 +86,11 @@ const Payroll: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
-        return <Badge variant="success">Paid</Badge>;
+        return <Badge variant="default" className="bg-green-100 text-green-800">Paid</Badge>;
       case 'pending':
-        return <Badge variant="warning">Pending</Badge>;
+        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800">Pending</Badge>;
       case 'cancelled':
-        return <Badge variant="error">Cancelled</Badge>;
+        return <Badge variant="destructive">Cancelled</Badge>;
       default:
         return <Badge variant="default">{status}</Badge>;
     }
@@ -192,31 +190,31 @@ const Payroll: React.FC = () => {
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Payroll Records</h3>
             <div className="flex space-x-3">
-              <Select 
-                value={currentMonth.toString()}
-                onChange={(e) => setCurrentMonth(parseInt(e.target.value))}
-              >
-                <option value="0">January</option>
-                <option value="1">February</option>
-                <option value="2">March</option>
-                <option value="3">April</option>
-                <option value="4">May</option>
-                <option value="5">June</option>
-                <option value="6">July</option>
-                <option value="7">August</option>
-                <option value="8">September</option>
-                <option value="9">October</option>
-                <option value="10">November</option>
-                <option value="11">December</option>
-              </Select>
-              <Select 
-                value={currentYear.toString()}
-                onChange={(e) => setCurrentYear(parseInt(e.target.value))}
-              >
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-              </Select>
+                             <Select 
+                 value={currentMonth.toString()}
+                 onValueChange={(value) => setCurrentMonth(parseInt(value))}
+               >
+                 <option value="0">January</option>
+                 <option value="1">February</option>
+                 <option value="2">March</option>
+                 <option value="3">April</option>
+                 <option value="4">May</option>
+                 <option value="5">June</option>
+                 <option value="6">July</option>
+                 <option value="7">August</option>
+                 <option value="8">September</option>
+                 <option value="9">October</option>
+                 <option value="10">November</option>
+                 <option value="11">December</option>
+               </Select>
+                             <Select 
+                 value={currentYear.toString()}
+                 onValueChange={(value) => setCurrentYear(parseInt(value))}
+               >
+                 <option value="2023">2023</option>
+                 <option value="2024">2024</option>
+                 <option value="2025">2025</option>
+               </Select>
               <Button>
                 <PlusIcon className="w-4 h-4 mr-2" />
                 Generate Payroll
@@ -224,12 +222,52 @@ const Payroll: React.FC = () => {
             </div>
           </div>
 
-          <Table 
-            data={payrolls}
-            columns={columns}
-            loading={loading}
-            emptyMessage="No payroll records found"
-          />
+                     {loading ? (
+             <div className="flex items-center justify-center h-32">
+               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+             </div>
+           ) : payrolls.length === 0 ? (
+             <div className="text-center py-8">
+               <p className="text-gray-500">No payroll records found</p>
+             </div>
+           ) : (
+             <Table>
+               <TableHeader>
+                 <TableRow>
+                   {columns.map((column) => (
+                     <TableHead key={column.key}>{column.label}</TableHead>
+                   ))}
+                 </TableRow>
+               </TableHeader>
+               <TableBody>
+                 {payrolls.map((payroll) => (
+                   <TableRow key={payroll.id}>
+                     <TableCell>{payroll.employeeId}</TableCell>
+                     <TableCell>{payroll.employeeName}</TableCell>
+                     <TableCell>{payroll.position}</TableCell>
+                     <TableCell>{`₹${payroll.basicSalary.toLocaleString()}`}</TableCell>
+                     <TableCell>{`₹${payroll.allowances.toLocaleString()}`}</TableCell>
+                     <TableCell>{`₹${payroll.deductions.toLocaleString()}`}</TableCell>
+                     <TableCell>{`₹${payroll.netSalary.toLocaleString()}`}</TableCell>
+                     <TableCell>{getStatusBadge(payroll.status)}</TableCell>
+                     <TableCell>
+                       <div className="flex space-x-2">
+                         <Button size="sm" variant="outline">
+                           <EyeIcon className="w-4 h-4" />
+                         </Button>
+                         <Button size="sm" variant="outline">
+                           <PencilIcon className="w-4 h-4" />
+                         </Button>
+                         <Button size="sm" variant="outline">
+                           <DocumentArrowDownIcon className="w-4 h-4" />
+                         </Button>
+                       </div>
+                     </TableCell>
+                   </TableRow>
+                 ))}
+               </TableBody>
+             </Table>
+           )}
         </div>
       </Card>
     </div>

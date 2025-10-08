@@ -6,8 +6,6 @@ import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   EyeIcon,
@@ -45,7 +43,7 @@ const Transactions: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     transaction_type: '',
     date_from: '',
     date_to: ''
@@ -279,23 +277,8 @@ const Transactions: React.FC = () => {
 
       {/* Filters */}
       <FilterBar
-        search={search}
+        searchValue={search}
         onSearchChange={setSearch}
-        filters={filters}
-        onFiltersChange={setFilters}
-        filterOptions={{
-          transaction_type: [
-            { value: '', label: 'All Types' },
-            { value: 'purchase', label: 'Purchase' },
-            { value: 'sale', label: 'Sale' },
-            { value: 'transfer', label: 'Transfer' },
-            { value: 'issue', label: 'Issue' },
-            { value: 'return', label: 'Return' },
-            { value: 'disposal', label: 'Disposal' },
-            { value: 'adjustment', label: 'Adjustment' }
-          ]
-        }}
-        dateFilters={['date_from', 'date_to']}
       />
 
       {/* Transactions List */}
@@ -394,8 +377,9 @@ const Transactions: React.FC = () => {
       {/* Pagination */}
       {totalPages > 1 && (
         <Pagination
-          currentPage={page}
-          totalPages={totalPages}
+          page={page}
+          pageSize={10}
+          total={totalPages * 10}
           onPageChange={setPage}
         />
       )}
@@ -406,7 +390,7 @@ const Transactions: React.FC = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Transaction</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete transaction "{selectedTransaction.reference_number}"? This action cannot be undone.
+              Are you sure you want to delete transaction &quot;{selectedTransaction.reference_number}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-3">
               <Button
@@ -416,7 +400,7 @@ const Transactions: React.FC = () => {
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                variant="destructive"
                 onClick={confirmDelete}
               >
                 Delete

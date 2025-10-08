@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
-import { useAuth } from '../../stores/authStore';
+
 import {
   UserIcon,
   ShieldCheckIcon,
   CogIcon,
-  BellIcon,
   KeyIcon,
   UserGroupIcon,
   ChartBarIcon,
@@ -16,15 +15,11 @@ import {
   CheckCircleIcon,
   PlusIcon,
   ArrowRightIcon,
-  EyeIcon,
-  LockClosedIcon,
-  DevicePhoneMobileIcon,
-  GlobeAltIcon
+  LockClosedIcon
 } from '@heroicons/react/24/outline';
 
 const AccountsPage: React.FC = () => {
-  const { user } = useAuth();
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     totalUsers: 1247,
     activeUsers: 1189,
     lockedUsers: 12,

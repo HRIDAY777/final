@@ -1,18 +1,32 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Create static directory if it doesn't exist
+(BASE_DIR / 'static').mkdir(exist_ok=True)
+
+# Create media directory if it doesn't exist
+(BASE_DIR / 'media').mkdir(exist_ok=True)
+
+# Create logs directory if it doesn't exist
+(BASE_DIR / 'logs').mkdir(exist_ok=True)
+
+
 SECRET_KEY = os.environ.get(
     'SECRET_KEY', 'dev-secret-key-for-development-only'
 )
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '*']
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0'
+).split(',')
 
 INSTALLED_APPS = [
     # Django
@@ -27,7 +41,11 @@ INSTALLED_APPS = [
     'django_otp', 'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
     'allauth', 'allauth.account', 'allauth.socialaccount',
-    'channels', 'django_extensions', 'sslserver',
+    # Social Auth Providers
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    'channels', 'django_extensions',
+    'whitenoise',
     # local
     'apps.accounts',
     'apps.teachers',
@@ -80,6 +98,7 @@ MIDDLEWARE = [
     'core.middleware.UserActivityMiddleware',
     'core.middleware.CacheControlMiddleware',
     'core.middleware.ErrorHandlingMiddleware',
+    'core.middleware.DatabaseQueryLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -106,15 +125,27 @@ DATABASES = {
     }
 }
 
-# Use PostgreSQL when environment variables are explicitly set
-if os.environ.get('DB_HOST') and os.environ.get('DB_NAME'):
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'educore_ultra'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+# Use PostgreSQL only when explicitly configured for production
+# and not in development mode
+if (os.environ.get('DJANGO_SETTINGS_ENV') == 'prod'
+        and os.environ.get('DB_HOST') and os.environ.get('DB_NAME')):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'educore_ultra'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'secure_password'),
+            'HOST': os.environ.get('DB_HOST', 'db'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'CONN_MAX_AGE': int(
+                os.environ.get('DB_CONN_MAX_AGE', '600')
+            ),
+            'OPTIONS': {
+                'sslmode': 'disable',
+                'connect_timeout': 10,
+                'application_name': 'educore_ultra',
+            },
+        }
     }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -153,19 +184,81 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [BASE_DIR / 'static']  # Commented out - directory removed
+
+# Create staticfiles directory if it doesn't exist
+(BASE_DIR / 'staticfiles').mkdir(exist_ok=True)
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Static files finders
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+# Additional static files directories
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': (
+                '{levelname} {asctime} {module} {process:d} '
+                '{thread:d} {message}'
+            ),
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'educore.log',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# REST Framework Configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # For demo, allow read-only to unauthenticated users; secure in production
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),
@@ -181,6 +274,7 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+# JWT Configuration
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -208,8 +302,74 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
+# Frontend URL for OAuth callbacks
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+
 AUTH_USER_MODEL = 'accounts.User'
 SITE_ID = 1
+
+# Django Allauth Configuration
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# Allauth settings
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USER_MODEL_EMAIL_FIELD = 'email'
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+
+# Social account settings
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+# Social OAuth settings
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'en_US',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v18.0',
+    },
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
 
 # Multi-tenant settings (disabled for development)
 # TENANT_MODEL = 'tenants.Tenant'
@@ -220,6 +380,10 @@ SITE_ID = 1
 #     'django_tenants.middleware.main.TenantMainMiddleware',
 # ] + MIDDLEWARE
 
+# Django Tenants Configuration
+# TENANT_CREATION_FAKES_MIGRATIONS = True
+# TENANT_LIMIT_SET_CALLS = True
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'EduCore Ultra API',
     'DESCRIPTION': (
@@ -228,6 +392,67 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False
 }
+
+# Security Settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+# CORS Settings
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://yourdomain.com",
+    "https://www.yourdomain.com",
+]
+
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://yourdomain.com",
+    "https://www.yourdomain.com",
+]
+
+# Session Security
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Password Security
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'UserAttributeSimilarityValidator'
+        ),
+    },
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'MinimumLengthValidator'
+        ),
+        'OPTIONS': {
+            'min_length': 8,
+        }
+    },
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'CommonPasswordValidator'
+        ),
+    },
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'NumericPasswordValidator'
+        ),
+    },
+]
 
 # Channels
 USE_REDIS = os.environ.get("USE_REDIS", "False").lower() == "true"
@@ -250,13 +475,19 @@ else:
         }
     }
 
-# Security (prod toggled)
-if not DEBUG:
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
+# Basic Email Configuration (can be overridden in dev/prod)
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.console.EmailBackend'
+)
+
+# Basic Cache Configuration (can be overridden in dev/prod)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
+# Basic Session Configuration (can be overridden in dev/prod)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'

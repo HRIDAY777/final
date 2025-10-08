@@ -2,16 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { Button } from '../../components/UI/Button';
-import { apiService } from '../../services/api';
+
 import {
   HomeModernIcon,
   UserGroupIcon,
   CreditCardIcon,
-  ChartBarIcon,
-  CogIcon,
   ExclamationTriangleIcon,
-  CheckCircleIcon,
-  ClockIcon,
   WrenchScrewdriverIcon,
   EyeIcon
 } from '@heroicons/react/24/outline';
@@ -170,10 +166,10 @@ const Hostel: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title="Hostel Management"
-        description="Manage student accommodations, room allocations, fees, and maintenance"
+        subtitle="Manage student accommodations, room allocations, fees, and maintenance"
         actions={
           <div className="flex space-x-3">
-            <Button variant="primary" size="sm">
+            <Button variant="default" size="sm">
               <HomeModernIcon className="h-4 w-4 mr-2" />
               Add Room
             </Button>
@@ -277,7 +273,7 @@ const Hostel: React.FC = () => {
 
         <Card>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Today's Activity</h3>
+                         <h3 className="text-lg font-semibold text-gray-900">Today&apos;s Activity</h3>
             <Button variant="ghost" size="sm">
               <EyeIcon className="h-4 w-4 mr-2" />
               View All

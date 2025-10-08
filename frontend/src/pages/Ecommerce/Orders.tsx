@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -26,7 +26,7 @@ const Orders: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true); setError(null);
     try {
       const data: any = await apiService.get('/shop/orders/', { params: { search, page } });
@@ -34,9 +34,9 @@ const Orders: React.FC = () => {
       setTotal(data.count || 0);
     } catch (e: any) { setError('Failed to load orders'); }
     finally { setLoading(false); }
-  };
+  }, [search, page]);
 
-  useEffect(() => { fetchOrders(); }, [page, search]);
+  useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
   const updateStatus = async (id: string, status: string) => {
     await apiService.patch(`/shop/orders/${id}/`, { status });

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
+import { apiService } from '../../services/api';
+import toast from 'react-hot-toast';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -142,6 +144,20 @@ const Sessions: React.FC = () => {
     }, 1000);
   }, []);
 
+  // Function to fetch sessions from API
+  const fetchSessions = async () => {
+    try {
+      setLoading(true);
+      const data = await apiService.get<Session[]>('/attendance-sessions/');
+      setSessions(data || []);
+    } catch (error) {
+      console.error('Failed to fetch sessions:', error);
+      toast.error('Failed to fetch sessions');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredSessions = sessions.filter(session => {
     const matchesSearch = session.course.subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          session.course.class_enrolled.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -187,23 +203,48 @@ const Sessions: React.FC = () => {
     setShowEditModal(true);
   };
 
-  const handleSaveSession = () => {
-    // TODO: Implement API call
-    console.log('Saving session:', formData);
-    setShowCreateModal(false);
-    setShowEditModal(false);
-  };
-
-  const handleDeleteSession = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this session?')) {
-      // TODO: Implement API call
-      console.log('Deleting session:', id);
+  const handleSaveSession = async () => {
+    try {
+      if (selectedSession) {
+        await apiService.put(`/attendance-sessions/${selectedSession.id}/`, formData);
+        toast.success('Session updated successfully');
+      } else {
+        await apiService.post('/attendance-sessions/', formData);
+        toast.success('Session created successfully');
+      }
+      fetchSessions();
+      setShowCreateModal(false);
+      setShowEditModal(false);
+    } catch (error) {
+      console.error('Failed to save session:', error);
+      toast.error('Failed to save session');
     }
   };
 
-  const handleToggleSession = (session: Session) => {
-    // TODO: Implement API call
-    console.log('Toggling session:', session.id, !session.is_active);
+  const handleDeleteSession = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this session?')) {
+      try {
+        await apiService.delete(`/attendance-sessions/${id}/`);
+        toast.success('Session deleted successfully');
+        fetchSessions();
+      } catch (error) {
+        console.error('Failed to delete session:', error);
+        toast.error('Failed to delete session');
+      }
+    }
+  };
+
+  const handleToggleSession = async (session: Session) => {
+    try {
+      await apiService.patch(`/attendance-sessions/${session.id}/`, {
+        is_active: !session.is_active
+      });
+      toast.success(`Session ${session.is_active ? 'deactivated' : 'activated'} successfully`);
+      fetchSessions();
+    } catch (error) {
+      console.error('Failed to toggle session:', error);
+      toast.error('Failed to toggle session');
+    }
   };
 
   const getStatusBadge = (session: Session) => {

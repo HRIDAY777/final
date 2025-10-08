@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -7,16 +7,13 @@ import { Button } from '../../components/UI/Button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/UI/Dialog';
 import Input from '../../components/UI/Input';
 import { Textarea } from '../../components/UI/Textarea';
-import { apiService } from '../../services/api';
+
 import {
   HomeModernIcon,
-  UserGroupIcon,
   EyeIcon,
   PlusIcon,
   PencilIcon,
-  TrashIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon
+  TrashIcon
 } from '@heroicons/react/24/outline';
 
 interface Building {
@@ -35,9 +32,7 @@ interface Building {
 
 const Buildings: React.FC = () => {
   const [buildings, setBuildings] = useState<Building[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [showBuildingModal, setShowBuildingModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -59,13 +54,10 @@ const Buildings: React.FC = () => {
     search: '',
   });
 
-  useEffect(() => {
-    fetchBuildings();
-  }, [currentPage, filters]);
 
-  const fetchBuildings = async () => {
+
+  const fetchBuildings = useCallback(async () => {
     try {
-      setLoading(true);
       // Mock data for demonstration
       const mockBuildings: Building[] = [
         {
@@ -145,18 +137,16 @@ const Buildings: React.FC = () => {
 
       setBuildings(paginatedBuildings);
       setTotalCount(filteredBuildings.length);
-      setTotalPages(Math.ceil(filteredBuildings.length / itemsPerPage));
     } catch (error) {
       console.error('Error fetching buildings:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentPage, filters]);
 
-  const handleFilterChange = (newFilters: any) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-  };
+  useEffect(() => {
+    fetchBuildings();
+  }, [fetchBuildings]);
+
+
 
   const handleCreateBuilding = async () => {
     try {

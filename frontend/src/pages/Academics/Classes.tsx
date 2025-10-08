@@ -10,14 +10,10 @@ import {
   EyeIcon,
   UserGroupIcon,
   AcademicCapIcon,
-  CalendarIcon,
-  ClockIcon,
   CheckCircleIcon,
   XCircleIcon,
-  ExclamationTriangleIcon,
   ChartBarIcon,
   CogIcon,
-  ArrowRightIcon,
   XMarkIcon,
   ChevronDownIcon,
   ChevronUpIcon
@@ -39,24 +35,7 @@ interface Class {
   updated_at: string;
 }
 
-interface Student {
-  id: string;
-  name: string;
-  roll_number: string;
-  email: string;
-  phone: string;
-  enrollment_date: string;
-  status: 'active' | 'inactive' | 'transferred';
-}
 
-interface Subject {
-  id: string;
-  name: string;
-  code: string;
-  teacher: string;
-  credits: number;
-  is_compulsory: boolean;
-}
 
 interface ClassStats {
   totalClasses: number;
@@ -69,8 +48,6 @@ interface ClassStats {
 
 const Classes: React.FC = () => {
   const [classes, setClasses] = useState<Class[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedYear, setSelectedYear] = useState('all');
@@ -80,8 +57,6 @@ const Classes: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isEnrollmentModalOpen, setIsEnrollmentModalOpen] = useState(false);
-  const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   // Mock data for demonstration
@@ -164,75 +139,8 @@ const Classes: React.FC = () => {
       }
     ];
 
-    const mockStudents: Student[] = [
-      {
-        id: '1',
-        name: 'Ahmed Khan',
-        roll_number: '10A001',
-        email: 'ahmed.khan@email.com',
-        phone: '+880 1712-345678',
-        enrollment_date: '2024-01-01',
-        status: 'active'
-      },
-      {
-        id: '2',
-        name: 'Fatima Rahman',
-        roll_number: '10A002',
-        email: 'fatima.rahman@email.com',
-        phone: '+880 1812-345678',
-        enrollment_date: '2024-01-01',
-        status: 'active'
-      },
-      {
-        id: '3',
-        name: 'Mohammed Ali',
-        roll_number: '10A003',
-        email: 'mohammed.ali@email.com',
-        phone: '+880 1912-345678',
-        enrollment_date: '2024-01-01',
-        status: 'active'
-      }
-    ];
-
-    const mockSubjects: Subject[] = [
-      {
-        id: '1',
-        name: 'Mathematics',
-        code: 'MATH101',
-        teacher: 'Sarah Johnson',
-        credits: 4,
-        is_compulsory: true
-      },
-      {
-        id: '2',
-        name: 'Science',
-        code: 'SCI101',
-        teacher: 'Michael Brown',
-        credits: 4,
-        is_compulsory: true
-      },
-      {
-        id: '3',
-        name: 'English',
-        code: 'ENG101',
-        teacher: 'Emily Davis',
-        credits: 3,
-        is_compulsory: true
-      },
-      {
-        id: '4',
-        name: 'History',
-        code: 'HIST101',
-        teacher: 'David Wilson',
-        credits: 3,
-        is_compulsory: false
-      }
-    ];
-
     setTimeout(() => {
       setClasses(mockClasses);
-      setStudents(mockStudents);
-      setSubjects(mockSubjects);
       setLoading(false);
     }, 1000);
   }, []);
@@ -1009,14 +917,7 @@ const Classes: React.FC = () => {
                 >
                   Edit Class
                 </Button>
-                <Button
-                  onClick={() => {
-                    setIsDetailsModalOpen(false);
-                    setIsEnrollmentModalOpen(true);
-                  }}
-                >
-                  Manage Students
-                </Button>
+
               </div>
             </div>
           </div>

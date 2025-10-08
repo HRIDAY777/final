@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { apiClient } from '@/lib/api-client';
+import { useState, useEffect, useCallback } from 'react';
 
 // E-learning Data Interfaces
 interface Course {
@@ -100,97 +99,7 @@ interface LessonProgress {
   last_accessed: string;
 }
 
-interface Quiz {
-  id: string;
-  lesson: string;
-  title: string;
-  description: string;
-  passing_score: number;
-  time_limit: number;
-  max_attempts: number;
-  shuffle_questions: boolean;
-  questions: any[];
-  total_attempts: number;
-  average_score: number;
-  created_at: string;
-  updated_at: string;
-}
 
-interface QuizAttempt {
-  id: string;
-  enrollment: string;
-  quiz: string;
-  attempt_number: number;
-  score?: number;
-  passed: boolean;
-  answers: Record<string, any>;
-  correct_answers: number;
-  total_questions: number;
-  started_at: string;
-  completed_at?: string;
-  time_taken: number;
-}
-
-interface CourseReview {
-  id: string;
-  student: {
-    id: string;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    full_name: string;
-  };
-  course: string;
-  rating: number;
-  title?: string;
-  comment: string;
-  is_approved: boolean;
-  is_helpful: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface Certificate {
-  id: string;
-  student: {
-    id: string;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    full_name: string;
-  };
-  course: string;
-  certificate_number: string;
-  issued_date: string;
-  completion_date: string;
-  certificate_file?: string;
-  is_verified: boolean;
-  verification_code: string;
-}
-
-interface Discussion {
-  id: string;
-  course: string;
-  author: {
-    id: string;
-    username: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    full_name: string;
-  };
-  parent?: string;
-  title?: string;
-  content: string;
-  is_pinned: boolean;
-  is_resolved: boolean;
-  views: number;
-  likes: number;
-  created_at: string;
-  updated_at: string;
-}
 
 interface LearningStats {
   total_courses: number;
@@ -210,12 +119,7 @@ export const useCourses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getCourses = async (params?: {
-    category?: string;
-    level?: string;
-    search?: string;
-    featured?: boolean;
-  }) => {
+  const getCourses = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -330,7 +234,7 @@ export const useCourseDetails = (courseId: string) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getCourseDetails = async () => {
+  const getCourseDetails = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -426,13 +330,13 @@ export const useCourseDetails = (courseId: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
 
   useEffect(() => {
     if (courseId) {
       getCourseDetails();
     }
-  }, [courseId]);
+  }, [courseId, getCourseDetails]);
 
   return {
     course,
@@ -527,7 +431,7 @@ export const useEnrollments = () => {
     }
   };
 
-  const enrollInCourse = async (courseId: string) => {
+  const enrollInCourse = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -618,7 +522,7 @@ export const useLessonProgress = (enrollmentId: string) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getLessonProgress = async () => {
+  const getLessonProgress = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -666,9 +570,9 @@ export const useLessonProgress = (enrollmentId: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [enrollmentId]);
 
-  const updateLessonProgress = async (lessonId: string, data: Partial<LessonProgress>) => {
+  const updateLessonProgress = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -694,7 +598,7 @@ export const useLessonProgress = (enrollmentId: string) => {
     if (enrollmentId) {
       getLessonProgress();
     }
-  }, [enrollmentId]);
+  }, [enrollmentId, getLessonProgress]);
 
   return {
     progress,

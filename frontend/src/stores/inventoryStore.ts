@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { api } from '../services/api';
@@ -223,7 +224,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchCategories: async (params = {}) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.get('/inventory/categories/', { params });
+          const response = await api.get('/inventory/categories/', { params }) as any;
           set({ categories: response.data, categoriesLoading: false });
         } catch (error: any) {
           set({ 
@@ -236,7 +237,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchCategoryById: async (id: number) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.get(`/inventory/categories/${id}/`);
+          const response = await api.get(`/inventory/categories/${id}/`) as any;
           set({ currentCategory: response.data, categoriesLoading: false });
         } catch (error: any) {
           set({ 
@@ -249,7 +250,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       createCategory: async (data: Partial<Category>) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.post('/inventory/categories/', data);
+          const response = await api.post('/inventory/categories/', data) as any;
           set({ categoriesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -264,7 +265,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       updateCategory: async (id: number, data: Partial<Category>) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.put(`/inventory/categories/${id}/`, data);
+          const response = await api.put(`/inventory/categories/${id}/`, data) as any;
           set({ categoriesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -279,7 +280,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       deleteCategory: async (id: number) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          await api.delete(`/inventory/categories/${id}/`);
+          await api.delete(`/inventory/categories/${id}/`) as any;
           set({ categoriesLoading: false });
         } catch (error: any) {
           set({ 
@@ -294,7 +295,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchSuppliers: async (params = {}) => {
         set({ suppliersLoading: true, suppliersError: null });
         try {
-          const response = await api.get('/inventory/suppliers/', { params });
+          const response = await api.get('/inventory/suppliers/', { params }) as any;
           set({ suppliers: response.data, suppliersLoading: false });
         } catch (error: any) {
           set({ 
@@ -307,7 +308,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchSupplierById: async (id: number) => {
         set({ suppliersLoading: true, suppliersError: null });
         try {
-          const response = await api.get(`/inventory/suppliers/${id}/`);
+          const response = await api.get(`/inventory/suppliers/${id}/`) as any;
           set({ currentSupplier: response.data, suppliersLoading: false });
         } catch (error: any) {
           set({ 
@@ -320,7 +321,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       createSupplier: async (data: Partial<Supplier>) => {
         set({ suppliersLoading: true, suppliersError: null });
         try {
-          const response = await api.post('/inventory/suppliers/', data);
+          const response = await api.post('/inventory/suppliers/', data) as any;
           set({ suppliersLoading: false });
           return response.data;
         } catch (error: any) {
@@ -335,7 +336,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       updateSupplier: async (id: number, data: Partial<Supplier>) => {
         set({ suppliersLoading: true, suppliersError: null });
         try {
-          const response = await api.put(`/inventory/suppliers/${id}/`, data);
+          const response = await api.put(`/inventory/suppliers/${id}/`, data) as any;
           set({ suppliersLoading: false });
           return response.data;
         } catch (error: any) {
@@ -350,7 +351,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       deleteSupplier: async (id: number) => {
         set({ suppliersLoading: true, suppliersError: null });
         try {
-          await api.delete(`/inventory/suppliers/${id}/`);
+          await api.delete(`/inventory/suppliers/${id}/`) as any;
           set({ suppliersLoading: false });
         } catch (error: any) {
           set({ 
@@ -365,7 +366,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchAssets: async (params = {}) => {
         set({ assetsLoading: true, assetsError: null });
         try {
-          const response = await api.get('/inventory/assets/', { params });
+          const response = await api.get('/inventory/assets/', { params }) as any;
           set({ assets: response.data, assetsLoading: false });
         } catch (error: any) {
           set({ 
@@ -378,7 +379,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchAssetById: async (id: number) => {
         set({ assetsLoading: true, assetsError: null });
         try {
-          const response = await api.get(`/inventory/assets/${id}/`);
+          const response = await api.get(`/inventory/assets/${id}/`) as any;
           set({ currentAsset: response.data, assetsLoading: false });
         } catch (error: any) {
           set({ 
@@ -391,7 +392,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       createAsset: async (data: Partial<Asset>) => {
         set({ assetsLoading: true, assetsError: null });
         try {
-          const response = await api.post('/inventory/assets/', data);
+          const response = await api.post('/inventory/assets/', data) as any;
           set({ assetsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -406,7 +407,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       updateAsset: async (id: number, data: Partial<Asset>) => {
         set({ assetsLoading: true, assetsError: null });
         try {
-          const response = await api.put(`/inventory/assets/${id}/`, data);
+          const response = await api.put(`/inventory/assets/${id}/`, data) as any;
           set({ assetsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -421,7 +422,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       deleteAsset: async (id: number) => {
         set({ assetsLoading: true, assetsError: null });
         try {
-          await api.delete(`/inventory/assets/${id}/`);
+          await api.delete(`/inventory/assets/${id}/`) as any;
           set({ assetsLoading: false });
         } catch (error: any) {
           set({ 
@@ -436,7 +437,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchStockItems: async (params = {}) => {
         set({ stockItemsLoading: true, stockItemsError: null });
         try {
-          const response = await api.get('/inventory/stock-items/', { params });
+          const response = await api.get('/inventory/stock-items/', { params }) as any;
           set({ stockItems: response.data, stockItemsLoading: false });
         } catch (error: any) {
           set({ 
@@ -449,7 +450,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchStockItemById: async (id: number) => {
         set({ stockItemsLoading: true, stockItemsError: null });
         try {
-          const response = await api.get(`/inventory/stock-items/${id}/`);
+          const response = await api.get(`/inventory/stock-items/${id}/`) as any;
           set({ currentStockItem: response.data, stockItemsLoading: false });
         } catch (error: any) {
           set({ 
@@ -462,7 +463,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       createStockItem: async (data: Partial<StockItem>) => {
         set({ stockItemsLoading: true, stockItemsError: null });
         try {
-          const response = await api.post('/inventory/stock-items/', data);
+          const response = await api.post('/inventory/stock-items/', data) as any;
           set({ stockItemsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -477,7 +478,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       updateStockItem: async (id: number, data: Partial<StockItem>) => {
         set({ stockItemsLoading: true, stockItemsError: null });
         try {
-          const response = await api.put(`/inventory/stock-items/${id}/`, data);
+          const response = await api.put(`/inventory/stock-items/${id}/`, data) as any;
           set({ stockItemsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -492,7 +493,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       deleteStockItem: async (id: number) => {
         set({ stockItemsLoading: true, stockItemsError: null });
         try {
-          await api.delete(`/inventory/stock-items/${id}/`);
+          await api.delete(`/inventory/stock-items/${id}/`) as any;
           set({ stockItemsLoading: false });
         } catch (error: any) {
           set({ 
@@ -506,7 +507,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       updateStockLevel: async (id: number, quantity: number) => {
         set({ stockItemsLoading: true, stockItemsError: null });
         try {
-          await api.post(`/inventory/stock-items/${id}/update-stock/`, { quantity });
+          await api.post(`/inventory/stock-items/${id}/update-stock/`, { quantity }) as any;
           set({ stockItemsLoading: false });
         } catch (error: any) {
           set({ 
@@ -521,7 +522,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchTransactions: async (params = {}) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          const response = await api.get('/inventory/transactions/', { params });
+          const response = await api.get('/inventory/transactions/', { params }) as any;
           set({ transactions: response.data, transactionsLoading: false });
         } catch (error: any) {
           set({ 
@@ -534,7 +535,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchTransactionById: async (id: number) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          const response = await api.get(`/inventory/transactions/${id}/`);
+          const response = await api.get(`/inventory/transactions/${id}/`) as any;
           set({ currentTransaction: response.data, transactionsLoading: false });
         } catch (error: any) {
           set({ 
@@ -547,7 +548,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       createTransaction: async (data: Partial<Transaction>) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          const response = await api.post('/inventory/transactions/', data);
+          const response = await api.post('/inventory/transactions/', data) as any;
           set({ transactionsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -562,7 +563,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       updateTransaction: async (id: number, data: Partial<Transaction>) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          const response = await api.put(`/inventory/transactions/${id}/`, data);
+          const response = await api.put(`/inventory/transactions/${id}/`, data) as any;
           set({ transactionsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -577,7 +578,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       deleteTransaction: async (id: number) => {
         set({ transactionsLoading: true, transactionsError: null });
         try {
-          await api.delete(`/inventory/transactions/${id}/`);
+          await api.delete(`/inventory/transactions/${id}/`) as any;
           set({ transactionsLoading: false });
         } catch (error: any) {
           set({ 
@@ -592,7 +593,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchMaintenanceRecords: async (params = {}) => {
         set({ maintenanceRecordsLoading: true, maintenanceRecordsError: null });
         try {
-          const response = await api.get('/inventory/maintenance-records/', { params });
+          const response = await api.get('/inventory/maintenance-records/', { params }) as any;
           set({ maintenanceRecords: response.data, maintenanceRecordsLoading: false });
         } catch (error: any) {
           set({ 
@@ -605,7 +606,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       fetchMaintenanceRecordById: async (id: number) => {
         set({ maintenanceRecordsLoading: true, maintenanceRecordsError: null });
         try {
-          const response = await api.get(`/inventory/maintenance-records/${id}/`);
+          const response = await api.get(`/inventory/maintenance-records/${id}/`) as any;
           set({ currentMaintenanceRecord: response.data, maintenanceRecordsLoading: false });
         } catch (error: any) {
           set({ 
@@ -618,7 +619,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       createMaintenanceRecord: async (data: Partial<MaintenanceRecord>) => {
         set({ maintenanceRecordsLoading: true, maintenanceRecordsError: null });
         try {
-          const response = await api.post('/inventory/maintenance-records/', data);
+          const response = await api.post('/inventory/maintenance-records/', data) as any;
           set({ maintenanceRecordsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -633,7 +634,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       updateMaintenanceRecord: async (id: number, data: Partial<MaintenanceRecord>) => {
         set({ maintenanceRecordsLoading: true, maintenanceRecordsError: null });
         try {
-          const response = await api.put(`/inventory/maintenance-records/${id}/`, data);
+          const response = await api.put(`/inventory/maintenance-records/${id}/`, data) as any;
           set({ maintenanceRecordsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -648,7 +649,7 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
       deleteMaintenanceRecord: async (id: number) => {
         set({ maintenanceRecordsLoading: true, maintenanceRecordsError: null });
         try {
-          await api.delete(`/inventory/maintenance-records/${id}/`);
+          await api.delete(`/inventory/maintenance-records/${id}/`) as any;
           set({ maintenanceRecordsLoading: false });
         } catch (error: any) {
           set({ 
@@ -680,3 +681,4 @@ export const useInventoryStore = create<InventoryState & InventoryActions>()(
     }
   )
 );
+

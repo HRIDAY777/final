@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -17,7 +17,7 @@ const Grades: React.FC = () => {
   const [editing, setEditing] = useState<any | null>(null);
   const [form, setForm] = useState({ student: '', course: '', assignment: '', marks_obtained: 0, max_marks: 100, remarks: '' });
 
-  const fetchGrades = async () => {
+  const fetchGrades = useCallback(async () => {
     setLoading(true); setError(null);
     try {
       const data: any = await academicAPI.getGrades({ search, page });
@@ -25,9 +25,9 @@ const Grades: React.FC = () => {
       setTotal(data.count || 0);
     } catch (e) { setError('Failed to load grades'); }
     finally { setLoading(false); }
-  };
+  }, [search, page]);
 
-  useEffect(() => { fetchGrades(); }, [page, search]);
+  useEffect(() => { fetchGrades(); }, [fetchGrades]);
 
   const onOpen = (g?: any) => {
     if (g) {

@@ -14,7 +14,6 @@ import {
   CalendarIcon,
   ClockIcon,
   MapPinIcon,
-  UserIcon,
 } from '@heroicons/react/24/outline';
 
 interface CalendarEvent {

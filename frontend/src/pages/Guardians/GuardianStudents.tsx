@@ -13,9 +13,7 @@ import {
   UserIcon,
   AcademicCapIcon,
   PhoneIcon,
-  EnvelopeIcon,
-  MapPinIcon,
-  CalendarIcon
+  EnvelopeIcon
 } from '@heroicons/react/24/outline';
 
 interface GuardianStudent {

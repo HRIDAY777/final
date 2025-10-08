@@ -337,6 +337,12 @@ const translations: Translations = {
     hi: 'रिपोर्ट',
     ar: 'التقارير'
   },
+  'nav.rbac': {
+    en: 'RBAC',
+    bn: 'রোল ভিত্তিক অ্যাক্সেস কন্ট্রোল',
+    hi: 'रोल आधारित एक्सेस कंट्रोल',
+    ar: 'التحكم في الوصول القائم على الأدوار'
+  },
   'nav.inventory': {
     en: 'Inventory',
     bn: 'ইনভেন্টরি',

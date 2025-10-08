@@ -1,11 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.db.models import Count, Sum, Q
-from django.utils import timezone
 from .models import (
-    Plan, Subscription, Fee, Invoice, InvoiceItem, Payment, Transaction, BillingSettings
+    Plan, Subscription, Fee, Invoice, InvoiceItem, Payment, Transaction,
+    BillingSettings
 )
 
 
@@ -63,13 +60,17 @@ class SubscriptionAdmin(admin.ModelAdmin):
     def cancel_subscriptions(self, request, queryset):
         for subscription in queryset.filter(status='active'):
             subscription.cancel(request.user, "Cancelled by admin")
-        self.message_user(request, f"Cancelled {queryset.count()} subscriptions")
+        self.message_user(
+            request, f"Cancelled {queryset.count()} subscriptions"
+        )
     cancel_subscriptions.short_description = "Cancel selected subscriptions"
 
     def activate_subscriptions(self, request, queryset):
         queryset.filter(status='pending').update(status='active')
-        self.message_user(request, f"Activated {queryset.count()} subscriptions")
-    activate_subscriptions.short_description = "Activate selected subscriptions"
+        self.message_user(
+            request, f"Activated {queryset.count()} subscriptions"
+        )
+    activate_subscriptions.short_description = "Activate"
 
 
 @admin.register(Fee)
@@ -87,14 +88,16 @@ class FeeAdmin(admin.ModelAdmin):
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
     list_display = [
-        'invoice_number', 'tenant', 'student', 'status_display', 'total_amount',
+        'invoice_number', 'tenant', 'student', 'status_display',
+        'total_amount',
         'is_overdue', 'days_overdue', 'issue_date', 'due_date'
     ]
     list_filter = [
         'status', 'issue_date', 'due_date', 'paid_date', 'tenant'
     ]
     search_fields = [
-        'invoice_number', 'tenant__name', 'student__first_name', 'student__last_name'
+        'invoice_number', 'tenant__name', 'student__first_name',
+        'student__last_name'
     ]
     ordering = ['-issue_date']
     readonly_fields = [
@@ -108,7 +111,9 @@ class InvoiceAdmin(admin.ModelAdmin):
             'fields': ('invoice_number', 'tenant', 'student', 'subscription')
         }),
         ('Amounts', {
-            'fields': ('subtotal', 'tax_amount', 'discount_amount', 'total_amount')
+            'fields': (
+                'subtotal', 'tax_amount', 'discount_amount', 'total_amount'
+            )
         }),
         ('Dates', {
             'fields': ('issue_date', 'due_date', 'paid_date')
@@ -117,7 +122,9 @@ class InvoiceAdmin(admin.ModelAdmin):
             'fields': ('status', 'notes')
         }),
         ('Metadata', {
-            'fields': ('created_at', 'updated_at', 'is_overdue', 'days_overdue'),
+            'fields': (
+                'created_at', 'updated_at', 'is_overdue', 'days_overdue'
+            ),
             'classes': ('collapse',)
         }),
     )
@@ -141,7 +148,8 @@ class InvoiceAdmin(admin.ModelAdmin):
     def is_overdue(self, obj):
         if obj.is_overdue:
             return format_html(
-                '<span style="color: red; font-weight: bold;">{} days overdue</span>',
+                '<span style="color: red; font-weight: bold;">'
+                '{} days overdue</span>',
                 obj.days_overdue
             )
         return format_html('<span style="color: green;">On time</span>')
@@ -152,17 +160,23 @@ class InvoiceAdmin(admin.ModelAdmin):
     def mark_as_paid(self, request, queryset):
         for invoice in queryset:
             invoice.mark_as_paid()
-        self.message_user(request, f"Marked {queryset.count()} invoices as paid")
+        self.message_user(
+            request, f"Marked {queryset.count()} invoices as paid"
+        )
     mark_as_paid.short_description = "Mark selected invoices as paid"
 
     def mark_as_sent(self, request, queryset):
         queryset.filter(status='draft').update(status='sent')
-        self.message_user(request, f"Marked {queryset.count()} invoices as sent")
+        self.message_user(
+            request, f"Marked {queryset.count()} invoices as sent"
+        )
     mark_as_sent.short_description = "Mark selected invoices as sent"
 
     def mark_as_overdue(self, request, queryset):
         queryset.filter(status='sent').update(status='overdue')
-        self.message_user(request, f"Marked {queryset.count()} invoices as overdue")
+        self.message_user(
+            request, f"Marked {queryset.count()} invoices as overdue"
+        )
     mark_as_overdue.short_description = "Mark selected invoices as overdue"
 
 
@@ -240,17 +254,23 @@ class PaymentAdmin(admin.ModelAdmin):
     def mark_as_completed(self, request, queryset):
         for payment in queryset.filter(status='pending'):
             payment.mark_as_completed(request.user)
-        self.message_user(request, f"Marked {queryset.count()} payments as completed")
+        self.message_user(
+            request, f"Marked {queryset.count()} payments as completed"
+        )
     mark_as_completed.short_description = "Mark selected payments as completed"
 
     def mark_as_failed(self, request, queryset):
         queryset.filter(status='pending').update(status='failed')
-        self.message_user(request, f"Marked {queryset.count()} payments as failed")
+        self.message_user(
+            request, f"Marked {queryset.count()} payments as failed"
+        )
     mark_as_failed.short_description = "Mark selected payments as failed"
 
     def mark_as_refunded(self, request, queryset):
         queryset.filter(status='completed').update(status='refunded')
-        self.message_user(request, f"Marked {queryset.count()} payments as refunded")
+        self.message_user(
+            request, f"Marked {queryset.count()} payments as refunded"
+        )
     mark_as_refunded.short_description = "Mark selected payments as refunded"
 
 
@@ -291,9 +311,12 @@ class TransactionAdmin(admin.ModelAdmin):
 class BillingSettingsAdmin(admin.ModelAdmin):
     list_display = [
         'tenant', 'currency', 'tax_rate', 'late_fee_rate', 'grace_period_days',
-        'auto_generate_invoices', 'send_payment_reminders', 'payment_gateway_enabled'
+        'auto_generate_invoices', 'send_payment_reminders',
+        'payment_gateway_enabled'
     ]
-    list_filter = ['currency', 'auto_generate_invoices', 'send_payment_reminders']
+    list_filter = [
+        'currency', 'auto_generate_invoices', 'send_payment_reminders'
+    ]
     search_fields = ['tenant__name']
     readonly_fields = ['created_at', 'updated_at']
 

@@ -25,7 +25,7 @@ const Reservations: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  useEffect(() => { fetchReservations({ page, search }); }, [page, search]);
+  useEffect(() => { fetchReservations({ page, search }); }, [page, search, fetchReservations]);
 
   const onDelete = async (id: number) => {
     if (!confirm(t('confirm.delete_reservation'))) return;

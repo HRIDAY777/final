@@ -193,7 +193,7 @@ interface LibraryState {
 // Store Implementation
 export const useLibraryStore = create<LibraryState>()(
   devtools(
-    (set, get) => ({
+    (set) => ({
       // Initial State
       books: null,
       currentBook: null,
@@ -276,7 +276,10 @@ export const useLibraryStore = create<LibraryState>()(
                 image_url: newBook.cover_image || undefined,
               });
             }
-          } catch {}
+          } catch (ecommerceError) {
+            // Silently handle e-commerce sync errors
+            console.warn('Failed to sync book with e-commerce:', ecommerceError);
+          }
           set(state => ({
             books: state.books ? {
               ...state.books,
@@ -311,7 +314,10 @@ export const useLibraryStore = create<LibraryState>()(
                 image_url: updatedBook.cover_image || undefined,
               });
             }
-          } catch {}
+          } catch (ecommerceError) {
+            // Silently handle e-commerce sync errors
+            console.warn('Failed to sync book with e-commerce:', ecommerceError);
+          }
           set(state => ({
             books: state.books ? {
               ...state.books,
@@ -369,7 +375,10 @@ export const useLibraryStore = create<LibraryState>()(
                 await apiService.patch(`/shop/products/${match.id}/`, { stock: book.available_copies ?? 0 });
               }
             }
-          } catch {}
+          } catch (ecommerceError) {
+            // Silently handle e-commerce sync errors
+            console.warn('Failed to sync borrowing with e-commerce:', ecommerceError);
+          }
           set(state => ({
             borrowings: state.borrowings ? {
               ...state.borrowings,
@@ -403,7 +412,10 @@ export const useLibraryStore = create<LibraryState>()(
                 await apiService.patch(`/shop/products/${match.id}/`, { stock: book.available_copies ?? 0 });
               }
             }
-          } catch {}
+          } catch (ecommerceError) {
+            // Silently handle e-commerce sync errors
+            console.warn('Failed to sync return with e-commerce:', ecommerceError);
+          }
           set(state => ({
             borrowings: state.borrowings ? {
               ...state.borrowings,

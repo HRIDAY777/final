@@ -126,7 +126,7 @@ const TeachersList: React.FC = () => {
         responseType: 'blob'
       });
       
-      const url = window.URL.createObjectURL(new Blob([response]));
+      const url = window.URL.createObjectURL(new Blob([response as Blob]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'teachers.csv');
@@ -144,7 +144,7 @@ const TeachersList: React.FC = () => {
         <PageHeader 
           title="Teachers" 
           subtitle="Manage all teachers in the system"
-          right={
+          actions={
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => setShowFilters(!showFilters)}>
                 <FunnelIcon className="w-4 h-4 mr-2" />
@@ -289,7 +289,6 @@ const TeachersList: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => openProfile(row)}
-                          title="View Details"
                         >
                           <EyeIcon className="w-4 h-4" />
                         </Button>
@@ -297,7 +296,6 @@ const TeachersList: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => window.location.href = `/teachers/${row.id}/edit`}
-                          title="Edit"
                         >
                           <PencilIcon className="w-4 h-4" />
                         </Button>
@@ -305,7 +303,6 @@ const TeachersList: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => toggleActive(row)}
-                          title={row.is_active ? 'Deactivate' : 'Activate'}
                         >
                           {row.is_active ? 'Deactivate' : 'Activate'}
                         </Button>
@@ -313,7 +310,6 @@ const TeachersList: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => remove(row)}
-                          title="Delete"
                           className="text-red-600 hover:text-red-700"
                         >
                           <TrashIcon className="w-4 h-4" />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -9,9 +9,7 @@ import {
   CalendarIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
-  ClockIcon,
   EyeIcon,
-  PencilIcon,
   TrashIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline';
@@ -58,9 +56,13 @@ const Borrowings: React.FC = () => {
   const [selectedBorrowing, setSelectedBorrowing] = useState<any>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
+  const fetchBorrowingsCallback = useCallback(() => {
+    fetchBorrowings({ page, search });
+  }, [fetchBorrowings, page, search]);
+
   useEffect(() => { 
-    fetchBorrowings({ page, search }); 
-  }, [page, search]);
+    fetchBorrowingsCallback(); 
+  }, [fetchBorrowingsCallback]);
 
   const onReturn = async (id: number) => {
     try {

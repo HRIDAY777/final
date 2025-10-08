@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -29,7 +28,9 @@ class Plan(models.Model):
     plan_type = models.CharField(max_length=20, choices=PLAN_TYPES)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    billing_cycle = models.CharField(max_length=20, choices=BILLING_CYCLES, default='monthly')
+    billing_cycle = models.CharField(
+        max_length=20, choices=BILLING_CYCLES, default='monthly'
+    )
     max_students = models.PositiveIntegerField(default=100)
     max_teachers = models.PositiveIntegerField(default=10)
     max_storage_gb = models.PositiveIntegerField(default=10)
@@ -68,14 +69,24 @@ class Subscription(models.Model):
         ('pending', _('Pending')),
     ]
 
-    tenant = models.ForeignKey('tenants.Tenant', on_delete=models.CASCADE, related_name='billing_subscriptions')
-    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='subscriptions')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    tenant = models.ForeignKey(
+        'tenants.Tenant', on_delete=models.CASCADE,
+        related_name='billing_subscriptions'
+    )
+    plan = models.ForeignKey(
+        Plan, on_delete=models.CASCADE, related_name='subscriptions'
+    )
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='pending'
+    )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     auto_renew = models.BooleanField(default=True)
     cancelled_at = models.DateTimeField(null=True, blank=True)
-    cancelled_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='cancelled_subscriptions')
+    cancelled_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='cancelled_subscriptions'
+    )
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -132,7 +143,9 @@ class Fee(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True)
     is_recurring = models.BooleanField(default=False)
-    recurring_frequency = models.CharField(max_length=20, blank=True, help_text="monthly, quarterly, yearly")
+    recurring_frequency = models.CharField(
+        max_length=20, blank=True, help_text="monthly, quarterly, yearly"
+    )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -158,17 +171,35 @@ class Invoice(models.Model):
     ]
 
     invoice_number = models.CharField(max_length=50, unique=True)
-    tenant = models.ForeignKey('tenants.Tenant', on_delete=models.CASCADE, related_name='invoices')
-    student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='invoices', null=True, blank=True)
-    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True, related_name='invoices')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    tenant = models.ForeignKey(
+        'tenants.Tenant', on_delete=models.CASCADE, related_name='invoices'
+    )
+    student = models.ForeignKey(
+        'students.Student', on_delete=models.CASCADE, related_name='invoices',
+        null=True, blank=True
+    )
+    subscription = models.ForeignKey(
+        Subscription, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='invoices'
+    )
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='draft'
+    )
     issue_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField()
     paid_date = models.DateTimeField(null=True, blank=True)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    tax_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    subtotal = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0
+    )
+    tax_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0
+    )
+    discount_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0
+    )
+    total_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0
+    )
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -193,11 +224,16 @@ class Invoice(models.Model):
 
     def generate_invoice_number(self):
         """Generate unique invoice number"""
-        return f"INV-{timezone.now().strftime('%Y%m')}-{uuid.uuid4().hex[:8].upper()}"
+        return (
+            f"INV-{timezone.now().strftime('%Y%m')}-"
+            f"{uuid.uuid4().hex[:8].upper()}"
+        )
 
     def calculate_total(self):
         """Calculate total amount"""
-        self.total_amount = self.subtotal + self.tax_amount - self.discount_amount
+        self.total_amount = (
+            self.subtotal + self.tax_amount - self.discount_amount
+        )
         return self.total_amount
 
     def get_paid_amount(self):
@@ -208,7 +244,10 @@ class Invoice(models.Model):
 
     @property
     def is_overdue(self):
-        return self.status in ['sent', 'partially_paid'] and timezone.now() > self.due_date
+        return (
+            self.status in ['sent', 'partially_paid'] and
+            timezone.now() > self.due_date
+        )
 
     @property
     def days_overdue(self):
@@ -225,8 +264,12 @@ class Invoice(models.Model):
 
 class InvoiceItem(models.Model):
     """Invoice item model"""
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='items')
-    fee = models.ForeignKey(Fee, on_delete=models.CASCADE, related_name='invoice_items')
+    invoice = models.ForeignKey(
+        Invoice, on_delete=models.CASCADE, related_name='items'
+    )
+    fee = models.ForeignKey(
+        Fee, on_delete=models.CASCADE, related_name='invoice_items'
+    )
     description = models.CharField(max_length=200)
     quantity = models.PositiveIntegerField(default=1)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -269,14 +312,26 @@ class Payment(models.Model):
     ]
 
     payment_id = models.CharField(max_length=100, unique=True)
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='payments')
+    invoice = models.ForeignKey(
+        Invoice, on_delete=models.CASCADE, related_name='payments'
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='pending'
+    )
     transaction_id = models.CharField(max_length=100, blank=True)
-    gateway_response = models.JSONField(default=dict, blank=True)
-    paid_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='payments_made')
-    processed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='payments_processed')
+    gateway_response = models.JSONField(
+        default=dict, blank=True
+    )
+    paid_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='payments_made'
+    )
+    processed_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='payments_processed'
+    )
     payment_date = models.DateTimeField(auto_now_add=True)
     processed_date = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(blank=True)
@@ -298,7 +353,10 @@ class Payment(models.Model):
 
     def generate_payment_id(self):
         """Generate unique payment ID"""
-        return f"PAY-{timezone.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:8].upper()}"
+        return (
+            f"PAY-{timezone.now().strftime('%Y%m%d')}-"
+            f"{uuid.uuid4().hex[:8].upper()}"
+        )
 
     def mark_as_completed(self, processed_by=None):
         """Mark payment as completed"""
@@ -323,14 +381,28 @@ class Transaction(models.Model):
     ]
 
     transaction_id = models.CharField(max_length=100, unique=True)
-    tenant = models.ForeignKey('tenants.Tenant', on_delete=models.CASCADE, related_name='transactions')
-    transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
+    tenant = models.ForeignKey(
+        'tenants.Tenant', on_delete=models.CASCADE,
+        related_name='transactions'
+    )
+    transaction_type = models.CharField(
+        max_length=20, choices=TRANSACTION_TYPES
+    )
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=200)
     reference = models.CharField(max_length=100, blank=True)
-    payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions')
-    invoice = models.ForeignKey(Invoice, on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions')
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='transactions_created')
+    payment = models.ForeignKey(
+        Payment, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='transactions'
+    )
+    invoice = models.ForeignKey(
+        Invoice, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='transactions'
+    )
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True,
+        related_name='transactions_created'
+    )
     transaction_date = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -341,7 +413,10 @@ class Transaction(models.Model):
         ordering = ['-transaction_date']
 
     def __str__(self):
-        return f"{self.transaction_type.title()} - ${self.amount} - {self.description}"
+        return (
+            f"{self.transaction_type.title()} - ${self.amount} - "
+            f"{self.description}"
+        )
 
     def save(self, *args, **kwargs):
         if not self.transaction_id:
@@ -350,15 +425,23 @@ class Transaction(models.Model):
 
     def generate_transaction_id(self):
         """Generate unique transaction ID"""
-        return f"TXN-{timezone.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:8].upper()}"
+        return (
+            f"TXN-{timezone.now().strftime('%Y%m%d')}-"
+            f"{uuid.uuid4().hex[:8].upper()}"
+        )
 
 
 class BillingSettings(models.Model):
     """Billing settings model"""
-    tenant = models.OneToOneField('tenants.Tenant', on_delete=models.CASCADE, related_name='billing_settings')
+    tenant = models.OneToOneField(
+        'tenants.Tenant', on_delete=models.CASCADE,
+        related_name='billing_settings'
+    )
     currency = models.CharField(max_length=3, default='USD')
     tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    late_fee_rate = models.DecimalField(max_digits=5, decimal_places=2, default=5.00)
+    late_fee_rate = models.DecimalField(
+        max_digits=5, decimal_places=2, default=5.00
+    )
     grace_period_days = models.PositiveIntegerField(default=7)
     auto_generate_invoices = models.BooleanField(default=True)
     send_payment_reminders = models.BooleanField(default=True)

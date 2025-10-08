@@ -3,84 +3,10 @@ Production settings for EduCore Ultra.
 """
 
 import os
-from datetime import timedelta
-from .base import *  # noqa: F403, F401
+from .base import *  # noqa: F401,F403
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# Production-specific overrides
 DEBUG = False
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
-# Allowed hosts
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
-
-# Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'educore_ultra'),
-        'USER': os.environ.get('DB_USER', 'educore_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
-    }
-}
-
-# Cache configuration
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': (
-            f"redis://{os.environ.get('REDIS_HOST', 'redis')}:"
-            f"{os.environ.get('REDIS_PORT', '6379')}/1"
-        ),
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    }
-}
-
-# Session configuration
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
-
-# Celery configuration
-CELERY_BROKER_URL = (
-    f"redis://{os.environ.get('REDIS_HOST', 'redis')}:"
-    f"{os.environ.get('REDIS_PORT', '6379')}/0"
-)
-CELERY_RESULT_BACKEND = (
-    f"redis://{os.environ.get('REDIS_HOST', 'redis')}:"
-    f"{os.environ.get('REDIS_PORT', '6379')}/0"
-)
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
-
-# Email configuration
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = os.environ.get(
-    'DEFAULT_FROM_EMAIL', 'noreply@educore.com'
-)
-
-# Static files
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # noqa: F405
-STATICFILES_STORAGE = (
-    'whitenoise.storage.CompressedManifestStaticFilesStorage'
-)
-
-# Media files
-MEDIA_ROOT = BASE_DIR / 'media'  # noqa: F405
 
 # Security settings
 SECURE_BROWSER_XSS_FILTER = True
@@ -91,15 +17,67 @@ SECURE_HSTS_PRELOAD = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# CORS settings
-CORS_ALLOWED_ORIGINS = (
-    os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+# CORS settings for production
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    'https://yourdomain.com,https://www.yourdomain.com'
+).split(',')
+
+# CSRF settings
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://yourdomain.com,https://www.yourdomain.com'
+).split(',')
+
+# Database settings (ensure PostgreSQL is used)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'educore_ultra'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', 'db'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+        'CONN_MAX_AGE': int(os.environ.get('DB_CONN_MAX_AGE', '600')),
+        'OPTIONS': {
+            'sslmode': os.environ.get('DB_OPTIONS_SSLMODE', 'require'),
+            'connect_timeout': int(
+                os.environ.get('DB_OPTIONS_CONNECT_TIMEOUT', '10')
+            ),
+            'application_name': 'educore_ultra',
+        },
+    }
+}
+
+# Redis settings for production
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
+CELERY_BROKER_URL = os.environ.get(
+    'CELERY_BROKER_URL', 'redis://redis:6379/1'
 )
-CORS_ALLOW_CREDENTIALS = True
+CELERY_RESULT_BACKEND = os.environ.get(
+    'CELERY_RESULT_BACKEND', 'redis://redis:6379/1'
+)
 
-# Logging configuration
+# Email settings for production
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.environ.get(
+    'EMAIL_USE_TLS', 'True'
+).lower() == 'true'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get(
+    'DEFAULT_FROM_EMAIL', 'noreply@yourdomain.com'
+)
+
+# Static files for production
+STATIC_ROOT = os.environ.get('STATIC_ROOT', '/app/staticfiles/')
+MEDIA_ROOT = os.environ.get('MEDIA_ROOT', '/app/media/')
+
+# Logging for production
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -111,101 +89,73 @@ LOGGING = {
             ),
             'style': '{',
         },
-        'simple': {
-            'format': (
-                '{levelname} {message}'
-            ),
-            'style': '{',
-        },
     },
     'handlers': {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': (
-                BASE_DIR / 'logs' / 'django.log'  # noqa: F405
+            'filename': os.environ.get(
+                'LOG_FILE', '/app/logs/educore.log'
             ),
             'formatter': 'verbose',
         },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+            'formatter': 'verbose',
         },
     },
     'root': {
-        'handlers': ['console', 'file'],
+        'handlers': ['file', 'console'],
         'level': 'INFO',
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['file', 'console'],
             'level': 'INFO',
             'propagate': False,
         },
-        'django.request': {
-            'handlers': ['console', 'file'],
-            'level': 'ERROR',
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING',
             'propagate': False,
         },
     },
 }
 
-# Channels configuration
-CHANNEL_LAYERS = {
+# Cache settings for production
+CACHES = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [
-                (os.environ.get('REDIS_HOST', 'redis'),
-                 int(os.environ.get('REDIS_PORT', '6379')))
-            ],
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': 50,
+                'retry_on_timeout': True,
+            },
+        }
+    }
+}
+
+# Session settings for production
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+
+# Channels for production
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
         },
     },
 }
 
-# Sentry configuration (if using)
-if os.environ.get('SENTRY_DSN'):
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-
-    sentry_sdk.init(
-        dsn=os.environ.get('SENTRY_DSN'),
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=1.0,
-        send_default_pii=True,
-    )
-
-# Frontend URL
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
-
-# JWT settings
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'UPDATE_LAST_LOGIN': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-    'AUTH_TOKEN_CLASSES': (
-        'rest_framework_simplejwt.tokens.AccessToken',
-    ),
-    'TOKEN_TYPE_CLAIM': 'token_type',
-    'JTI_CLAIM': 'jti',
-    'TOKEN_USER_CLASS': (
-        'rest_framework_simplejwt.models.TokenUser'
-    ),
-    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
-}
-
-# REST Framework settings
+# REST Framework settings for production
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -228,7 +178,34 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '100/hour',
-        'user': '1000/hour'
+        'anon': os.environ.get(
+            'REST_FRAMEWORK_THROTTLE_RATE_ANON', '100/hour'
+        ),
+        'user': os.environ.get(
+            'REST_FRAMEWORK_THROTTLE_RATE_USER', '1000/hour'
+        ),
     }
 }
+
+# Spectacular settings for production
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'EduCore Ultra API',
+    'DESCRIPTION': 'AI-Powered School Management System API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': '/api/',
+}
+
+# Sentry configuration for production
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+    )

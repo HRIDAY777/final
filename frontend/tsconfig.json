@@ -28,7 +28,7 @@
     "exactOptionalPropertyTypes": false,
 
     /* Type checking */
-    "types": ["node"],
+    "types": [],
 
     /* Path mapping */
     "baseUrl": ".",

@@ -9,11 +9,8 @@ import {
   ClockIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
-  AcademicCapIcon,
   CalendarIcon,
-  UserGroupIcon,
   TrophyIcon,
-  CogIcon,
   DocumentMagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 

@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router-dom';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { useTranslation } from '../../utils/i18n';
-import { MagnifyingGlassIcon, AcademicCapIcon, BookOpenIcon, UserGroupIcon, CalendarIcon, CurrencyDollarIcon, BuildingLibraryIcon, TruckIcon, HomeIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, AcademicCapIcon, BookOpenIcon, UserGroupIcon, CalendarIcon, CurrencyDollarIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline';
 
 const useQuery = () => new URLSearchParams(useLocation().search);
 

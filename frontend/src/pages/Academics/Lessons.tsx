@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -17,7 +17,7 @@ const Lessons: React.FC = () => {
   const [editing, setEditing] = useState<any | null>(null);
   const [form, setForm] = useState({ course: '', title: '', content: '', duration_minutes: 45, order: 1, is_active: true });
 
-  const fetchLessons = async () => {
+  const fetchLessons = useCallback(async () => {
     setLoading(true); setError(null);
     try {
       const data: any = await academicAPI.getLessons({ search, page });
@@ -25,9 +25,9 @@ const Lessons: React.FC = () => {
       setTotal(data.count || 0);
     } catch (e) { setError('Failed to load lessons'); }
     finally { setLoading(false); }
-  };
+  }, [search, page]);
 
-  useEffect(() => { fetchLessons(); }, [page, search]);
+  useEffect(() => { fetchLessons(); }, [fetchLessons]);
 
   const onOpen = (l?: any) => {
     if (l) {

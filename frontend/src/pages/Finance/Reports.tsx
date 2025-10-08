@@ -3,21 +3,12 @@ import { Card, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import {
   ChartBarIcon,
-  DocumentChartBarIcon,
   ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
-  ClockIcon,
-  UserGroupIcon,
-  CalendarIcon,
   ArrowDownTrayIcon,
-  EyeIcon,
-  CogIcon,
   BanknotesIcon,
-  ReceiptRefundIcon,
-  CurrencyDollarIcon,
-  DocumentTextIcon
+  ReceiptRefundIcon
 } from '@heroicons/react/24/outline';
 
 interface FinancialMetrics {

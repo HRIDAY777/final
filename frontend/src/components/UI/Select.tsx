@@ -6,8 +6,8 @@ interface SelectContextType {
   isOpen: boolean;
   selectedValue: string;
   selectedLabel: string;
-  setIsOpen: (open: boolean) => void;
-  handleSelect: (value: string, label: string) => void;
+  setIsOpen: (open: boolean) => void; // eslint-disable-line no-unused-vars
+  handleSelect: (value: string, label: string) => void; // eslint-disable-line no-unused-vars
 }
 
 const SelectContext = createContext<SelectContextType | null>(null);
@@ -22,7 +22,7 @@ const useSelectContext = () => {
 
 interface SelectProps {
   value?: string;
-  onValueChange?: (value: string) => void;
+  onValueChange?: (value: string) => void; // eslint-disable-line no-unused-vars
   children: React.ReactNode;
 }
 
@@ -80,7 +80,7 @@ export const Select: React.FC<SelectProps> = ({ value, onValueChange, children }
   );
 };
 
-export const SelectTrigger: React.FC<SelectTriggerProps> = ({ className, children }) => {
+export const SelectTrigger: React.FC<SelectTriggerProps> = ({ className, children }) => { // eslint-disable-line no-unused-vars
   const { isOpen, selectedLabel, setIsOpen } = useSelectContext();
   const triggerRef = useRef<HTMLButtonElement>(null);
 

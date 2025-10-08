@@ -10,8 +10,7 @@ import {
   ClockIcon,
   ExclamationTriangleIcon,
   DocumentTextIcon,
-  WrenchScrewdriverIcon,
-  FuelIcon
+  WrenchScrewdriverIcon
 } from '@heroicons/react/24/outline';
 
 interface DashboardStats {
@@ -40,7 +39,7 @@ const Transport: React.FC = () => {
 
   const fetchDashboardStats = async () => {
     try {
-      const data = await apiService.get('/transport/dashboard/stats/');
+      const data = await apiService.get('/transport/dashboard/stats/') as DashboardStats;
       setStats(data);
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
@@ -90,7 +89,7 @@ const Transport: React.FC = () => {
         <PageHeader 
           title="Transport" 
           subtitle="Comprehensive transport and fleet management"
-          right={
+          actions={
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => window.location.href = '/transport/vehicles'}>
                 View Vehicles
@@ -125,7 +124,7 @@ const Transport: React.FC = () => {
           color="bg-purple-500"
         />
         <StatCard
-          title="Today's Trips"
+          title="Today&apos;s Trips"
           value={stats?.total_trips_today || 0}
           icon={<ClockIcon className="w-6 h-6 text-white" />}
           color="bg-orange-500"
@@ -173,7 +172,7 @@ const Transport: React.FC = () => {
         </Card>
 
         <Card>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Today's Overview</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Today&apos;s Overview</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
               <div className="flex items-center">
@@ -320,7 +319,7 @@ const Transport: React.FC = () => {
         <Card>
           <div className="flex items-center">
             <div className="p-3 rounded-lg bg-yellow-500">
-              <FuelIcon className="w-6 h-6 text-white" />
+              <UserIcon className="w-6 h-6 text-white" />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Total Drivers</p>

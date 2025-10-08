@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import React from 'react';
+import { Card, CardContent, CardHeader } from '@/components/UI/Card';
 import { Badge } from '@/components/UI/Badge';
 import { 
   Users, 
   DollarSign, 
   Calendar, 
   Clock, 
-  TrendingUp,
-  TrendingDown,
   UserPlus,
-  FileText,
-  CheckCircle,
-  AlertCircle
+  FileText
 } from 'lucide-react';
 import { useHR } from '@/hooks/useHR';
 
@@ -120,7 +116,7 @@ const HRDashboard: React.FC = () => {
                 <p className="text-sm font-medium text-gray-600">Attendance Rate</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.attendance_rate}%</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Today's attendance
+                  Today&apos;s attendance
                 </p>
               </div>
               <Clock className="w-8 h-8 text-purple-500" />
@@ -146,12 +142,10 @@ const HRDashboard: React.FC = () => {
 
       {/* Department Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Department Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+                 <Card>
+           <CardHeader title="Department Distribution" />
+           <CardContent>
+             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full bg-blue-500" />
@@ -184,11 +178,9 @@ const HRDashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Employment Types</CardTitle>
-          </CardHeader>
-          <CardContent>
+                 <Card>
+           <CardHeader title="Employment Types" />
+           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -217,11 +209,9 @@ const HRDashboard: React.FC = () => {
       </div>
 
       {/* Recent Activities */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Activities</CardTitle>
-        </CardHeader>
-        <CardContent>
+             <Card>
+         <CardHeader title="Recent Activities" />
+         <CardContent>
           <div className="space-y-4">
             {stats.recent_activities.map((activity, index) => (
               <div key={index} className="flex items-center gap-4 p-3 rounded-lg border">
@@ -250,11 +240,9 @@ const HRDashboard: React.FC = () => {
       </Card>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
+             <Card>
+         <CardHeader title="Quick Actions" />
+         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
               <UserPlus className="w-6 h-6 text-blue-500" />

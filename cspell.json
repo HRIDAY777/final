@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "PGDATA",
+    "pgdata",
+    "maxmemory",
+    "allkeys",
+    "rootfs",
+    "sysfs",
+    "INITDB",
+    "appendonly",
+    "ctype",
+    "healthcheck",
+    "initdb",
+    "isready",
+    "pycache",
+    "runserver",
+    "venv",
+    "staticfiles",
+    "ehthumbs",
+    "educore",
+    "createsuperuser",
+    "collectstatic",
+    "noinput",
+    "yourdomain",
+    "HSTS",
+    "NOSNIFF",
+    "certbot",
+    "certonly",
+    "letsencrypt",
+    "fullchain",
+    "privkey",
+    "HTTPONLY",
+    "SSLMODE",
+    "dbshell",
+    "psql",
+    "pytest",
+    "locustfile",
+    "Metaverse"
+  ],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/.venv/**",
+    "**/venv/**"
+  ]
+}
+
+

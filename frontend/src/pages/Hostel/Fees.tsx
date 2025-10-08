@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import { Button } from '../../components/UI/Button';
 import { Modal } from '../../components/UI/Modal';
-import { Input } from '../../components/UI/Input';
-import { Select } from '../../components/UI/Select';
+import Input from '../../components/UI/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/UI/Select';
 import { Textarea } from '../../components/UI/Textarea';
-import { apiService } from '../../services/api';
+
 import {
   CreditCardIcon,
   CurrencyDollarIcon,
@@ -47,9 +47,8 @@ interface FeeStructure {
 const Fees: React.FC = () => {
   const [studentFees, setStudentFees] = useState<StudentFee[]>([]);
   const [feeStructures, setFeeStructures] = useState<FeeStructure[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+
   const [totalCount, setTotalCount] = useState(0);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showFeeStructureModal, setShowFeeStructureModal] = useState(false);
@@ -85,15 +84,8 @@ const Fees: React.FC = () => {
     pending_count: 0
   });
 
-  useEffect(() => {
-    fetchStudentFees();
-    fetchFeeStructures();
-    fetchStats();
-  }, [currentPage, filters]);
-
-  const fetchStudentFees = async () => {
+  const fetchStudentFees = useCallback(async () => {
     try {
-      setLoading(true);
       // Mock data for demonstration
       const mockFees: StudentFee[] = [
         {
@@ -162,13 +154,16 @@ const Fees: React.FC = () => {
 
       setStudentFees(paginatedFees);
       setTotalCount(filteredFees.length);
-      setTotalPages(Math.ceil(filteredFees.length / itemsPerPage));
     } catch (error) {
       console.error('Error fetching student fees:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentPage, filters]);
+
+  useEffect(() => {
+    fetchStudentFees();
+    fetchFeeStructures();
+    fetchStats();
+  }, [fetchStudentFees]);
 
   const fetchFeeStructures = async () => {
     try {
@@ -272,14 +267,7 @@ const Fees: React.FC = () => {
     }
   };
 
-  const filterOptions = [
-    { label: 'All Status', value: '' },
-    { label: 'Paid', value: 'paid' },
-    { label: 'Partial', value: 'partial' },
-    { label: 'Pending', value: 'pending' },
-    { label: 'Overdue', value: 'overdue' },
-    { label: 'Waived', value: 'waived' },
-  ];
+
 
   const feeTypeOptions = [
     { label: 'Monthly', value: 'monthly' },
@@ -290,12 +278,12 @@ const Fees: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Hostel Fees"
-        description="Manage hostel fees, payments, and fee structures"
-        actions={
+             <PageHeader
+         title="Hostel Fees"
+         subtitle="Manage hostel fees, payments, and fee structures"
+         actions={
           <div className="flex space-x-3">
-            <Button variant="primary" size="sm" onClick={() => setShowFeeStructureModal(true)}>
+                         <Button variant="default" size="sm" onClick={() => setShowFeeStructureModal(true)}>
               <PlusIcon className="h-4 w-4 mr-2" />
               Add Fee Structure
             </Button>
@@ -358,14 +346,11 @@ const Fees: React.FC = () => {
         </Card>
       </div>
 
-      <FilterBar
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        searchPlaceholder="Search by student name, ID, or fee..."
-        filterOptions={[
-          { key: 'payment_status', label: 'Payment Status', options: filterOptions },
-        ]}
-      />
+             <FilterBar
+         searchPlaceholder="Search by student name, ID, or fee..."
+         searchValue={filters.search}
+         onSearchChange={(value) => handleFilterChange({ ...filters, search: value })}
+       />
 
       <Card>
         <div className="overflow-x-auto">
@@ -456,14 +441,14 @@ const Fees: React.FC = () => {
           </table>
         </div>
 
-        <div className="px-6 py-4 border-t border-gray-200">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalCount={totalCount}
-            onPageChange={setCurrentPage}
-          />
-        </div>
+                 <div className="px-6 py-4 border-t border-gray-200">
+           <Pagination
+             page={currentPage}
+             pageSize={10}
+             total={totalCount}
+             onPageChange={(page) => setCurrentPage(page)}
+           />
+         </div>
       </Card>
 
       {/* Fee Structures Section */}
@@ -544,16 +529,18 @@ const Fees: React.FC = () => {
             </div>
           )}
 
-          <Input
-            label="Payment Amount"
-            type="number"
-            value={paymentForm.payment_amount}
-            onChange={(e) => setPaymentForm({ ...paymentForm, payment_amount: parseFloat(e.target.value) })}
-            min={0}
-            max={selectedFee?.balance || 0}
-            step={0.01}
-            required
-          />
+                     <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Payment Amount</label>
+             <Input
+               type="number"
+               value={paymentForm.payment_amount}
+               onChange={(e) => setPaymentForm({ ...paymentForm, payment_amount: parseFloat(e.target.value) })}
+               min={0}
+               max={selectedFee?.balance || 0}
+               step={0.01}
+               required
+             />
+           </div>
 
           <Textarea
             label="Payment Notes"
@@ -567,9 +554,9 @@ const Fees: React.FC = () => {
           <Button variant="secondary" onClick={() => setShowPaymentModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleRecordPayment}>
-            Record Payment
-          </Button>
+                     <Button variant="default" onClick={handleRecordPayment}>
+             Record Payment
+           </Button>
         </div>
       </Modal>
 
@@ -581,38 +568,55 @@ const Fees: React.FC = () => {
         size="lg"
       >
         <div className="space-y-4">
-          <Input
-            label="Fee Name"
-            value={feeStructureForm.name}
-            onChange={(e) => setFeeStructureForm({ ...feeStructureForm, name: e.target.value })}
-            required
-          />
+                     <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Fee Name</label>
+             <Input
+               value={feeStructureForm.name}
+               onChange={(e) => setFeeStructureForm({ ...feeStructureForm, name: e.target.value })}
+               required
+             />
+           </div>
 
-          <Select
-            label="Fee Type"
-            value={feeStructureForm.fee_type}
-            onChange={(value) => setFeeStructureForm({ ...feeStructureForm, fee_type: value })}
-            options={feeTypeOptions}
-            required
-          />
+                       <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Fee Type</label>
+              <Select
+                value={feeStructureForm.fee_type}
+                onValueChange={(value) => setFeeStructureForm({ ...feeStructureForm, fee_type: value })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select fee type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {feeTypeOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <Input
-            label="Amount"
-            type="number"
-            value={feeStructureForm.amount}
-            onChange={(e) => setFeeStructureForm({ ...feeStructureForm, amount: parseFloat(e.target.value) })}
-            min={0}
-            step={0.01}
-            required
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+             <Input
+               type="number"
+               value={feeStructureForm.amount}
+               onChange={(e) => setFeeStructureForm({ ...feeStructureForm, amount: parseFloat(e.target.value) })}
+               min={0}
+               step={0.01}
+               required
+             />
+           </div>
 
-          <Input
-            label="Room Type"
-            value={feeStructureForm.room_type}
-            onChange={(e) => setFeeStructureForm({ ...feeStructureForm, room_type: e.target.value })}
-            placeholder="e.g., All Rooms, Single Room, Double Room"
-            required
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+             <Input
+               value={feeStructureForm.room_type}
+               onChange={(e) => setFeeStructureForm({ ...feeStructureForm, room_type: e.target.value })}
+               placeholder="e.g., All Rooms, Single Room, Double Room"
+               required
+             />
+           </div>
 
           <Textarea
             label="Description"
@@ -626,9 +630,9 @@ const Fees: React.FC = () => {
           <Button variant="secondary" onClick={() => setShowFeeStructureModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleCreateFeeStructure}>
-            Create Fee Structure
-          </Button>
+                     <Button variant="default" onClick={handleCreateFeeStructure}>
+             Create Fee Structure
+           </Button>
         </div>
       </Modal>
 

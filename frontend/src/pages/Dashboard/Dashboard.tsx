@@ -3,12 +3,9 @@ import {
   UsersIcon, AcademicCapIcon, ClockIcon, DocumentTextIcon,
   ChartBarIcon, ArrowTrendingUpIcon, ExclamationTriangleIcon, CheckCircleIcon,
   BuildingLibraryIcon, BanknotesIcon, TruckIcon, HomeModernIcon,
-  CubeIcon, BriefcaseIcon, CalendarDaysIcon, BuildingStorefrontIcon, PlayCircleIcon,
-  ShoppingBagIcon, CalendarIcon, BellIcon, EyeIcon, PlusIcon
+  BriefcaseIcon, CalendarDaysIcon, EyeIcon, PlusIcon
 } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
-import { Card } from '../../components/UI/Card';
-import { PageHeader } from '../../components/UI/Page';
 import { useAuth } from '../../stores/authStore';
 import { useClasses } from '../../stores/academicStore';
 import { useAttendanceSessions } from '../../stores/attendanceStore';
@@ -35,7 +32,7 @@ interface RecentActivity {
 }
 
 const Dashboard: React.FC = () => {
-  const { t, formatNumber, formatCurrency } = useTranslation();
+  const { t, formatCurrency } = useTranslation();
   const { user } = useAuth();
   const { classes, fetchClasses } = useClasses();
   const { sessions, fetchSessions } = useAttendanceSessions();
@@ -103,7 +100,7 @@ const Dashboard: React.FC = () => {
     ];
 
     setStats(calculatedStats);
-  }, [classes, exams]);
+  }, [classes, exams, t]);
 
   useEffect(() => {
     // Mock recent activities
@@ -143,7 +140,7 @@ const Dashboard: React.FC = () => {
     ];
 
     setRecentActivities(activities);
-  }, []);
+  }, [t]);
 
   const moduleCards: ModuleCard[] = [
     {

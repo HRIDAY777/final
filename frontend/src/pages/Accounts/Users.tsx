@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader } from '../../components/UI/Card';
+import { Card } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import {
   PlusIcon,

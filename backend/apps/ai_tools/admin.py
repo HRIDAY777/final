@@ -21,8 +21,7 @@ class AIModelAdmin(admin.ModelAdmin):
     ]
     search_fields = ['name', 'description', 'created_by__username']
     readonly_fields = ['id', 'created_at', 'updated_at']
-    # filter_horizontal removed - shared_with is not ManyToManyField
-    
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'description', 'model_type', 'version')
@@ -34,7 +33,9 @@ class AIModelAdmin(admin.ModelAdmin):
             'fields': ('accuracy', 'precision', 'recall', 'f1_score')
         }),
         ('Status & Tracking', {
-            'fields': ('status', 'is_active', 'last_trained', 'training_duration')
+            'fields': (
+                'status', 'is_active', 'last_trained', 'training_duration'
+            )
         }),
         ('Access Control', {
             'fields': ('created_by', 'shared_with')
@@ -44,7 +45,7 @@ class AIModelAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def accuracy_display(self, obj):
         if obj.accuracy:
             color = ('green' if obj.accuracy >= 0.8
@@ -55,7 +56,7 @@ class AIModelAdmin(admin.ModelAdmin):
             )
         return "-"
     accuracy_display.short_description = 'Accuracy'
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('created_by')
 
@@ -74,8 +75,7 @@ class AIQuizGeneratorAdmin(admin.ModelAdmin):
         'title', 'description', 'subject__name', 'created_by__username'
     ]
     readonly_fields = ['id', 'generated_at', 'created_at', 'updated_at']
-    # filter_horizontal removed - shared_with is not ManyToManyField
-    
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'description', 'subject', 'syllabus_topic')
@@ -90,7 +90,9 @@ class AIQuizGeneratorAdmin(admin.ModelAdmin):
             'fields': ('ai_model', 'generation_params')
         }),
         ('Status & Tracking', {
-            'fields': ('is_generated', 'generation_status', 'generated_at')
+            'fields': (
+                'is_generated', 'generation_status', 'generated_at'
+            )
         }),
         ('Access Control', {
             'fields': ('created_by', 'shared_with')
@@ -100,7 +102,7 @@ class AIQuizGeneratorAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
             'subject', 'ai_model', 'created_by'
@@ -118,7 +120,7 @@ class AIQuestionAdmin(admin.ModelAdmin):
     ]
     search_fields = ['question_text', 'quiz__title', 'correct_answer']
     readonly_fields = ['id', 'created_at', 'updated_at']
-    
+
     fieldsets = (
         ('Question Information', {
             'fields': ('quiz', 'question_text', 'question_type', 'difficulty')
@@ -137,7 +139,7 @@ class AIQuestionAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def confidence_score_display(self, obj):
         if obj.confidence_score:
             color = ('green' if obj.confidence_score >= 0.8
@@ -148,7 +150,7 @@ class AIQuestionAdmin(admin.ModelAdmin):
             )
         return "-"
     confidence_score_display.short_description = 'Confidence'
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('quiz', 'ai_model')
 
@@ -157,9 +159,8 @@ class AIQuestionAdmin(admin.ModelAdmin):
 class AILessonSummarizerAdmin(admin.ModelAdmin):
     list_display = [
         'title', 'lesson', 'subject', 'summary_type',
-        'is_generated',
-        'generation_status', 'readability_score_display',
-        'created_by', 'created_at'
+        'is_generated', 'generation_status',
+        'readability_score_display', 'created_by', 'created_at'
     ]
     list_filter = [
         'summary_type', 'is_generated', 'generation_status', 'created_at'
@@ -168,14 +169,15 @@ class AILessonSummarizerAdmin(admin.ModelAdmin):
         'title', 'lesson__title', 'subject__name', 'created_by__username'
     ]
     readonly_fields = ['id', 'generated_at', 'created_at', 'updated_at']
-    # filter_horizontal removed - shared_with is not ManyToManyField
-    
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'lesson', 'subject')
         }),
         ('Summary Content', {
-            'fields': ('summary_type', 'summary_content', 'key_points', 'vocabulary')
+            'fields': (
+                'summary_type', 'summary_content', 'key_points', 'vocabulary'
+            )
         }),
         ('AI Generation', {
             'fields': ('ai_model', 'generation_params')
@@ -184,7 +186,9 @@ class AILessonSummarizerAdmin(admin.ModelAdmin):
             'fields': ('readability_score', 'coherence_score')
         }),
         ('Status & Tracking', {
-            'fields': ('is_generated', 'generation_status', 'generated_at')
+            'fields': (
+                'is_generated', 'generation_status', 'generated_at'
+            )
         }),
         ('Access Control', {
             'fields': ('created_by', 'shared_with')
@@ -194,7 +198,7 @@ class AILessonSummarizerAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def readability_score_display(self, obj):
         if obj.readability_score:
             color = ('green' if obj.readability_score >= 0.7
@@ -205,7 +209,7 @@ class AILessonSummarizerAdmin(admin.ModelAdmin):
             )
         return "-"
     readability_score_display.short_description = 'Readability'
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
             'lesson', 'subject', 'ai_model', 'created_by'
@@ -215,11 +219,9 @@ class AILessonSummarizerAdmin(admin.ModelAdmin):
 @admin.register(AIPerformancePredictor)
 class AIPerformancePredictorAdmin(admin.ModelAdmin):
     list_display = [
-        'student', 'subject', 'prediction_type',
-        'predicted_value',
+        'student', 'subject', 'prediction_type', 'predicted_value',
         'confidence_level', 'confidence_score_display',
-        'intervention_needed',
-        'created_at'
+        'intervention_needed', 'created_at'
     ]
     list_filter = [
         'prediction_type', 'confidence_level', 'intervention_needed',
@@ -229,13 +231,15 @@ class AIPerformancePredictorAdmin(admin.ModelAdmin):
         'student__first_name', 'student__last_name', 'subject__name'
     ]
     readonly_fields = ['id', 'created_at', 'updated_at']
-    
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('student', 'subject', 'prediction_type')
         }),
         ('Prediction Details', {
-            'fields': ('predicted_value', 'confidence_level', 'confidence_score')
+            'fields': (
+                'predicted_value', 'confidence_level', 'confidence_score'
+            )
         }),
         ('Input Features', {
             'fields': ('input_features', 'feature_importance')
@@ -244,87 +248,115 @@ class AIPerformancePredictorAdmin(admin.ModelAdmin):
             'fields': ('ai_model', 'generation_params')
         }),
         ('Recommendations', {
-            'fields': ('recommendations', 'intervention_needed', 'intervention_urgency')
+            'fields': (
+                'recommendations', 'intervention_needed',
+                'intervention_urgency'
+            )
         }),
         ('Validation', {
             'fields': ('actual_value', 'prediction_accuracy')
         }),
         ('Metadata', {
-            'fields': ('academic_year', 'semester', 'id', 'created_at', 'updated_at'),
+            'fields': (
+                'academic_year', 'semester', 'id', 'created_at', 'updated_at'
+            ),
             'classes': ('collapse',)
         }),
     )
-    
+
     def confidence_score_display(self, obj):
         if obj.confidence_score:
-            color = 'green' if obj.confidence_score >= 0.8 else 'orange' if obj.confidence_score >= 0.6 else 'red'
+            color = ('green' if obj.confidence_score >= 0.8
+                     else 'orange' if obj.confidence_score >= 0.6 else 'red')
             return format_html(
                 '<span style="color: {};">{:.2%}</span>',
                 color, obj.confidence_score
             )
         return "-"
     confidence_score_display.short_description = 'Confidence'
-    
+
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('student', 'subject', 'ai_model')
+        return super().get_queryset(request).select_related(
+            'student', 'subject', 'ai_model'
+        )
 
 
 @admin.register(AIAttendanceAnomalyDetector)
 class AIAttendanceAnomalyDetectorAdmin(admin.ModelAdmin):
     list_display = [
-        'student', 'class_enrolled', 'anomaly_type', 'severity', 'detection_date',
-        'attendance_rate_display', 'deviation_display', 'intervention_needed',
-        'is_resolved', 'created_at'
+        'student', 'class_enrolled', 'anomaly_type', 'severity',
+        'detection_date', 'attendance_rate_display',
+        'deviation_display', 'intervention_needed', 'is_resolved',
+        'created_at'
     ]
     list_filter = [
-        'anomaly_type', 'severity', 'intervention_needed', 'is_resolved', 'detection_date', 'created_at'
+        'anomaly_type', 'severity', 'intervention_needed', 'is_resolved',
+        'detection_date', 'created_at'
     ]
-    search_fields = ['student__first_name', 'student__last_name', 'class_enrolled__name']
+    search_fields = [
+        'student__first_name', 'student__last_name', 'class_enrolled__name'
+    ]
     readonly_fields = ['id', 'created_at', 'updated_at']
-    
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('student', 'class_enrolled', 'anomaly_type', 'severity')
         }),
         ('Detection Data', {
-            'fields': ('detection_date', 'attendance_rate', 'historical_average', 'deviation')
+            'fields': (
+                'detection_date', 'attendance_rate', 'historical_average',
+                'deviation'
+            )
         }),
         ('Analysis', {
-            'fields': ('contributing_factors', 'pattern_analysis', 'peer_comparison')
+            'fields': (
+                'contributing_factors', 'pattern_analysis', 'peer_comparison'
+            )
         }),
         ('AI Model', {
-            'fields': ('ai_model', 'detection_params', 'confidence_score')
+            'fields': (
+                'ai_model', 'detection_params', 'confidence_score'
+            )
         }),
         ('Actions & Recommendations', {
-            'fields': ('recommendations', 'intervention_needed', 'intervention_actions')
+            'fields': (
+                'recommendations', 'intervention_needed',
+                'intervention_actions'
+            )
         }),
         ('Status Tracking', {
-            'fields': ('is_resolved', 'resolution_date', 'resolution_notes')
+            'fields': (
+                'is_resolved', 'resolution_date', 'resolution_notes'
+            )
         }),
         ('Metadata', {
             'fields': ('id', 'created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
-    
+
     def attendance_rate_display(self, obj):
-        color = 'green' if obj.attendance_rate >= 90 else 'orange' if obj.attendance_rate >= 75 else 'red'
+        color = ('green' if obj.attendance_rate >= 90
+                 else 'orange' if obj.attendance_rate >= 75 else 'red')
         return format_html(
             '<span style="color: {};">{:.1f}%</span>',
             color, obj.attendance_rate
         )
     attendance_rate_display.short_description = 'Attendance Rate'
-    
+
     def deviation_display(self, obj):
-        color = 'red' if abs(obj.deviation) > 20 else 'orange' if abs(obj.deviation) > 10 else 'green'
+        color = ('red' if abs(obj.deviation) > 20
+                 else 'orange' if abs(obj.deviation) > 10 else 'green')
         return format_html(
             '<span style="color: {};">{:.1f}%</span>',
             color, obj.deviation
         )
     deviation_display.short_description = 'Deviation'
-    
+
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('student', 'class_section', 'ai_model')
+        return super().get_queryset(request).select_related(
+            'student', 'class_section', 'ai_model'
+        )
 
 
 @admin.register(AINaturalLanguageQuery)
@@ -338,7 +370,7 @@ class AINaturalLanguageQueryAdmin(admin.ModelAdmin):
     ]
     search_fields = ['query_text', 'user__username', 'intent']
     readonly_fields = ['id', 'created_at', 'updated_at']
-    
+
     fieldsets = (
         ('Query Information', {
             'fields': ('user', 'query_text', 'query_type', 'intent')
@@ -347,13 +379,17 @@ class AINaturalLanguageQueryAdmin(admin.ModelAdmin):
             'fields': ('processed_query', 'sql_query', 'parameters')
         }),
         ('Results', {
-            'fields': ('result_data', 'result_summary', 'visualization_config')
+            'fields': (
+                'result_data', 'result_summary', 'visualization_config'
+            )
         }),
         ('AI Model', {
             'fields': ('ai_model', 'processing_params')
         }),
         ('Performance Metrics', {
-            'fields': ('processing_time', 'confidence_score', 'accuracy_score')
+            'fields': (
+                'processing_time', 'confidence_score', 'accuracy_score'
+            )
         }),
         ('Status & Error Handling', {
             'fields': ('status', 'error_message')
@@ -366,23 +402,24 @@ class AINaturalLanguageQueryAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def processing_time_display(self, obj):
         if obj.processing_time:
             return str(obj.processing_time).split('.')[0]
         return "-"
     processing_time_display.short_description = 'Processing Time'
-    
+
     def confidence_score_display(self, obj):
         if obj.confidence_score:
-            color = 'green' if obj.confidence_score >= 0.8 else 'orange' if obj.confidence_score >= 0.6 else 'red'
+            color = ('green' if obj.confidence_score >= 0.8
+                     else 'orange' if obj.confidence_score >= 0.6 else 'red')
             return format_html(
                 '<span style="color: {};">{:.2%}</span>',
                 color, obj.confidence_score
             )
         return "-"
     confidence_score_display.short_description = 'Confidence'
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('user', 'ai_model')
 
@@ -396,9 +433,14 @@ class AITrainingJobAdmin(admin.ModelAdmin):
     list_filter = [
         'status', 'created_at'
     ]
-    search_fields = ['name', 'description', 'ai_model__name', 'created_by__username']
-    readonly_fields = ['id', 'started_at', 'completed_at', 'duration', 'created_at', 'updated_at']
-    
+    search_fields = [
+        'name', 'description', 'ai_model__name', 'created_by__username'
+    ]
+    readonly_fields = [
+        'id', 'started_at', 'completed_at', 'duration',
+        'created_at', 'updated_at'
+    ]
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'description', 'ai_model')
@@ -407,10 +449,14 @@ class AITrainingJobAdmin(admin.ModelAdmin):
             'fields': ('training_config', 'dataset_config')
         }),
         ('Job Tracking', {
-            'fields': ('status', 'progress', 'current_epoch', 'total_epochs')
+            'fields': (
+                'status', 'progress', 'current_epoch', 'total_epochs'
+            )
         }),
         ('Performance Metrics', {
-            'fields': ('training_metrics', 'validation_metrics', 'final_metrics')
+            'fields': (
+                'training_metrics', 'validation_metrics', 'final_metrics'
+            )
         }),
         ('Timing', {
             'fields': ('started_at', 'completed_at', 'duration')
@@ -429,23 +475,26 @@ class AITrainingJobAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def progress_display(self, obj):
-        color = 'green' if obj.progress >= 80 else 'orange' if obj.progress >= 50 else 'red'
+        color = ('green' if obj.progress >= 80
+                 else 'orange' if obj.progress >= 50 else 'red')
         return format_html(
             '<span style="color: {};">{}%</span>',
             color, obj.progress
         )
     progress_display.short_description = 'Progress'
-    
+
     def duration_display(self, obj):
         if obj.duration:
             return str(obj.duration).split('.')[0]
         return "-"
     duration_display.short_description = 'Duration'
-    
+
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('ai_model', 'created_by')
+        return super().get_queryset(request).select_related(
+            'ai_model', 'created_by'
+        )
 
 
 @admin.register(AIDataSource)
@@ -459,8 +508,7 @@ class AIDataSourceAdmin(admin.ModelAdmin):
     ]
     search_fields = ['name', 'description', 'created_by__username']
     readonly_fields = ['id', 'created_at', 'updated_at']
-    # filter_horizontal removed - shared_with is not ManyToManyField
-    
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'description', 'source_type')
@@ -469,7 +517,9 @@ class AIDataSourceAdmin(admin.ModelAdmin):
             'fields': ('connection_config', 'schema_config')
         }),
         ('Data Quality', {
-            'fields': ('data_quality_score', 'last_updated', 'record_count')
+            'fields': (
+                'data_quality_score', 'last_updated', 'record_count'
+            )
         }),
         ('Access Control', {
             'fields': ('is_active', 'created_by', 'shared_with')
@@ -479,17 +529,18 @@ class AIDataSourceAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def data_quality_score_display(self, obj):
         if obj.data_quality_score:
-            color = 'green' if obj.data_quality_score >= 0.8 else 'orange' if obj.data_quality_score >= 0.6 else 'red'
+            color = ('green' if obj.data_quality_score >= 0.8
+                     else 'orange' if obj.data_quality_score >= 0.6 else 'red')
             return format_html(
                 '<span style="color: {};">{:.2%}</span>',
                 color, obj.data_quality_score
             )
         return "-"
     data_quality_score_display.short_description = 'Data Quality'
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('created_by')
 
@@ -505,7 +556,7 @@ class AIUsageLogAdmin(admin.ModelAdmin):
     ]
     search_fields = ['user__username', 'tool_type', 'error_message']
     readonly_fields = ['id', 'timestamp']
-    
+
     fieldsets = (
         ('Usage Information', {
             'fields': ('user', 'tool_type', 'ai_model', 'model_version')
@@ -524,13 +575,13 @@ class AIUsageLogAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def processing_time_display(self, obj):
         if obj.processing_time:
             return str(obj.processing_time).split('.')[0]
         return "-"
     processing_time_display.short_description = 'Processing Time'
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('user', 'ai_model')
 
@@ -540,13 +591,16 @@ class AIUsageLogAdmin(admin.ModelAdmin):
 def activate_ai_models(modeladmin, request, queryset):
     queryset.update(status='active', is_active=True)
 
+
 @admin.action(description="Deactivate selected AI models")
 def deactivate_ai_models(modeladmin, request, queryset):
     queryset.update(status='inactive', is_active=False)
 
+
 @admin.action(description="Mark selected anomalies as resolved")
 def resolve_anomalies(modeladmin, request, queryset):
     queryset.update(is_resolved=True, resolution_date=timezone.now())
+
 
 @admin.action(description="Retrain selected AI models")
 def retrain_models(modeladmin, request, queryset):
@@ -555,7 +609,11 @@ def retrain_models(modeladmin, request, queryset):
         model.is_active = False
         model.save()
 
-# Add actions to admin classes
-AIModelAdmin.actions = [activate_ai_models, deactivate_ai_models, retrain_models]
-AIAttendanceAnomalyDetectorAdmin.actions = [resolve_anomalies]
 
+# Add actions to admin classes
+AIModelAdmin.actions = [
+    activate_ai_models, deactivate_ai_models, retrain_models
+]
+AIAttendanceAnomalyDetectorAdmin.actions = [
+    resolve_anomalies
+]

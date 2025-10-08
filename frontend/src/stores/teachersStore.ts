@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { api } from '../services/api';
+import { apiService } from '../services/api';
 
 export interface Teacher {
   id: number;
@@ -188,61 +188,109 @@ interface TeachersState {
 
 interface TeachersActions {
   // Fetch actions
+  // eslint-disable-next-line no-unused-vars
   fetchTeachers: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherProfile: (teacherId: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherQualifications: (teacherId: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherExperiences: (teacherId: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherSubjects: (teacherId: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherClasses: (teacherId: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherAttendance: (teacherId: number, params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherSalaries: (teacherId: number, params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherLeaves: (teacherId: number, params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherPerformances: (teacherId: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTeacherDocuments: (teacherId: number) => Promise<void>;
   
   // Create actions
+  // eslint-disable-next-line no-unused-vars
   createTeacher: (data: Partial<Teacher>) => Promise<Teacher>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherProfile: (data: Partial<TeacherProfile>) => Promise<TeacherProfile>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherQualification: (data: Partial<TeacherQualification>) => Promise<TeacherQualification>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherExperience: (data: Partial<TeacherExperience>) => Promise<TeacherExperience>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherSubject: (data: Partial<TeacherSubject>) => Promise<TeacherSubject>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherClass: (data: Partial<TeacherClass>) => Promise<TeacherClass>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherAttendance: (data: Partial<TeacherAttendance>) => Promise<TeacherAttendance>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherSalary: (data: Partial<TeacherSalary>) => Promise<TeacherSalary>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherLeave: (data: Partial<TeacherLeave>) => Promise<TeacherLeave>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherPerformance: (data: Partial<TeacherPerformance>) => Promise<TeacherPerformance>;
+  // eslint-disable-next-line no-unused-vars
   createTeacherDocument: (data: Partial<TeacherDocument>) => Promise<TeacherDocument>;
   
   // Update actions
+  // eslint-disable-next-line no-unused-vars
   updateTeacher: (id: number, data: Partial<Teacher>) => Promise<Teacher>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherProfile: (id: number, data: Partial<TeacherProfile>) => Promise<TeacherProfile>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherQualification: (id: number, data: Partial<TeacherQualification>) => Promise<TeacherQualification>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherExperience: (id: number, data: Partial<TeacherExperience>) => Promise<TeacherExperience>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherSubject: (id: number, data: Partial<TeacherSubject>) => Promise<TeacherSubject>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherClass: (id: number, data: Partial<TeacherClass>) => Promise<TeacherClass>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherAttendance: (id: number, data: Partial<TeacherAttendance>) => Promise<TeacherAttendance>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherSalary: (id: number, data: Partial<TeacherSalary>) => Promise<TeacherSalary>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherLeave: (id: number, data: Partial<TeacherLeave>) => Promise<TeacherLeave>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherPerformance: (id: number, data: Partial<TeacherPerformance>) => Promise<TeacherPerformance>;
+  // eslint-disable-next-line no-unused-vars
   updateTeacherDocument: (id: number, data: Partial<TeacherDocument>) => Promise<TeacherDocument>;
   
   // Delete actions
+  // eslint-disable-next-line no-unused-vars
   deleteTeacher: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherProfile: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherQualification: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherExperience: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherSubject: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherClass: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherAttendance: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherSalary: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherLeave: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherPerformance: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   deleteTeacherDocument: (id: number) => Promise<void>;
   
   // Utility actions
+  // eslint-disable-next-line no-unused-vars
   setSelectedTeacher: (teacher: Teacher | null) => void;
+  // eslint-disable-next-line no-unused-vars
   setFilters: (filters: Partial<TeachersState['filters']>) => void;
+  // eslint-disable-next-line no-unused-vars
   setPagination: (pagination: Partial<TeachersState['pagination']>) => void;
   clearError: () => void;
   reset: () => void;
@@ -279,6 +327,7 @@ const initialState: TeachersState = {
 
 export const useTeachersStore = create<TeachersState & TeachersActions>()(
   devtools(
+    // eslint-disable-next-line no-unused-vars
     (set, get) => ({
       ...initialState,
 
@@ -286,16 +335,28 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
       fetchTeachers: async (params = {}) => {
         set({ loading: true, error: null });
         try {
-          const response = await api.get('/teachers/', { params });
-          set({
-            teachers: response.data.results || response.data,
-            pagination: {
-              page: response.data.page || 1,
-              pageSize: response.data.page_size || 20,
-              total: response.data.count || response.data.length,
-            },
-            loading: false,
-          });
+          const response = await apiService.get<{ results: Teacher[], page: number, page_size: number, count: number } | Teacher[]>('/teachers/', { params });
+          if ('results' in response) {
+            set({
+              teachers: response.results,
+              pagination: {
+                page: response.page || 1,
+                pageSize: response.page_size || 20,
+                total: response.count || 0,
+              },
+              loading: false,
+            });
+          } else {
+            set({
+              teachers: response,
+              pagination: {
+                page: 1,
+                pageSize: response.length,
+                total: response.length,
+              },
+              loading: false,
+            });
+          }
         } catch (error: any) {
           set({
             error: error.response?.data?.message || 'Failed to fetch teachers',
@@ -307,8 +368,8 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
       fetchTeacherById: async (id: number) => {
         set({ loading: true, error: null });
         try {
-          const response = await api.get(`/teachers/${id}/`);
-          set({ selectedTeacher: response.data, loading: false });
+          const response = await apiService.get<Teacher>(`/teachers/${id}/`);
+          set({ selectedTeacher: response, loading: false });
         } catch (error: any) {
           set({
             error: error.response?.data?.message || 'Failed to fetch teacher',
@@ -319,11 +380,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherProfile: async (teacherId: number) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/profile/`);
+          const response = await apiService.get<TeacherProfile>(`/teachers/${teacherId}/profile/`);
           set((state) => ({
             teacherProfiles: state.teacherProfiles.map(profile =>
-              profile.teacher === teacherId ? response.data : profile
-            ).concat(response.data),
+              profile.teacher === teacherId ? response : profile
+            ).concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher profile' });
@@ -332,10 +393,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherQualifications: async (teacherId: number) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/qualifications/`);
+          const response = await apiService.get<TeacherQualification[]>(`/teachers/${teacherId}/qualifications/`);
           set((state) => ({
             teacherQualifications: state.teacherQualifications.filter(qual => qual.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher qualifications' });
@@ -344,10 +405,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherExperiences: async (teacherId: number) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/experiences/`);
+          const response = await apiService.get<TeacherExperience[]>(`/teachers/${teacherId}/experiences/`);
           set((state) => ({
             teacherExperiences: state.teacherExperiences.filter(exp => exp.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher experiences' });
@@ -356,10 +417,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherSubjects: async (teacherId: number) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/subjects/`);
+          const response = await apiService.get<TeacherSubject[]>(`/teachers/${teacherId}/subjects/`);
           set((state) => ({
             teacherSubjects: state.teacherSubjects.filter(subject => subject.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher subjects' });
@@ -368,10 +429,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherClasses: async (teacherId: number) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/classes/`);
+          const response = await apiService.get<TeacherClass[]>(`/teachers/${teacherId}/classes/`);
           set((state) => ({
             teacherClasses: state.teacherClasses.filter(cls => cls.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher classes' });
@@ -380,10 +441,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherAttendance: async (teacherId: number, params = {}) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/attendance/`, { params });
+          const response = await apiService.get<TeacherAttendance[]>(`/teachers/${teacherId}/attendance/`, { params });
           set((state) => ({
             teacherAttendance: state.teacherAttendance.filter(att => att.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher attendance' });
@@ -392,10 +453,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherSalaries: async (teacherId: number, params = {}) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/salaries/`, { params });
+          const response = await apiService.get<TeacherSalary[]>(`/teachers/${teacherId}/salaries/`, { params });
           set((state) => ({
             teacherSalaries: state.teacherSalaries.filter(salary => salary.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher salaries' });
@@ -404,10 +465,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherLeaves: async (teacherId: number, params = {}) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/leaves/`, { params });
+          const response = await apiService.get<TeacherLeave[]>(`/teachers/${teacherId}/leaves/`, { params });
           set((state) => ({
             teacherLeaves: state.teacherLeaves.filter(leave => leave.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher leaves' });
@@ -416,10 +477,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherPerformances: async (teacherId: number) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/performances/`);
+          const response = await apiService.get<TeacherPerformance[]>(`/teachers/${teacherId}/performances/`);
           set((state) => ({
             teacherPerformances: state.teacherPerformances.filter(perf => perf.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher performances' });
@@ -428,10 +489,10 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       fetchTeacherDocuments: async (teacherId: number) => {
         try {
-          const response = await api.get(`/teachers/${teacherId}/documents/`);
+          const response = await apiService.get<TeacherDocument[]>(`/teachers/${teacherId}/documents/`);
           set((state) => ({
             teacherDocuments: state.teacherDocuments.filter(doc => doc.teacher !== teacherId)
-              .concat(response.data),
+              .concat(response),
           }));
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch teacher documents' });
@@ -442,12 +503,12 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
       createTeacher: async (data: Partial<Teacher>) => {
         set({ loading: true, error: null });
         try {
-          const response = await api.post('/teachers/', data);
+          const response = await apiService.post<Teacher>('/teachers/', data);
           set((state) => ({
-            teachers: [...state.teachers, response.data],
+            teachers: [...state.teachers, response],
             loading: false,
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({
             error: error.response?.data?.message || 'Failed to create teacher',
@@ -459,11 +520,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherProfile: async (data: Partial<TeacherProfile>) => {
         try {
-          const response = await api.post('/teachers/profiles/', data);
+          const response = await apiService.post<TeacherProfile>('/teachers/profiles/', data);
           set((state) => ({
-            teacherProfiles: [...state.teacherProfiles, response.data],
+            teacherProfiles: [...state.teacherProfiles, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher profile' });
           throw error;
@@ -472,11 +533,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherQualification: async (data: Partial<TeacherQualification>) => {
         try {
-          const response = await api.post('/teachers/qualifications/', data);
+          const response = await apiService.post<TeacherQualification>('/teachers/qualifications/', data);
           set((state) => ({
-            teacherQualifications: [...state.teacherQualifications, response.data],
+            teacherQualifications: [...state.teacherQualifications, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher qualification' });
           throw error;
@@ -485,11 +546,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherExperience: async (data: Partial<TeacherExperience>) => {
         try {
-          const response = await api.post('/teachers/experiences/', data);
+          const response = await apiService.post<TeacherExperience>('/teachers/experiences/', data);
           set((state) => ({
-            teacherExperiences: [...state.teacherExperiences, response.data],
+            teacherExperiences: [...state.teacherExperiences, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher experience' });
           throw error;
@@ -498,11 +559,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherSubject: async (data: Partial<TeacherSubject>) => {
         try {
-          const response = await api.post('/teachers/subjects/', data);
+          const response = await apiService.post<TeacherSubject>('/teachers/subjects/', data);
           set((state) => ({
-            teacherSubjects: [...state.teacherSubjects, response.data],
+            teacherSubjects: [...state.teacherSubjects, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher subject' });
           throw error;
@@ -511,11 +572,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherClass: async (data: Partial<TeacherClass>) => {
         try {
-          const response = await api.post('/teachers/classes/', data);
+          const response = await apiService.post<TeacherClass>('/teachers/classes/', data);
           set((state) => ({
-            teacherClasses: [...state.teacherClasses, response.data],
+            teacherClasses: [...state.teacherClasses, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher class' });
           throw error;
@@ -524,11 +585,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherAttendance: async (data: Partial<TeacherAttendance>) => {
         try {
-          const response = await api.post('/teachers/attendance/', data);
+          const response = await apiService.post<TeacherAttendance>('/teachers/attendance/', data);
           set((state) => ({
-            teacherAttendance: [...state.teacherAttendance, response.data],
+            teacherAttendance: [...state.teacherAttendance, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher attendance' });
           throw error;
@@ -537,11 +598,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherSalary: async (data: Partial<TeacherSalary>) => {
         try {
-          const response = await api.post('/teachers/salaries/', data);
+          const response = await apiService.post<TeacherSalary>('/teachers/salaries/', data);
           set((state) => ({
-            teacherSalaries: [...state.teacherSalaries, response.data],
+            teacherSalaries: [...state.teacherSalaries, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher salary' });
           throw error;
@@ -550,11 +611,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherLeave: async (data: Partial<TeacherLeave>) => {
         try {
-          const response = await api.post('/teachers/leaves/', data);
+          const response = await apiService.post<TeacherLeave>('/teachers/leaves/', data);
           set((state) => ({
-            teacherLeaves: [...state.teacherLeaves, response.data],
+            teacherLeaves: [...state.teacherLeaves, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher leave' });
           throw error;
@@ -563,11 +624,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherPerformance: async (data: Partial<TeacherPerformance>) => {
         try {
-          const response = await api.post('/teachers/performances/', data);
+          const response = await apiService.post<TeacherPerformance>('/teachers/performances/', data);
           set((state) => ({
-            teacherPerformances: [...state.teacherPerformances, response.data],
+            teacherPerformances: [...state.teacherPerformances, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher performance' });
           throw error;
@@ -576,11 +637,11 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       createTeacherDocument: async (data: Partial<TeacherDocument>) => {
         try {
-          const response = await api.post('/teachers/documents/', data);
+          const response = await apiService.post<TeacherDocument>('/teachers/documents/', data);
           set((state) => ({
-            teacherDocuments: [...state.teacherDocuments, response.data],
+            teacherDocuments: [...state.teacherDocuments, response],
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to create teacher document' });
           throw error;
@@ -591,15 +652,15 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
       updateTeacher: async (id: number, data: Partial<Teacher>) => {
         set({ loading: true, error: null });
         try {
-          const response = await api.patch(`/teachers/${id}/`, data);
+          const response = await apiService.patch<Teacher>(`/teachers/${id}/`, data);
           set((state) => ({
             teachers: state.teachers.map(teacher =>
-              teacher.id === id ? response.data : teacher
+              teacher.id === id ? response : teacher
             ),
-            selectedTeacher: state.selectedTeacher?.id === id ? response.data : state.selectedTeacher,
+            selectedTeacher: state.selectedTeacher?.id === id ? response : state.selectedTeacher,
             loading: false,
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({
             error: error.response?.data?.message || 'Failed to update teacher',
@@ -611,13 +672,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherProfile: async (id: number, data: Partial<TeacherProfile>) => {
         try {
-          const response = await api.patch(`/teachers/profiles/${id}/`, data);
+          const response = await apiService.patch<TeacherProfile>(`/teachers/profiles/${id}/`, data);
           set((state) => ({
             teacherProfiles: state.teacherProfiles.map(profile =>
-              profile.id === id ? response.data : profile
+              profile.id === id ? response : profile
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher profile' });
           throw error;
@@ -626,13 +687,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherQualification: async (id: number, data: Partial<TeacherQualification>) => {
         try {
-          const response = await api.patch(`/teachers/qualifications/${id}/`, data);
+          const response = await apiService.patch<TeacherQualification>(`/teachers/qualifications/${id}/`, data);
           set((state) => ({
             teacherQualifications: state.teacherQualifications.map(qual =>
-              qual.id === id ? response.data : qual
+              qual.id === id ? response : qual
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher qualification' });
           throw error;
@@ -641,13 +702,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherExperience: async (id: number, data: Partial<TeacherExperience>) => {
         try {
-          const response = await api.patch(`/teachers/experiences/${id}/`, data);
+          const response = await apiService.patch<TeacherExperience>(`/teachers/experiences/${id}/`, data);
           set((state) => ({
             teacherExperiences: state.teacherExperiences.map(exp =>
-              exp.id === id ? response.data : exp
+              exp.id === id ? response : exp
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher experience' });
           throw error;
@@ -656,13 +717,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherSubject: async (id: number, data: Partial<TeacherSubject>) => {
         try {
-          const response = await api.patch(`/teachers/subjects/${id}/`, data);
+          const response = await apiService.patch<TeacherSubject>(`/teachers/subjects/${id}/`, data);
           set((state) => ({
             teacherSubjects: state.teacherSubjects.map(subject =>
-              subject.id === id ? response.data : subject
+              subject.id === id ? response : subject
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher subject' });
           throw error;
@@ -671,13 +732,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherClass: async (id: number, data: Partial<TeacherClass>) => {
         try {
-          const response = await api.patch(`/teachers/classes/${id}/`, data);
+          const response = await apiService.patch<TeacherClass>(`/teachers/classes/${id}/`, data);
           set((state) => ({
             teacherClasses: state.teacherClasses.map(cls =>
-              cls.id === id ? response.data : cls
+              cls.id === id ? response : cls
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher class' });
           throw error;
@@ -686,13 +747,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherAttendance: async (id: number, data: Partial<TeacherAttendance>) => {
         try {
-          const response = await api.patch(`/teachers/attendance/${id}/`, data);
+          const response = await apiService.patch<TeacherAttendance>(`/teachers/attendance/${id}/`, data);
           set((state) => ({
             teacherAttendance: state.teacherAttendance.map(att =>
-              att.id === id ? response.data : att
+              att.id === id ? response : att
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher attendance' });
           throw error;
@@ -701,13 +762,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherSalary: async (id: number, data: Partial<TeacherSalary>) => {
         try {
-          const response = await api.patch(`/teachers/salaries/${id}/`, data);
+          const response = await apiService.patch<TeacherSalary>(`/teachers/salaries/${id}/`, data);
           set((state) => ({
             teacherSalaries: state.teacherSalaries.map(salary =>
-              salary.id === id ? response.data : salary
+              salary.id === id ? response : salary
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher salary' });
           throw error;
@@ -716,13 +777,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherLeave: async (id: number, data: Partial<TeacherLeave>) => {
         try {
-          const response = await api.patch(`/teachers/leaves/${id}/`, data);
+          const response = await apiService.patch<TeacherLeave>(`/teachers/leaves/${id}/`, data);
           set((state) => ({
             teacherLeaves: state.teacherLeaves.map(leave =>
-              leave.id === id ? response.data : leave
+              leave.id === id ? response : leave
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher leave' });
           throw error;
@@ -731,13 +792,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherPerformance: async (id: number, data: Partial<TeacherPerformance>) => {
         try {
-          const response = await api.patch(`/teachers/performances/${id}/`, data);
+          const response = await apiService.patch<TeacherPerformance>(`/teachers/performances/${id}/`, data);
           set((state) => ({
             teacherPerformances: state.teacherPerformances.map(perf =>
-              perf.id === id ? response.data : perf
+              perf.id === id ? response : perf
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher performance' });
           throw error;
@@ -746,13 +807,13 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       updateTeacherDocument: async (id: number, data: Partial<TeacherDocument>) => {
         try {
-          const response = await api.patch(`/teachers/documents/${id}/`, data);
+          const response = await apiService.patch<TeacherDocument>(`/teachers/documents/${id}/`, data);
           set((state) => ({
             teacherDocuments: state.teacherDocuments.map(doc =>
-              doc.id === id ? response.data : doc
+              doc.id === id ? response : doc
             ),
           }));
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to update teacher document' });
           throw error;
@@ -763,7 +824,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
       deleteTeacher: async (id: number) => {
         set({ loading: true, error: null });
         try {
-          await api.delete(`/teachers/${id}/`);
+          await apiService.delete(`/teachers/${id}/`);
           set((state) => ({
             teachers: state.teachers.filter(teacher => teacher.id !== id),
             selectedTeacher: state.selectedTeacher?.id === id ? null : state.selectedTeacher,
@@ -780,7 +841,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherProfile: async (id: number) => {
         try {
-          await api.delete(`/teachers/profiles/${id}/`);
+          await apiService.delete(`/teachers/profiles/${id}/`);
           set((state) => ({
             teacherProfiles: state.teacherProfiles.filter(profile => profile.id !== id),
           }));
@@ -792,7 +853,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherQualification: async (id: number) => {
         try {
-          await api.delete(`/teachers/qualifications/${id}/`);
+          await apiService.delete(`/teachers/qualifications/${id}/`);
           set((state) => ({
             teacherQualifications: state.teacherQualifications.filter(qual => qual.id !== id),
           }));
@@ -804,7 +865,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherExperience: async (id: number) => {
         try {
-          await api.delete(`/teachers/experiences/${id}/`);
+          await apiService.delete(`/teachers/experiences/${id}/`);
           set((state) => ({
             teacherExperiences: state.teacherExperiences.filter(exp => exp.id !== id),
           }));
@@ -816,7 +877,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherSubject: async (id: number) => {
         try {
-          await api.delete(`/teachers/subjects/${id}/`);
+          await apiService.delete(`/teachers/subjects/${id}/`);
           set((state) => ({
             teacherSubjects: state.teacherSubjects.filter(subject => subject.id !== id),
           }));
@@ -828,7 +889,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherClass: async (id: number) => {
         try {
-          await api.delete(`/teachers/classes/${id}/`);
+          await apiService.delete(`/teachers/classes/${id}/`);
           set((state) => ({
             teacherClasses: state.teacherClasses.filter(cls => cls.id !== id),
           }));
@@ -840,7 +901,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherAttendance: async (id: number) => {
         try {
-          await api.delete(`/teachers/attendance/${id}/`);
+          await apiService.delete(`/teachers/attendance/${id}/`);
           set((state) => ({
             teacherAttendance: state.teacherAttendance.filter(att => att.id !== id),
           }));
@@ -852,7 +913,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherSalary: async (id: number) => {
         try {
-          await api.delete(`/teachers/salaries/${id}/`);
+          await apiService.delete(`/teachers/salaries/${id}/`);
           set((state) => ({
             teacherSalaries: state.teacherSalaries.filter(salary => salary.id !== id),
           }));
@@ -864,7 +925,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherLeave: async (id: number) => {
         try {
-          await api.delete(`/teachers/leaves/${id}/`);
+          await apiService.delete(`/teachers/leaves/${id}/`);
           set((state) => ({
             teacherLeaves: state.teacherLeaves.filter(leave => leave.id !== id),
           }));
@@ -876,7 +937,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherPerformance: async (id: number) => {
         try {
-          await api.delete(`/teachers/performances/${id}/`);
+          await apiService.delete(`/teachers/performances/${id}/`);
           set((state) => ({
             teacherPerformances: state.teacherPerformances.filter(perf => perf.id !== id),
           }));
@@ -888,7 +949,7 @@ export const useTeachersStore = create<TeachersState & TeachersActions>()(
 
       deleteTeacherDocument: async (id: number) => {
         try {
-          await api.delete(`/teachers/documents/${id}/`);
+          await apiService.delete(`/teachers/documents/${id}/`);
           set((state) => ({
             teacherDocuments: state.teacherDocuments.filter(doc => doc.id !== id),
           }));

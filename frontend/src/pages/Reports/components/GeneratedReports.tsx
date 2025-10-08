@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/UI/Card';
 import { Button } from '@/components/UI/Button';
 import { Badge } from '@/components/UI/Badge';
 import Input from '@/components/UI/Input';
@@ -59,11 +59,7 @@ const GeneratedReports: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const { getGeneratedReports, deleteReport } = useGeneratedReports();
 
-  useEffect(() => {
-    loadReports();
-  }, []);
-
-  const loadReports = async () => {
+  const loadReports = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getGeneratedReports();
@@ -73,7 +69,11 @@ const GeneratedReports: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getGeneratedReports]);
+
+  useEffect(() => {
+    loadReports();
+  }, [loadReports]);
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this report?')) {
@@ -190,9 +190,7 @@ const GeneratedReports: React.FC = () => {
 
       {/* Reports Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>All Reports ({filteredReports.length})</CardTitle>
-        </CardHeader>
+        <CardHeader title={`All Reports (${filteredReports.length})`} />
         <CardContent>
           <Table>
             <TableHeader>
@@ -263,12 +261,12 @@ const GeneratedReports: React.FC = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenuTrigger>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent>
                         <DropdownMenuItem>
                           <Eye className="mr-2 h-4 w-4" />
                           View

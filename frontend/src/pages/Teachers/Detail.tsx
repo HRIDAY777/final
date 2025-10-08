@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
@@ -17,7 +17,10 @@ import {
   TrophyIcon,
   ExclamationTriangleIcon,
   UserGroupIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  PlusIcon,
+  DocumentArrowDownIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline';
 
 interface Teacher {
@@ -85,22 +88,22 @@ const TeacherDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    if (id) {
-      fetchTeacher();
-    }
-  }, [id]);
-
-  const fetchTeacher = async () => {
+  const fetchTeacher = useCallback(async () => {
     try {
-      const data = await apiService.get(`/teachers/${id}/`);
+      const data = await apiService.get(`/teachers/${id}/`) as Teacher;
       setTeacher(data);
     } catch (error) {
       console.error('Failed to fetch teacher:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchTeacher();
+    }
+  }, [id, fetchTeacher]);
 
   if (loading) {
     return (
@@ -145,17 +148,15 @@ const TeacherDetail: React.FC = () => {
         <PageHeader 
           title={teacher.full_name}
           subtitle={`Teacher ID: ${teacher.teacher_id} • Employee: ${teacher.employee_number}`}
-          left={
-            <Button 
-              variant="outline" 
-              onClick={() => window.history.back()}
-            >
-              <ArrowLeftIcon className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          }
-          right={
+          actions={
             <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => window.history.back()}
+              >
+                <ArrowLeftIcon className="w-4 h-4 mr-2" />
+                Back
+              </Button>
               <Button 
                 variant="outline"
                 onClick={() => window.location.href = `/teachers/${id}/edit`}
@@ -319,7 +320,273 @@ const TeacherDetail: React.FC = () => {
           )}
 
           {/* Other tabs content would go here */}
-          {activeTab !== 'overview' && (
+          {activeTab === 'qualifications' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900">Qualifications</h4>
+                <Button size="sm">
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                  Add Qualification
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {teacher.qualifications?.map((qual) => (
+                  <div key={qual.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h5 className="font-medium text-gray-900">{qual.degree}</h5>
+                        <p className="text-sm text-gray-600">{qual.institution}</p>
+                        <p className="text-sm text-gray-500">{qual.year}</p>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <PencilIcon className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )) || (
+                  <div className="text-center py-8 text-gray-500">
+                    No qualifications added yet
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'experiences' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900">Work Experience</h4>
+                <Button size="sm">
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                  Add Experience
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {teacher.experiences?.map((exp) => (
+                  <div key={exp.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h5 className="font-medium text-gray-900">{exp.position}</h5>
+                        <p className="text-sm text-gray-600">{exp.institution}</p>
+                        <p className="text-sm text-gray-500">{exp.start_date} - {exp.end_date || 'Present'}</p>
+                        <p className="text-sm text-gray-600 mt-2">{exp.description}</p>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        <PencilIcon className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )) || (
+                  <div className="text-center py-8 text-gray-500">
+                    No work experience added yet
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'subjects' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900">Assigned Subjects</h4>
+                <Button size="sm">
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                  Assign Subject
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {teacher.subjects?.map((subject) => (
+                  <div key={subject.id} className="border rounded-lg p-4">
+                    <h5 className="font-medium text-gray-900">{subject.name}</h5>
+                    <p className="text-sm text-gray-600">{subject.code}</p>
+                    <p className="text-sm text-gray-500">{subject.credits} credits</p>
+                  </div>
+                )) || (
+                  <div className="col-span-full text-center py-8 text-gray-500">
+                    No subjects assigned yet
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'classes' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900">Assigned Classes</h4>
+                <Button size="sm">
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                  Assign Class
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {teacher.classes?.map((cls) => (
+                  <div key={cls.id} className="border rounded-lg p-4">
+                    <h5 className="font-medium text-gray-900">{cls.name}</h5>
+                    <p className="text-sm text-gray-600">Section {cls.section}</p>
+                    <p className="text-sm text-gray-500">{cls.students?.length || 0} students</p>
+                  </div>
+                )) || (
+                  <div className="col-span-full text-center py-8 text-gray-500">
+                    No classes assigned yet
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'attendance' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900">Attendance Records</h4>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    <CalendarIcon className="w-4 h-4 mr-2" />
+                    This Month
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <DocumentArrowDownIcon className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-2xl font-bold text-green-600">95%</p>
+                    <p className="text-sm text-gray-600">Present</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-yellow-600">3%</p>
+                    <p className="text-sm text-gray-600">Late</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-red-600">2%</p>
+                    <p className="text-sm text-gray-600">Absent</p>
+                  </div>
+                </div>
+              </div>
+              <div className="text-center py-8 text-gray-500">
+                Detailed attendance records will be displayed here
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'leaves' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900">Leave Requests</h4>
+                <Button size="sm">
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                  Request Leave
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {teacher.leaves?.map((leave) => (
+                  <div key={leave.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h5 className="font-medium text-gray-900">{leave.leave_type}</h5>
+                        <p className="text-sm text-gray-600">{leave.start_date} - {leave.end_date}</p>
+                        <p className="text-sm text-gray-500">{leave.duration_days} days</p>
+                        <p className="text-sm text-gray-600 mt-2">{leave.reason}</p>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        leave.status === 'approved' ? 'bg-green-100 text-green-800' :
+                        leave.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {leave.status}
+                      </span>
+                    </div>
+                  </div>
+                )) || (
+                  <div className="text-center py-8 text-gray-500">
+                    No leave requests found
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'performance' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900">Performance Metrics</h4>
+                <Button variant="outline" size="sm">
+                  <DocumentArrowDownIcon className="w-4 h-4 mr-2" />
+                  Export Report
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-blue-50 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-blue-600">4.8</p>
+                  <p className="text-sm text-gray-600">Average Rating</p>
+                </div>
+                <div className="bg-green-50 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-green-600">95%</p>
+                  <p className="text-sm text-gray-600">Attendance Rate</p>
+                </div>
+                <div className="bg-purple-50 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-purple-600">150</p>
+                  <p className="text-sm text-gray-600">Classes Taught</p>
+                </div>
+                <div className="bg-orange-50 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-orange-600">85%</p>
+                  <p className="text-sm text-gray-600">Student Satisfaction</p>
+                </div>
+              </div>
+              <div className="text-center py-8 text-gray-500">
+                Detailed performance analytics will be displayed here
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'documents' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h4 className="text-lg font-medium text-gray-900">Documents</h4>
+                <Button size="sm">
+                  <PlusIcon className="w-4 h-4 mr-2" />
+                  Upload Document
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {teacher.documents?.map((doc) => (
+                  <div key={doc.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-3">
+                        <DocumentTextIcon className="w-8 h-8 text-gray-400" />
+                        <div>
+                          <h5 className="font-medium text-gray-900">{doc.title}</h5>
+                          <p className="text-sm text-gray-600">{doc.document_type}</p>
+                          <p className="text-sm text-gray-500">Uploaded {new Date(doc.uploaded_at).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="sm">
+                          <EyeIcon className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <DocumentArrowDownIcon className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )) || (
+                  <div className="text-center py-8 text-gray-500">
+                    No documents uploaded yet
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab !== 'overview' && activeTab !== 'qualifications' && 
+           activeTab !== 'experiences' && activeTab !== 'subjects' && 
+           activeTab !== 'classes' && activeTab !== 'attendance' && 
+           activeTab !== 'leaves' && activeTab !== 'performance' && 
+           activeTab !== 'documents' && (
             <div className="text-center py-8">
               <p className="text-gray-500">Content for {activeTab} tab will be implemented here</p>
             </div>

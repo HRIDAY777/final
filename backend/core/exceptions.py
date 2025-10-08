@@ -1,14 +1,13 @@
 """
 Custom exceptions for EduCore Ultra project.
 """
-from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.exceptions import APIException
 
 
 class EduCoreException(Exception):
     """Base exception for EduCore Ultra project."""
-    
+
     def __init__(self, message: str, code: str = None, details: dict = None):
         self.message = message
         self.code = code
@@ -36,7 +35,7 @@ class AuthorizationError(EduCoreException):
     pass
 
 
-class ValidationError(EduCoreException):
+class EduCoreValidationError(EduCoreException):
     """Raised when there's a validation error."""
     pass
 
@@ -225,7 +224,9 @@ class RateLimitExceededAPIException(TooManyRequestsAPIException):
 
 class MaintenanceModeAPIException(ServiceUnavailableAPIException):
     """Maintenance mode API exception."""
-    default_detail = 'System is currently under maintenance. Please try again later.'
+    default_detail = (
+        'System is currently under maintenance. Please try again later.'
+    )
     default_code = 'maintenance_mode'
 
 

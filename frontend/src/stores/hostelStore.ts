@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { api } from '../services/api';
@@ -243,7 +244,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
       fetchHostels: async (params = {}) => {
         set({ loading: true, error: null });
         try {
-          const response = await api.get('/hostel/hostels/', { params });
+          const response = await api.get('/hostel/hostels/', { params }) as any as any;
           set({
             hostels: response.data.results || response.data,
             pagination: {
@@ -264,7 +265,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
       fetchHostelById: async (id: number) => {
         set({ loading: true, error: null });
         try {
-          const response = await api.get(`/hostel/hostels/${id}/`);
+          const response = await api.get(`/hostel/hostels/${id}/`) as any as any;
           set({ selectedHostel: response.data, loading: false });
         } catch (error: any) {
           set({
@@ -276,7 +277,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchBuildings: async (hostelId: number, params = {}) => {
         try {
-          const response = await api.get(`/hostel/hostels/${hostelId}/buildings/`, { params });
+          const response = await api.get(`/hostel/hostels/${hostelId}/buildings/`, { params }) as any as any;
           set((state) => ({
             buildings: state.buildings.filter(building => building.hostel !== hostelId)
               .concat(response.data),
@@ -288,7 +289,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchBuildingById: async (id: number) => {
         try {
-          const response = await api.get(`/hostel/buildings/${id}/`);
+          const response = await api.get(`/hostel/buildings/${id}/`) as any as any;
           set({ selectedBuilding: response.data });
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch building' });
@@ -297,7 +298,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchRooms: async (buildingId: number, params = {}) => {
         try {
-          const response = await api.get(`/hostel/buildings/${buildingId}/rooms/`, { params });
+          const response = await api.get(`/hostel/buildings/${buildingId}/rooms/`, { params }) as any as any;
           set((state) => ({
             rooms: state.rooms.filter(room => room.building !== buildingId)
               .concat(response.data),
@@ -309,7 +310,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchRoomById: async (id: number) => {
         try {
-          const response = await api.get(`/hostel/rooms/${id}/`);
+          const response = await api.get(`/hostel/rooms/${id}/`) as any as any;
           set({ selectedRoom: response.data });
         } catch (error: any) {
           set({ error: error.response?.data?.message || 'Failed to fetch room' });
@@ -318,7 +319,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchStudentAllocations: async (hostelId: number, params = {}) => {
         try {
-          const response = await api.get(`/hostel/hostels/${hostelId}/allocations/`, { params });
+          const response = await api.get(`/hostel/hostels/${hostelId}/allocations/`, { params }) as any;
           set((state) => ({
             studentAllocations: state.studentAllocations.filter(allocation => allocation.hostel !== hostelId)
               .concat(response.data),
@@ -330,7 +331,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchStudentAllocationById: async (id: number) => {
         try {
-          const response = await api.get(`/hostel/allocations/${id}/`);
+          const response = await api.get(`/hostel/allocations/${id}/`) as any;
           // Update the allocation in the list
           set((state) => ({
             studentAllocations: state.studentAllocations.map(allocation =>
@@ -344,7 +345,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchFees: async (allocationId: number, params = {}) => {
         try {
-          const response = await api.get(`/hostel/allocations/${allocationId}/fees/`, { params });
+          const response = await api.get(`/hostel/allocations/${allocationId}/fees/`, { params }) as any;
           set((state) => ({
             fees: state.fees.filter(fee => fee.student_allocation !== allocationId)
               .concat(response.data),
@@ -356,7 +357,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchFeeById: async (id: number) => {
         try {
-          const response = await api.get(`/hostel/fees/${id}/`);
+          const response = await api.get(`/hostel/fees/${id}/`) as any;
           set((state) => ({
             fees: state.fees.map(fee => fee.id === id ? response.data : fee),
           }));
@@ -367,7 +368,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchMaintenance: async (hostelId: number, params = {}) => {
         try {
-          const response = await api.get(`/hostel/hostels/${hostelId}/maintenance/`, { params });
+          const response = await api.get(`/hostel/hostels/${hostelId}/maintenance/`, { params }) as any;
           set((state) => ({
             maintenance: state.maintenance.filter(maint => maint.hostel !== hostelId)
               .concat(response.data),
@@ -379,7 +380,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchMaintenanceById: async (id: number) => {
         try {
-          const response = await api.get(`/hostel/maintenance/${id}/`);
+          const response = await api.get(`/hostel/maintenance/${id}/`) as any;
           set((state) => ({
             maintenance: state.maintenance.map(maint => maint.id === id ? response.data : maint),
           }));
@@ -390,7 +391,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchVisitors: async (hostelId: number, params = {}) => {
         try {
-          const response = await api.get(`/hostel/hostels/${hostelId}/visitors/`, { params });
+          const response = await api.get(`/hostel/hostels/${hostelId}/visitors/`, { params }) as any;
           set((state) => ({
             visitors: state.visitors.filter(visitor => visitor.hostel !== hostelId)
               .concat(response.data),
@@ -402,7 +403,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchVisitorById: async (id: number) => {
         try {
-          const response = await api.get(`/hostel/visitors/${id}/`);
+          const response = await api.get(`/hostel/visitors/${id}/`) as any;
           set((state) => ({
             visitors: state.visitors.map(visitor => visitor.id === id ? response.data : visitor),
           }));
@@ -413,7 +414,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchRules: async (hostelId: number, params = {}) => {
         try {
-          const response = await api.get(`/hostel/hostels/${hostelId}/rules/`, { params });
+          const response = await api.get(`/hostel/hostels/${hostelId}/rules/`, { params }) as any;
           set((state) => ({
             rules: state.rules.filter(rule => rule.hostel !== hostelId)
               .concat(response.data),
@@ -425,7 +426,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       fetchRuleById: async (id: number) => {
         try {
-          const response = await api.get(`/hostel/rules/${id}/`);
+          const response = await api.get(`/hostel/rules/${id}/`) as any;
           set((state) => ({
             rules: state.rules.map(rule => rule.id === id ? response.data : rule),
           }));
@@ -438,7 +439,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
       createHostel: async (data: Partial<Hostel>) => {
         set({ loading: true, error: null });
         try {
-          const response = await api.post('/hostel/hostels/', data);
+          const response = await api.post('/hostel/hostels/', data) as any;
           set((state) => ({
             hostels: [...state.hostels, response.data],
             loading: false,
@@ -455,7 +456,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       createBuilding: async (data: Partial<Building>) => {
         try {
-          const response = await api.post('/hostel/buildings/', data);
+          const response = await api.post('/hostel/buildings/', data) as any;
           set((state) => ({
             buildings: [...state.buildings, response.data],
           }));
@@ -468,7 +469,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       createRoom: async (data: Partial<Room>) => {
         try {
-          const response = await api.post('/hostel/rooms/', data);
+          const response = await api.post('/hostel/rooms/', data) as any;
           set((state) => ({
             rooms: [...state.rooms, response.data],
           }));
@@ -481,7 +482,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       createStudentAllocation: async (data: Partial<StudentAllocation>) => {
         try {
-          const response = await api.post('/hostel/allocations/', data);
+          const response = await api.post('/hostel/allocations/', data) as any;
           set((state) => ({
             studentAllocations: [...state.studentAllocations, response.data],
           }));
@@ -494,7 +495,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       createFee: async (data: Partial<Fee>) => {
         try {
-          const response = await api.post('/hostel/fees/', data);
+          const response = await api.post('/hostel/fees/', data) as any;
           set((state) => ({
             fees: [...state.fees, response.data],
           }));
@@ -507,7 +508,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       createMaintenance: async (data: Partial<Maintenance>) => {
         try {
-          const response = await api.post('/hostel/maintenance/', data);
+          const response = await api.post('/hostel/maintenance/', data) as any;
           set((state) => ({
             maintenance: [...state.maintenance, response.data],
           }));
@@ -520,7 +521,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       createVisitor: async (data: Partial<Visitor>) => {
         try {
-          const response = await api.post('/hostel/visitors/', data);
+          const response = await api.post('/hostel/visitors/', data) as any;
           set((state) => ({
             visitors: [...state.visitors, response.data],
           }));
@@ -533,7 +534,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       createRule: async (data: Partial<Rule>) => {
         try {
-          const response = await api.post('/hostel/rules/', data);
+          const response = await api.post('/hostel/rules/', data) as any;
           set((state) => ({
             rules: [...state.rules, response.data],
           }));
@@ -548,7 +549,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
       updateHostel: async (id: number, data: Partial<Hostel>) => {
         set({ loading: true, error: null });
         try {
-          const response = await api.patch(`/hostel/hostels/${id}/`, data);
+          const response = await api.patch(`/hostel/hostels/${id}/`, data) as any;
           set((state) => ({
             hostels: state.hostels.map(hostel =>
               hostel.id === id ? response.data : hostel
@@ -568,7 +569,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       updateBuilding: async (id: number, data: Partial<Building>) => {
         try {
-          const response = await api.patch(`/hostel/buildings/${id}/`, data);
+          const response = await api.patch(`/hostel/buildings/${id}/`, data) as any;
           set((state) => ({
             buildings: state.buildings.map(building =>
               building.id === id ? response.data : building
@@ -584,7 +585,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       updateRoom: async (id: number, data: Partial<Room>) => {
         try {
-          const response = await api.patch(`/hostel/rooms/${id}/`, data);
+          const response = await api.patch(`/hostel/rooms/${id}/`, data) as any;
           set((state) => ({
             rooms: state.rooms.map(room =>
               room.id === id ? response.data : room
@@ -600,7 +601,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       updateStudentAllocation: async (id: number, data: Partial<StudentAllocation>) => {
         try {
-          const response = await api.patch(`/hostel/allocations/${id}/`, data);
+          const response = await api.patch(`/hostel/allocations/${id}/`, data) as any;
           set((state) => ({
             studentAllocations: state.studentAllocations.map(allocation =>
               allocation.id === id ? response.data : allocation
@@ -615,7 +616,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       updateFee: async (id: number, data: Partial<Fee>) => {
         try {
-          const response = await api.patch(`/hostel/fees/${id}/`, data);
+          const response = await api.patch(`/hostel/fees/${id}/`, data) as any;
           set((state) => ({
             fees: state.fees.map(fee =>
               fee.id === id ? response.data : fee
@@ -630,7 +631,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       updateMaintenance: async (id: number, data: Partial<Maintenance>) => {
         try {
-          const response = await api.patch(`/hostel/maintenance/${id}/`, data);
+          const response = await api.patch(`/hostel/maintenance/${id}/`, data) as any;
           set((state) => ({
             maintenance: state.maintenance.map(maint =>
               maint.id === id ? response.data : maint
@@ -645,7 +646,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       updateVisitor: async (id: number, data: Partial<Visitor>) => {
         try {
-          const response = await api.patch(`/hostel/visitors/${id}/`, data);
+          const response = await api.patch(`/hostel/visitors/${id}/`, data) as any;
           set((state) => ({
             visitors: state.visitors.map(visitor =>
               visitor.id === id ? response.data : visitor
@@ -660,7 +661,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       updateRule: async (id: number, data: Partial<Rule>) => {
         try {
-          const response = await api.patch(`/hostel/rules/${id}/`, data);
+          const response = await api.patch(`/hostel/rules/${id}/`, data) as any;
           set((state) => ({
             rules: state.rules.map(rule =>
               rule.id === id ? response.data : rule
@@ -677,7 +678,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
       deleteHostel: async (id: number) => {
         set({ loading: true, error: null });
         try {
-          await api.delete(`/hostel/hostels/${id}/`);
+          await api.delete(`/hostel/hostels/${id}/`) as any;
           set((state) => ({
             hostels: state.hostels.filter(hostel => hostel.id !== id),
             selectedHostel: state.selectedHostel?.id === id ? null : state.selectedHostel,
@@ -694,7 +695,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       deleteBuilding: async (id: number) => {
         try {
-          await api.delete(`/hostel/buildings/${id}/`);
+          await api.delete(`/hostel/buildings/${id}/`) as any;
           set((state) => ({
             buildings: state.buildings.filter(building => building.id !== id),
             selectedBuilding: state.selectedBuilding?.id === id ? null : state.selectedBuilding,
@@ -707,7 +708,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       deleteRoom: async (id: number) => {
         try {
-          await api.delete(`/hostel/rooms/${id}/`);
+          await api.delete(`/hostel/rooms/${id}/`) as any;
           set((state) => ({
             rooms: state.rooms.filter(room => room.id !== id),
             selectedRoom: state.selectedRoom?.id === id ? null : state.selectedRoom,
@@ -720,7 +721,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       deleteStudentAllocation: async (id: number) => {
         try {
-          await api.delete(`/hostel/allocations/${id}/`);
+          await api.delete(`/hostel/allocations/${id}/`) as any;
           set((state) => ({
             studentAllocations: state.studentAllocations.filter(allocation => allocation.id !== id),
           }));
@@ -732,7 +733,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       deleteFee: async (id: number) => {
         try {
-          await api.delete(`/hostel/fees/${id}/`);
+          await api.delete(`/hostel/fees/${id}/`) as any;
           set((state) => ({
             fees: state.fees.filter(fee => fee.id !== id),
           }));
@@ -744,7 +745,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       deleteMaintenance: async (id: number) => {
         try {
-          await api.delete(`/hostel/maintenance/${id}/`);
+          await api.delete(`/hostel/maintenance/${id}/`) as any;
           set((state) => ({
             maintenance: state.maintenance.filter(maint => maint.id !== id),
           }));
@@ -756,7 +757,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       deleteVisitor: async (id: number) => {
         try {
-          await api.delete(`/hostel/visitors/${id}/`);
+          await api.delete(`/hostel/visitors/${id}/`) as any;
           set((state) => ({
             visitors: state.visitors.filter(visitor => visitor.id !== id),
           }));
@@ -768,7 +769,7 @@ export const useHostelStore = create<HostelState & HostelActions>()(
 
       deleteRule: async (id: number) => {
         try {
-          await api.delete(`/hostel/rules/${id}/`);
+          await api.delete(`/hostel/rules/${id}/`) as any;
           set((state) => ({
             rules: state.rules.filter(rule => rule.id !== id),
           }));
@@ -792,3 +793,4 @@ export const useHostelStore = create<HostelState & HostelActions>()(
     }
   )
 );
+

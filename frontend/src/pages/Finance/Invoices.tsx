@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -8,11 +8,9 @@ import { useBillingStore } from '../../stores/billingStore';
 import { useTranslation } from '../../utils/i18n';
 import { 
   PlusIcon, 
-  DocumentTextIcon, 
   PaperAirplaneIcon,
   TrashIcon,
-  EyeIcon,
-  PencilIcon
+  EyeIcon
 } from '@heroicons/react/24/outline';
 
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
@@ -34,9 +32,13 @@ const Invoices: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
+  const loadInvoices = useCallback(() => {
     fetchInvoices({ page, search });
-  }, [page, search]);
+  }, [fetchInvoices, page, search]);
+
+  useEffect(() => {
+    loadInvoices();
+  }, [loadInvoices]);
 
   const onDelete = async (id: number) => {
     if (!confirm(t('confirm.delete_invoice'))) return;

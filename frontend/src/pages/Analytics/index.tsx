@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/UI/Card';
+import { Card, CardContent, CardHeader } from '../../components/UI/Card';
 import { Button } from '../../components/UI/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/UI/Tabs';
 import { Badge } from '../../components/UI/Badge';
@@ -11,7 +11,6 @@ import {
   Users, 
   DollarSign,
   Calendar,
-  BookOpen,
   Activity,
   Target,
   Award,

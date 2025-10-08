@@ -6,8 +6,6 @@ import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   EyeIcon,
@@ -15,7 +13,6 @@ import {
   AcademicCapIcon,
   TagIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 
 interface Question {

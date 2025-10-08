@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import { Button } from '../../components/UI/Button';
 import { Modal } from '../../components/UI/Modal';
-import { Input } from '../../components/UI/Input';
-import { Select } from '../../components/UI/Select';
+import Input from '../../components/UI/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/UI/Select';
 import { Textarea } from '../../components/UI/Textarea';
-import { apiService } from '../../services/api';
 import {
   WrenchScrewdriverIcon,
-  ExclamationTriangleIcon,
   CheckCircleIcon,
   ClockIcon,
   EyeIcon,
@@ -55,9 +53,8 @@ const Maintenance: React.FC = () => {
   const [maintenanceRequests, setMaintenanceRequests] = useState<MaintenanceRequest[]>([]);
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -86,12 +83,7 @@ const Maintenance: React.FC = () => {
   });
 
   // Filter states
-  const [filters, setFilters] = useState({
-    priority: '',
-    status: '',
-    building: '',
-    search: '',
-  });
+  const [searchValue, setSearchValue] = useState('');
 
   // Stats
   const [stats, setStats] = useState({
@@ -102,16 +94,8 @@ const Maintenance: React.FC = () => {
     total_cost: 0
   });
 
-  useEffect(() => {
-    fetchMaintenanceRequests();
-    fetchAvailableRooms();
-    fetchAvailableUsers();
-    fetchStats();
-  }, [currentPage, filters]);
-
-  const fetchMaintenanceRequests = async () => {
+  const fetchMaintenanceRequests = useCallback(async () => {
     try {
-      setLoading(true);
       // Mock data for demonstration
       const mockRequests: MaintenanceRequest[] = [
         {
@@ -179,11 +163,8 @@ const Maintenance: React.FC = () => {
 
       // Apply filters
       let filteredRequests = mockRequests.filter(request => {
-        if (filters.priority && request.priority !== filters.priority) return false;
-        if (filters.status && request.status !== filters.status) return false;
-        if (filters.building && request.building_name !== filters.building) return false;
-        if (filters.search) {
-          const searchLower = filters.search.toLowerCase();
+        if (searchValue) {
+          const searchLower = searchValue.toLowerCase();
           return (
             request.title.toLowerCase().includes(searchLower) ||
             request.description.toLowerCase().includes(searchLower) ||
@@ -199,15 +180,19 @@ const Maintenance: React.FC = () => {
       const endIndex = startIndex + itemsPerPage;
       const paginatedRequests = filteredRequests.slice(startIndex, endIndex);
 
-      setMaintenanceRequests(paginatedRequests);
-      setTotalCount(filteredRequests.length);
-      setTotalPages(Math.ceil(filteredRequests.length / itemsPerPage));
+             setMaintenanceRequests(paginatedRequests);
+       setTotalCount(filteredRequests.length);
     } catch (error) {
       console.error('Error fetching maintenance requests:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentPage, searchValue]);
+
+  useEffect(() => {
+    fetchMaintenanceRequests();
+    fetchAvailableRooms();
+    fetchAvailableUsers();
+    fetchStats();
+  }, [fetchMaintenanceRequests]);
 
   const fetchAvailableRooms = async () => {
     try {
@@ -254,10 +239,7 @@ const Maintenance: React.FC = () => {
     }
   };
 
-  const handleFilterChange = (newFilters: any) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-  };
+
 
   const handleCreateRequest = async () => {
     try {
@@ -336,37 +318,15 @@ const Maintenance: React.FC = () => {
     }
   };
 
-  const filterOptions = [
-    { label: 'All Priorities', value: '' },
-    { label: 'Urgent', value: 'urgent' },
-    { label: 'High', value: 'high' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'Low', value: 'low' },
-  ];
 
-  const statusOptions = [
-    { label: 'All Status', value: '' },
-    { label: 'Pending', value: 'pending' },
-    { label: 'Assigned', value: 'assigned' },
-    { label: 'In Progress', value: 'in_progress' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Cancelled', value: 'cancelled' },
-  ];
-
-  const buildingOptions = [
-    { label: 'All Buildings', value: '' },
-    { label: 'Building A', value: 'Building A' },
-    { label: 'Building B', value: 'Building B' },
-    { label: 'Building C', value: 'Building C' },
-  ];
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Maintenance Requests"
-        description="Manage and track maintenance requests for hostel facilities"
+        subtitle="Manage and track maintenance requests for hostel facilities"
         actions={
-          <Button variant="primary" size="sm" onClick={() => setShowRequestModal(true)}>
+          <Button variant="default" size="sm" onClick={() => setShowRequestModal(true)}>
             <PlusIcon className="h-4 w-4 mr-2" />
             New Request
           </Button>
@@ -437,14 +397,9 @@ const Maintenance: React.FC = () => {
       </div>
 
       <FilterBar
-        filters={filters}
-        onFilterChange={handleFilterChange}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
         searchPlaceholder="Search by title, description, or room..."
-        filterOptions={[
-          { key: 'priority', label: 'Priority', options: filterOptions },
-          { key: 'status', label: 'Status', options: statusOptions },
-          { key: 'building', label: 'Building', options: buildingOptions },
-        ]}
       />
 
       <Card>
@@ -552,9 +507,9 @@ const Maintenance: React.FC = () => {
 
         <div className="px-6 py-4 border-t border-gray-200">
           <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalCount={totalCount}
+            page={currentPage}
+            pageSize={10}
+            total={totalCount}
             onPageChange={setCurrentPage}
           />
         </div>
@@ -567,70 +522,91 @@ const Maintenance: React.FC = () => {
         title="New Maintenance Request"
         size="lg"
       >
-        <div className="space-y-4">
-          <Input
-            label="Title"
-            value={requestForm.title}
-            onChange={(e) => setRequestForm({ ...requestForm, title: e.target.value })}
-            required
-          />
+                 <div className="space-y-4">
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+             <Input
+               value={requestForm.title}
+               onChange={(e) => setRequestForm({ ...requestForm, title: e.target.value })}
+               required
+             />
+           </div>
 
-          <Textarea
-            label="Description"
-            value={requestForm.description}
-            onChange={(e) => setRequestForm({ ...requestForm, description: e.target.value })}
-            rows={4}
-            required
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+             <Textarea
+               value={requestForm.description}
+               onChange={(e) => setRequestForm({ ...requestForm, description: e.target.value })}
+               rows={4}
+               required
+             />
+           </div>
 
-          <Select
-            label="Room"
-            value={requestForm.room_id}
-            onChange={(value) => setRequestForm({ ...requestForm, room_id: value })}
-            options={availableRooms.map(room => ({
-              value: room.id.toString(),
-              label: `${room.room_number} - ${room.building_name}`
-            }))}
-            required
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Room</label>
+             <Select
+               value={requestForm.room_id}
+               onValueChange={(value) => setRequestForm({ ...requestForm, room_id: value })}
+             >
+               <SelectTrigger>
+                 <SelectValue placeholder="Select a room" />
+               </SelectTrigger>
+               <SelectContent>
+                 {availableRooms.map(room => (
+                   <SelectItem key={room.id} value={room.id.toString()}>
+                     {`${room.room_number} - ${room.building_name}`}
+                   </SelectItem>
+                 ))}
+               </SelectContent>
+             </Select>
+           </div>
 
-          <Select
-            label="Priority"
-            value={requestForm.priority}
-            onChange={(value) => setRequestForm({ ...requestForm, priority: value })}
-            options={[
-              { label: 'Low', value: 'low' },
-              { label: 'Medium', value: 'medium' },
-              { label: 'High', value: 'high' },
-              { label: 'Urgent', value: 'urgent' },
-            ]}
-            required
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                           <Select
+                value={requestForm.priority}
+                onValueChange={(value) => setRequestForm({ ...requestForm, priority: value })}
+              >
+               <SelectTrigger>
+                 <SelectValue placeholder="Select priority" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="low">Low</SelectItem>
+                 <SelectItem value="medium">Medium</SelectItem>
+                 <SelectItem value="high">High</SelectItem>
+                 <SelectItem value="urgent">Urgent</SelectItem>
+               </SelectContent>
+             </Select>
+           </div>
 
-          <Input
-            label="Estimated Cost"
-            type="number"
-            value={requestForm.estimated_cost}
-            onChange={(e) => setRequestForm({ ...requestForm, estimated_cost: parseFloat(e.target.value) })}
-            min={0}
-            step={0.01}
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Cost</label>
+             <Input
+               type="number"
+               value={requestForm.estimated_cost}
+               onChange={(e) => setRequestForm({ ...requestForm, estimated_cost: parseFloat(e.target.value) })}
+               min={0}
+               step={0.01}
+             />
+           </div>
 
-          <Textarea
-            label="Notes"
-            value={requestForm.notes}
-            onChange={(e) => setRequestForm({ ...requestForm, notes: e.target.value })}
-            rows={3}
-          />
-        </div>
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+             <Textarea
+               value={requestForm.notes}
+               onChange={(e) => setRequestForm({ ...requestForm, notes: e.target.value })}
+               rows={3}
+             />
+           </div>
+         </div>
 
         <div className="flex justify-end space-x-3 mt-6">
           <Button variant="secondary" onClick={() => setShowRequestModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleCreateRequest}>
-            Create Request
-          </Button>
+                     <Button variant="default" onClick={handleCreateRequest}>
+             Create Request
+           </Button>
         </div>
       </Modal>
 
@@ -652,32 +628,42 @@ const Maintenance: React.FC = () => {
             </div>
           )}
 
-          <Select
-            label="Assign To"
-            value={assignForm.assigned_to}
-            onChange={(value) => setAssignForm({ ...assignForm, assigned_to: value })}
-            options={availableUsers.map(user => ({
-              value: user.id.toString(),
-              label: `${user.name} (${user.role})`
-            }))}
-            required
-          />
+                     <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Assign To</label>
+             <Select
+               value={assignForm.assigned_to}
+               onValueChange={(value) => setAssignForm({ ...assignForm, assigned_to: value })}
+             >
+               <SelectTrigger>
+                 <SelectValue placeholder="Select a user" />
+               </SelectTrigger>
+               <SelectContent>
+                 {availableUsers.map(user => (
+                   <SelectItem key={user.id} value={user.id.toString()}>
+                     {`${user.name} (${user.role})`}
+                   </SelectItem>
+                 ))}
+               </SelectContent>
+             </Select>
+           </div>
 
-          <Textarea
-            label="Assignment Notes"
-            value={assignForm.notes}
-            onChange={(e) => setAssignForm({ ...assignForm, notes: e.target.value })}
-            rows={3}
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Assignment Notes</label>
+             <Textarea
+               value={assignForm.notes}
+               onChange={(e) => setAssignForm({ ...assignForm, notes: e.target.value })}
+               rows={3}
+             />
+           </div>
         </div>
 
         <div className="flex justify-end space-x-3 mt-6">
           <Button variant="secondary" onClick={() => setShowAssignModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleAssignRequest}>
-            Assign Request
-          </Button>
+                     <Button variant="default" onClick={handleAssignRequest}>
+             Assign Request
+           </Button>
         </div>
       </Modal>
 
@@ -699,31 +685,35 @@ const Maintenance: React.FC = () => {
             </div>
           )}
 
-          <Input
-            label="Actual Cost"
-            type="number"
-            value={completeForm.actual_cost}
-            onChange={(e) => setCompleteForm({ ...completeForm, actual_cost: parseFloat(e.target.value) })}
-            min={0}
-            step={0.01}
-            required
-          />
+                     <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Actual Cost</label>
+             <Input
+               type="number"
+               value={completeForm.actual_cost}
+               onChange={(e) => setCompleteForm({ ...completeForm, actual_cost: parseFloat(e.target.value) })}
+               min={0}
+               step={0.01}
+               required
+             />
+           </div>
 
-          <Textarea
-            label="Completion Notes"
-            value={completeForm.notes}
-            onChange={(e) => setCompleteForm({ ...completeForm, notes: e.target.value })}
-            rows={3}
-          />
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">Completion Notes</label>
+             <Textarea
+               value={completeForm.notes}
+               onChange={(e) => setCompleteForm({ ...completeForm, notes: e.target.value })}
+               rows={3}
+             />
+           </div>
         </div>
 
         <div className="flex justify-end space-x-3 mt-6">
           <Button variant="secondary" onClick={() => setShowCompleteModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleCompleteRequest}>
-            Complete Request
-          </Button>
+                     <Button variant="default" onClick={handleCompleteRequest}>
+             Complete Request
+           </Button>
         </div>
       </Modal>
 

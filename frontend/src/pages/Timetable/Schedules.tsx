@@ -108,7 +108,7 @@ const Schedules: React.FC = () => {
         responseType: 'blob'
       });
       
-      const url = window.URL.createObjectURL(new Blob([response]));
+      const url = window.URL.createObjectURL(new Blob([response as Blob]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'schedules.csv');
@@ -126,7 +126,7 @@ const Schedules: React.FC = () => {
         <PageHeader 
           title="Schedules" 
           subtitle="Manage all schedules and timetables"
-          right={
+          actions={
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => setShowFilters(!showFilters)}>
                 <FunnelIcon className="w-4 h-4 mr-2" />
@@ -255,7 +255,6 @@ const Schedules: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => openSchedule(row)}
-                          title="View Details"
                         >
                           <EyeIcon className="w-4 h-4" />
                         </Button>
@@ -263,7 +262,6 @@ const Schedules: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => window.location.href = `/timetable/schedules/${row.id}/edit`}
-                          title="Edit"
                         >
                           <PencilIcon className="w-4 h-4" />
                         </Button>
@@ -271,7 +269,6 @@ const Schedules: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => window.location.href = `/timetable/schedules/${row.id}/timetable`}
-                          title="View Timetable"
                         >
                           <ClockIcon className="w-4 h-4" />
                         </Button>
@@ -279,7 +276,6 @@ const Schedules: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => toggleActive(row)}
-                          title={row.is_active ? 'Deactivate' : 'Activate'}
                         >
                           {row.is_active ? 'Deactivate' : 'Activate'}
                         </Button>
@@ -287,7 +283,6 @@ const Schedules: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           onClick={() => remove(row)}
-                          title="Delete"
                           className="text-red-600 hover:text-red-700"
                         >
                           <TrashIcon className="w-4 h-4" />

@@ -5,14 +5,12 @@ import { Button } from '../../components/UI/Button';
 import {
   CubeIcon,
   PlusIcon,
-  ChartBarIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
   ClockIcon,
   CurrencyDollarIcon,
   WrenchScrewdriverIcon,
   BuildingStorefrontIcon,
-  UserGroupIcon,
   DocumentTextIcon,
   CalendarIcon,
 } from '@heroicons/react/24/outline';

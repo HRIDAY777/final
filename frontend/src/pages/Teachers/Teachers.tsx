@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   AcademicCapIcon, UserIcon, CalendarIcon, PhoneIcon, 
-  EnvelopeIcon, MapPinIcon, ClockIcon, CheckCircleIcon,
+  EnvelopeIcon, ClockIcon, CheckCircleIcon,
   BookOpenIcon, CurrencyDollarIcon
 } from '@heroicons/react/24/outline';
 import DataTable from '../../components/CRUD/DataTable';
 import FormBuilder from '../../components/Forms/FormBuilder';
-import { apiService } from '../../services/api';
 
 interface Teacher {
   id: number;
@@ -27,6 +26,64 @@ interface Teacher {
   created_at: string;
 }
 
+// Sample data for demo
+const sampleTeachers: Teacher[] = [
+  {
+    id: 1,
+    first_name: 'Dr. Sarah',
+    last_name: 'Johnson',
+    email: 'sarah.johnson@school.com',
+    phone: '+1234567890',
+    date_of_birth: '1985-05-15',
+    gender: 'Female',
+    address: '123 Education St, City, State',
+    hire_date: '2020-08-01',
+    department: 'Science',
+    subject: 'Physics',
+    qualification: 'Ph.D. in Physics',
+    experience_years: 8,
+    salary: 65000,
+    status: 'active',
+    created_at: '2020-08-01T00:00:00Z'
+  },
+  {
+    id: 2,
+    first_name: 'Prof. Michael',
+    last_name: 'Chen',
+    email: 'michael.chen@school.com',
+    phone: '+1234567891',
+    date_of_birth: '1980-12-22',
+    gender: 'Male',
+    address: '456 Academic Ave, City, State',
+    hire_date: '2018-09-01',
+    department: 'Mathematics',
+    subject: 'Advanced Calculus',
+    qualification: 'M.Sc. in Mathematics',
+    experience_years: 12,
+    salary: 70000,
+    status: 'active',
+    created_at: '2018-09-01T00:00:00Z'
+  },
+  {
+    id: 3,
+    first_name: 'Ms. Emily',
+    last_name: 'Rodriguez',
+    email: 'emily.rodriguez@school.com',
+    phone: '+1234567892',
+    date_of_birth: '1990-03-08',
+    gender: 'Female',
+    address: '789 Teaching Rd, City, State',
+    hire_date: '2022-01-15',
+    department: 'Languages',
+    subject: 'English Literature',
+    qualification: 'M.A. in English',
+    experience_years: 5,
+    salary: 55000,
+    status: 'active',
+    created_at: '2022-01-15T00:00:00Z'
+  }
+];
+
 const Teachers: React.FC = () => {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,69 +91,7 @@ const Teachers: React.FC = () => {
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
-  // Sample data for demo
-  const sampleTeachers: Teacher[] = [
-    {
-      id: 1,
-      first_name: 'Dr. Sarah',
-      last_name: 'Johnson',
-      email: 'sarah.johnson@school.com',
-      phone: '+1234567890',
-      date_of_birth: '1985-05-15',
-      gender: 'Female',
-      address: '123 Education St, City, State',
-      hire_date: '2020-08-01',
-      department: 'Science',
-      subject: 'Physics',
-      qualification: 'Ph.D. in Physics',
-      experience_years: 8,
-      salary: 65000,
-      status: 'active',
-      created_at: '2020-08-01T00:00:00Z'
-    },
-    {
-      id: 2,
-      first_name: 'Prof. Michael',
-      last_name: 'Chen',
-      email: 'michael.chen@school.com',
-      phone: '+1234567891',
-      date_of_birth: '1980-12-22',
-      gender: 'Male',
-      address: '456 Academic Ave, City, State',
-      hire_date: '2018-09-01',
-      department: 'Mathematics',
-      subject: 'Advanced Calculus',
-      qualification: 'M.Sc. in Mathematics',
-      experience_years: 12,
-      salary: 70000,
-      status: 'active',
-      created_at: '2018-09-01T00:00:00Z'
-    },
-    {
-      id: 3,
-      first_name: 'Ms. Emily',
-      last_name: 'Rodriguez',
-      email: 'emily.rodriguez@school.com',
-      phone: '+1234567892',
-      date_of_birth: '1990-03-08',
-      gender: 'Female',
-      address: '789 Teaching Rd, City, State',
-      hire_date: '2022-01-15',
-      department: 'Languages',
-      subject: 'English Literature',
-      qualification: 'M.A. in English',
-      experience_years: 5,
-      salary: 55000,
-      status: 'active',
-      created_at: '2022-01-15T00:00:00Z'
-    }
-  ];
-
-  useEffect(() => {
-    loadTeachers();
-  }, []);
-
-  const loadTeachers = async () => {
+  const loadTeachers = useCallback(async () => {
     try {
       setLoading(true);
       // In real app, this would be: const data = await apiService.get('/teachers/');
@@ -107,7 +102,11 @@ const Teachers: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadTeachers();
+  }, [loadTeachers]);
 
   const handleAdd = () => {
     setEditingTeacher(null);

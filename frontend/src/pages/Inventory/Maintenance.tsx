@@ -6,8 +6,6 @@ import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   EyeIcon,
@@ -42,7 +40,7 @@ const Maintenance: React.FC = () => {
   const [maintenanceRecords, setMaintenanceRecords] = useState<MaintenanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     maintenance_type: '',
     is_completed: '',
     scheduled_from: '',
@@ -273,25 +271,8 @@ const Maintenance: React.FC = () => {
 
       {/* Filters */}
       <FilterBar
-        search={search}
+        searchValue={search}
         onSearchChange={setSearch}
-        filters={filters}
-        onFiltersChange={setFilters}
-        filterOptions={{
-          maintenance_type: [
-            { value: '', label: 'All Types' },
-            { value: 'preventive', label: 'Preventive' },
-            { value: 'corrective', label: 'Corrective' },
-            { value: 'emergency', label: 'Emergency' },
-            { value: 'upgrade', label: 'Upgrade' }
-          ],
-          is_completed: [
-            { value: '', label: 'All Records' },
-            { value: 'true', label: 'Completed' },
-            { value: 'false', label: 'Pending' }
-          ]
-        }}
-        dateFilters={['scheduled_from', 'scheduled_to']}
       />
 
       {/* Maintenance Records List */}
@@ -397,8 +378,9 @@ const Maintenance: React.FC = () => {
       {/* Pagination */}
       {totalPages > 1 && (
         <Pagination
-          currentPage={page}
-          totalPages={totalPages}
+          page={page}
+          pageSize={10}
+          total={totalPages * 10}
           onPageChange={setPage}
         />
       )}
@@ -409,7 +391,7 @@ const Maintenance: React.FC = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Maintenance Record</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "{selectedRecord.title}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{selectedRecord.title}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-3">
               <Button
@@ -419,7 +401,7 @@ const Maintenance: React.FC = () => {
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                variant="destructive"
                 onClick={confirmDelete}
               >
                 Delete

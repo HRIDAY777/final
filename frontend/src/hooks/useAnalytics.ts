@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { apiClient } from '../lib/api-client';
 
 // Analytics Data Interfaces
 interface AnalyticsOverview {
@@ -142,12 +141,7 @@ export const usePerformanceAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getPerformanceData = async (params: {
-    time_range?: string;
-    subject?: string;
-    grade?: string;
-    class?: string;
-  } = {}) => {
+  const getPerformanceData = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -231,11 +225,7 @@ export const useAttendanceAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getAttendanceData = async (params: {
-    time_range?: string;
-    class?: string;
-    grade?: string;
-  } = {}) => {
+  const getAttendanceData = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -317,10 +307,7 @@ export const useFinancialAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getFinancialData = async (params: {
-    time_range?: string;
-    category?: string;
-  } = {}) => {
+  const getFinancialData = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -407,10 +394,7 @@ export const useEnrollmentAnalytics = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getEnrollmentData = async (params: {
-    time_range?: string;
-    grade?: string;
-  } = {}) => {
+  const getEnrollmentData = async () => {
     try {
       setLoading(true);
       setError(null);

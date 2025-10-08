@@ -2,7 +2,8 @@ from rest_framework import serializers
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from .models import (
-    Plan, Subscription, Fee, Invoice, InvoiceItem, Payment, Transaction, BillingSettings
+    Plan, Subscription, Fee, Invoice, InvoiceItem, Payment, Transaction,
+    BillingSettings
 )
 
 
@@ -74,9 +75,11 @@ class InvoiceSerializer(serializers.ModelSerializer):
     tenant = serializers.StringRelatedField(read_only=True)
     tenant_id = serializers.IntegerField(write_only=True)
     student = serializers.StringRelatedField(read_only=True)
-    student_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    student_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True)
     subscription = SubscriptionSerializer(read_only=True)
-    subscription_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    subscription_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True)
     items = InvoiceItemSerializer(many=True, read_only=True)
     is_overdue = serializers.ReadOnlyField()
     days_overdue = serializers.ReadOnlyField()
@@ -84,14 +87,15 @@ class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = [
-            'id', 'invoice_number', 'tenant', 'tenant_id', 'student', 'student_id',
-            'subscription', 'subscription_id', 'status', 'issue_date', 'due_date',
-            'paid_date', 'subtotal', 'tax_amount', 'discount_amount', 'total_amount',
-            'notes', 'items', 'is_overdue', 'days_overdue', 'created_at', 'updated_at'
+            'id', 'invoice_number', 'tenant', 'tenant_id', 'student',
+            'student_id', 'subscription', 'subscription_id', 'status',
+            'issue_date', 'due_date', 'paid_date', 'subtotal', 'tax_amount',
+            'discount_amount', 'total_amount', 'notes', 'items', 'is_overdue',
+            'days_overdue', 'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'invoice_number', 'issue_date', 'paid_date', 'created_at', 'updated_at',
-            'is_overdue', 'days_overdue'
+            'id', 'invoice_number', 'issue_date', 'paid_date', 'created_at',
+            'updated_at', 'is_overdue', 'days_overdue'
         ]
 
     def validate(self, data):
@@ -109,8 +113,9 @@ class InvoiceListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = [
-            'id', 'invoice_number', 'tenant', 'student', 'status', 'total_amount',
-            'issue_date', 'due_date', 'is_overdue', 'created_at'
+            'id', 'invoice_number', 'tenant', 'student', 'status',
+            'total_amount', 'issue_date', 'due_date', 'is_overdue',
+            'created_at'
         ]
 
 
@@ -118,20 +123,21 @@ class PaymentSerializer(serializers.ModelSerializer):
     invoice = InvoiceSerializer(read_only=True)
     invoice_id = serializers.IntegerField(write_only=True)
     paid_by = serializers.StringRelatedField(read_only=True)
-    paid_by_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    paid_by_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True)
     processed_by = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Payment
         fields = [
-            'id', 'payment_id', 'invoice', 'invoice_id', 'amount', 'payment_method',
-            'status', 'transaction_id', 'gateway_response', 'paid_by', 'paid_by_id',
-            'processed_by', 'payment_date', 'processed_date', 'notes',
-            'created_at', 'updated_at'
+            'id', 'payment_id', 'invoice', 'invoice_id', 'amount',
+            'payment_method', 'status', 'transaction_id', 'gateway_response',
+            'paid_by', 'paid_by_id', 'processed_by', 'payment_date',
+            'processed_date', 'notes', 'created_at', 'updated_at'
         ]
         read_only_fields = [
-            'id', 'payment_id', 'processed_by', 'payment_date', 'processed_date',
-            'created_at', 'updated_at'
+            'id', 'payment_id', 'processed_by', 'payment_date',
+            'processed_date', 'created_at', 'updated_at'
         ]
 
 
@@ -143,7 +149,8 @@ class PaymentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = [
-            'id', 'payment_id', 'invoice', 'amount', 'payment_method', 'status',
+            'id', 'payment_id', 'invoice', 'amount', 'payment_method',
+            'status',
             'paid_by', 'processed_by', 'payment_date', 'created_at'
         ]
 
@@ -152,9 +159,11 @@ class TransactionSerializer(serializers.ModelSerializer):
     tenant = serializers.StringRelatedField(read_only=True)
     tenant_id = serializers.IntegerField(write_only=True)
     payment = PaymentSerializer(read_only=True)
-    payment_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    payment_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True)
     invoice = InvoiceSerializer(read_only=True)
-    invoice_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    invoice_id = serializers.IntegerField(
+        write_only=True, required=False, allow_null=True)
     created_by = serializers.StringRelatedField(read_only=True)
 
     class Meta:
@@ -190,10 +199,12 @@ class BillingSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BillingSettings
         fields = [
-            'id', 'tenant', 'tenant_id', 'currency', 'tax_rate', 'late_fee_rate',
-            'grace_period_days', 'auto_generate_invoices', 'send_payment_reminders',
-            'reminder_days_before', 'payment_gateway_enabled', 'payment_gateway_config',
-            'created_at', 'updated_at'
+            'id', 'tenant', 'tenant_id', 'currency', 'tax_rate',
+            'late_fee_rate',
+            'grace_period_days', 'auto_generate_invoices',
+            'send_payment_reminders',
+            'reminder_days_before', 'payment_gateway_enabled',
+            'payment_gateway_config', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
@@ -202,11 +213,14 @@ class BillingSettingsSerializer(serializers.ModelSerializer):
 class BillingDashboardSerializer(serializers.Serializer):
     total_invoices = serializers.IntegerField()
     total_payments = serializers.IntegerField()
-    total_revenue = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_revenue = serializers.DecimalField(
+        max_digits=10, decimal_places=2)
     pending_invoices = serializers.IntegerField()
     overdue_invoices = serializers.IntegerField()
-    pending_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
-    overdue_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    pending_amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2)
+    overdue_amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2)
     active_subscriptions = serializers.IntegerField()
     expiring_subscriptions = serializers.IntegerField()
 
@@ -214,20 +228,24 @@ class BillingDashboardSerializer(serializers.Serializer):
 class InvoiceAnalyticsSerializer(serializers.Serializer):
     invoice = InvoiceSerializer()
     payment_count = serializers.IntegerField()
-    total_paid = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_paid = serializers.DecimalField(
+        max_digits=10, decimal_places=2)
     days_outstanding = serializers.IntegerField()
 
 
 class PaymentAnalyticsSerializer(serializers.Serializer):
     payment_method = serializers.CharField()
     count = serializers.IntegerField()
-    total_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
-    percentage = serializers.DecimalField(max_digits=5, decimal_places=2)
+    total_amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2)
+    percentage = serializers.DecimalField(
+        max_digits=5, decimal_places=2)
 
 
 class RevenueAnalyticsSerializer(serializers.Serializer):
     period = serializers.CharField()
-    revenue = serializers.DecimalField(max_digits=10, decimal_places=2)
+    revenue = serializers.DecimalField(
+        max_digits=10, decimal_places=2)
     invoice_count = serializers.IntegerField()
     payment_count = serializers.IntegerField()
 
@@ -247,7 +265,8 @@ class CreateInvoiceSerializer(serializers.Serializer):
     def validate_items(self, value):
         for item in value:
             if 'fee_id' not in item or 'quantity' not in item:
-                raise ValidationError("Each item must have fee_id and quantity")
+                raise ValidationError(
+                    "Each item must have fee_id and quantity")
             if item['quantity'] <= 0:
                 raise ValidationError("Quantity must be greater than 0")
         return value
@@ -255,9 +274,11 @@ class CreateInvoiceSerializer(serializers.Serializer):
 
 class ProcessPaymentSerializer(serializers.Serializer):
     invoice_id = serializers.IntegerField()
-    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    amount = serializers.DecimalField(
+        max_digits=10, decimal_places=2)
     payment_method = serializers.CharField(max_length=20)
-    transaction_id = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    transaction_id = serializers.CharField(
+        max_length=100, required=False, allow_blank=True)
     notes = serializers.CharField(required=False, allow_blank=True)
 
     def validate_amount(self, value):
@@ -268,7 +289,8 @@ class ProcessPaymentSerializer(serializers.Serializer):
 
 class CancelSubscriptionSerializer(serializers.Serializer):
     subscription_id = serializers.IntegerField()
-    reason = serializers.CharField(max_length=500, required=False, allow_blank=True)
+    reason = serializers.CharField(
+        max_length=500, required=False, allow_blank=True)
 
 
 class GenerateInvoiceSerializer(serializers.Serializer):

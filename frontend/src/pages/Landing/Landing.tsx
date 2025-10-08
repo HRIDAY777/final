@@ -6,24 +6,24 @@ const Landing: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">EU</span>
+        <div className="container-responsive">
+          <div className="flex justify-between items-center py-4 sm:py-6">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm sm:text-base">EU</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">EduCore Ultra</span>
+              <span className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">EduCore Ultra</span>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <Link
                 to="/login"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                className="text-gray-600 hover:text-gray-900 px-2 sm:px-3 py-2 rounded-md text-sm font-medium"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all"
+                className="btn-primary-responsive"
               >
                 Get Started
               </Link>
@@ -33,24 +33,24 @@ const Landing: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+      <section className="hero-responsive">
+        <div className="container-responsive text-center">
+          <h1 className="hero-title-responsive">
             Welcome to EduCore Ultra
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="hero-subtitle-responsive">
             The most comprehensive school management system designed to streamline educational operations and enhance learning outcomes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/dashboard"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="btn-primary-responsive text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4"
             >
               Access Dashboard
             </Link>
             <Link
               to="/register"
-              className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:bg-gray-50"
+              className="btn-secondary-responsive text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4"
             >
               Start Free Trial
             </Link>
@@ -59,40 +59,40 @@ const Landing: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+      <section className="section-responsive bg-white">
+        <div className="container-responsive">
+          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
               Comprehensive School Management
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-lg sm:text-xl lg:text-2xl text-gray-600">
               Everything you need to manage your educational institution efficiently
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">👥</span>
+          <div className="feature-grid-responsive">
+            <div className="feature-card-responsive">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-xl sm:text-2xl">👥</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Student Management</h3>
-              <p className="text-gray-600">Complete student lifecycle management with enrollment, attendance, and academic tracking.</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Student Management</h3>
+              <p className="text-sm sm:text-base text-gray-600">Complete student lifecycle management with enrollment, attendance, and academic tracking.</p>
             </div>
             
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">👨‍🏫</span>
+            <div className="feature-card-responsive">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-xl sm:text-2xl">👨‍🏫</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Teacher Management</h3>
-              <p className="text-gray-600">Comprehensive teacher profiles, assignments, schedules, and performance tracking.</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Teacher Management</h3>
+              <p className="text-sm sm:text-base text-gray-600">Comprehensive teacher profiles, assignments, schedules, and performance tracking.</p>
             </div>
             
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">📊</span>
+            <div className="feature-card-responsive">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-xl sm:text-2xl">📊</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Analytics & Reports</h3>
-              <p className="text-gray-600">Comprehensive analytics dashboard with real-time insights and reporting.</p>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Analytics & Reports</h3>
+              <p className="text-sm sm:text-base text-gray-600">Comprehensive analytics dashboard with real-time insights and reporting.</p>
             </div>
           </div>
         </div>

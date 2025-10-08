@@ -7,8 +7,7 @@ import {
   TrashIcon, 
   MapPinIcon, 
   ClockIcon, 
-  TruckIcon,
-  EyeIcon
+  TruckIcon
 } from '@heroicons/react/24/outline';
 
 interface Route {
@@ -40,7 +39,7 @@ const Routes: React.FC = () => {
     estimatedTime: '',
     distance: '',
     assignedVehicle: '',
-    status: 'active' as const
+    status: 'active' as Route['status']
   });
 
   // Mock data
@@ -207,9 +206,9 @@ const Routes: React.FC = () => {
 
       <Card>
         <FilterBar
-          placeholder={t('placeholder.search_routes')}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          searchPlaceholder={t('placeholder.search_routes')}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
         />
 
         {filteredRoutes.length === 0 ? (
@@ -309,8 +308,9 @@ const Routes: React.FC = () => {
 
             {totalPages > 1 && (
               <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
+                page={currentPage}
+                pageSize={itemsPerPage}
+                total={filteredRoutes.length}
                 onPageChange={setCurrentPage}
               />
             )}
@@ -448,7 +448,7 @@ const Routes: React.FC = () => {
                         estimatedTime: '',
                         distance: '',
                         assignedVehicle: '',
-                        status: 'active'
+                        status: 'active' as Route['status']
                       });
                     }}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"

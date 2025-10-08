@@ -1,8 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    AIModelViewSet, AIQuizGeneratorViewSet, AIQuestionViewSet, AILessonSummarizerViewSet,
-    AIPerformancePredictorViewSet, AIAttendanceAnomalyDetectorViewSet, AINaturalLanguageQueryViewSet,
+    AIModelViewSet, AIQuizGeneratorViewSet, AIQuestionViewSet,
+    AILessonSummarizerViewSet, AIPerformancePredictorViewSet,
+    AIAttendanceAnomalyDetectorViewSet, AINaturalLanguageQueryViewSet,
     AITrainingJobViewSet, AIDataSourceViewSet, AIUsageLogViewSet
 )
 

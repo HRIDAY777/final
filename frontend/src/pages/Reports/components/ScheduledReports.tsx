@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/UI/Card';
 import { Button } from '@/components/UI/Button';
 import { Badge } from '@/components/UI/Badge';
 import Input from '@/components/UI/Input';
@@ -27,7 +27,6 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle,
   Edit,
   Eye
 } from 'lucide-react';
@@ -62,11 +61,7 @@ const ScheduledReports: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const { getScheduledReports, pauseReport, resumeReport, deleteReport } = useScheduledReports();
 
-  useEffect(() => {
-    loadReports();
-  }, []);
-
-  const loadReports = async () => {
+  const loadReports = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getScheduledReports();
@@ -76,7 +71,11 @@ const ScheduledReports: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getScheduledReports]);
+
+  useEffect(() => {
+    loadReports();
+  }, [loadReports]);
 
   const handlePause = async (id: string) => {
     try {
@@ -222,9 +221,7 @@ const ScheduledReports: React.FC = () => {
 
       {/* Reports Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>All Scheduled Reports ({filteredReports.length})</CardTitle>
-        </CardHeader>
+        <CardHeader title={`All Scheduled Reports (${filteredReports.length})`} />
         <CardContent>
           <Table>
             <TableHeader>
@@ -289,12 +286,12 @@ const ScheduledReports: React.FC = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenuTrigger>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent>
                         <DropdownMenuItem>
                           <Eye className="mr-2 h-4 w-4" />
                           View

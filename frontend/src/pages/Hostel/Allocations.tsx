@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -6,19 +6,10 @@ import { Pagination } from '../../components/UI/Pagination';
 import { Button } from '../../components/UI/Button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/UI/Dialog';
 import Input from '../../components/UI/Input';
-import { Select } from '../../components/UI/Select';
 import { Textarea } from '../../components/UI/Textarea';
-import { apiService } from '../../services/api';
 import {
-  UserGroupIcon,
-  HomeModernIcon,
-  CalendarIcon,
-  CheckCircleIcon,
   XCircleIcon,
-  ClockIcon,
   EyeIcon,
-  PencilIcon,
-  TrashIcon,
   PlusIcon
 } from '@heroicons/react/24/outline';
 
@@ -56,9 +47,7 @@ interface Student {
 
 const Allocations: React.FC = () => {
   const [allocations, setAllocations] = useState<Allocation[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [showAllocationModal, setShowAllocationModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -82,15 +71,8 @@ const Allocations: React.FC = () => {
     search: '',
   });
 
-  useEffect(() => {
-    fetchAllocations();
-    fetchAvailableRooms();
-    fetchAvailableStudents();
-  }, [currentPage, filters]);
-
-  const fetchAllocations = async () => {
+  const fetchAllocations = useCallback(async () => {
     try {
-      setLoading(true);
       // Mock data for demonstration
       const mockAllocations: Allocation[] = [
         {
@@ -158,13 +140,16 @@ const Allocations: React.FC = () => {
 
       setAllocations(paginatedAllocations);
       setTotalCount(filteredAllocations.length);
-      setTotalPages(Math.ceil(filteredAllocations.length / itemsPerPage));
     } catch (error) {
       console.error('Error fetching allocations:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentPage, filters]);
+
+  useEffect(() => {
+    fetchAllocations();
+    fetchAvailableRooms();
+    fetchAvailableStudents();
+  }, [fetchAllocations]);
 
   const fetchAvailableRooms = async () => {
     try {
@@ -194,10 +179,7 @@ const Allocations: React.FC = () => {
     }
   };
 
-  const handleFilterChange = (newFilters: any) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-  };
+
 
   const handleCreateAllocation = async () => {
     try {

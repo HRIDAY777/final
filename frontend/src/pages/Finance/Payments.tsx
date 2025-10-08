@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -8,12 +8,8 @@ import { useBillingStore } from '../../stores/billingStore';
 import { useTranslation } from '../../utils/i18n';
 import { 
   PlusIcon, 
-  BanknotesIcon, 
-  CreditCardIcon,
   TrashIcon,
-  EyeIcon,
-  CheckCircleIcon,
-  XCircleIcon
+  EyeIcon
 } from '@heroicons/react/24/outline';
 
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
@@ -34,9 +30,13 @@ const Payments: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
+  const loadPayments = useCallback(() => {
     fetchPayments({ page, search });
-  }, [page, search]);
+  }, [fetchPayments, page, search]);
+
+  useEffect(() => {
+    loadPayments();
+  }, [loadPayments]);
 
   const onDelete = async (id: number) => {
     if (!confirm(t('confirm.delete_payment'))) return;

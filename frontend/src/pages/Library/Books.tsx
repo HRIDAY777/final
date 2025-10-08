@@ -1,9 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Skeleton, SkeletonText } from '../../components/UI/Skeleton';
 import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination as Pager } from '../../components/UI/Pagination';
 import { useLibraryStore } from '../../stores/libraryStore';
 import { Book } from '../../stores/libraryStore';
+
+// Type for form data when creating/updating books
+interface BookFormData {
+  title: string;
+  isbn: string;
+  author: string; // Author name or ID
+  category: string; // Category name or ID
+  publication_year: string;
+  publisher: string;
+  description: string;
+  total_copies: string;
+  location: string;
+}
 
 const Books: React.FC = () => {
   const {
@@ -22,7 +35,7 @@ const Books: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<BookFormData>({
     title: '',
     isbn: '',
     author: '',
@@ -34,29 +47,43 @@ const Books: React.FC = () => {
     location: ''
   });
 
-  useEffect(() => {
+  const fetchBooksCallback = useCallback(() => {
     fetchBooks({ page: currentPage, search: searchTerm });
-  }, [currentPage, searchTerm]);
+  }, [fetchBooks, currentPage, searchTerm]);
+
+  const clearErrorsCallback = useCallback(() => {
+    clearErrors();
+  }, [clearErrors]);
+
+  useEffect(() => {
+    fetchBooksCallback();
+  }, [fetchBooksCallback]);
 
   useEffect(() => {
     if (booksError) {
-      setTimeout(() => clearErrors(), 5000);
+      setTimeout(() => clearErrorsCallback(), 5000);
     }
-  }, [booksError]);
+  }, [booksError, clearErrorsCallback]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const bookData = {
-      ...formData,
+      title: formData.title,
+      isbn: formData.isbn,
+      author: formData.author, // This should be an author ID or name string
+      category: formData.category, // This should be a category ID or name string
       publication_year: parseInt(formData.publication_year),
-      total_copies: parseInt(formData.total_copies)
+      publisher: formData.publisher,
+      description: formData.description,
+      total_copies: parseInt(formData.total_copies),
+      location: formData.location
     };
 
     try {
       if (editingBook) {
-        await updateBook(editingBook.id, bookData);
+        await updateBook(editingBook.id, bookData as unknown as Partial<Book>);
       } else {
-        await createBook(bookData);
+        await createBook(bookData as unknown as Partial<Book>);
       }
       setIsModalOpen(false);
       setEditingBook(null);

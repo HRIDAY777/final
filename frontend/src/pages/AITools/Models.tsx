@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAIToolsStore } from '../../stores/aiToolsStore';
 import { AIModel } from '../../stores/aiToolsStore';
 
@@ -38,15 +38,23 @@ const Models: React.FC = () => {
     validation_data_size: 200
   });
 
-  useEffect(() => {
+  const memoizedFetchModels = useCallback(() => {
     fetchModels({ page: currentPage, search: searchTerm });
-  }, [currentPage, searchTerm]);
+  }, [fetchModels, currentPage, searchTerm]);
+
+  const memoizedClearErrors = useCallback(() => {
+    clearErrors();
+  }, [clearErrors]);
+
+  useEffect(() => {
+    memoizedFetchModels();
+  }, [memoizedFetchModels]);
 
   useEffect(() => {
     if (modelsError) {
-      setTimeout(() => clearErrors(), 5000);
+      setTimeout(() => memoizedClearErrors(), 5000);
     }
-  }, [modelsError]);
+  }, [modelsError, memoizedClearErrors]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -14,7 +14,7 @@ const Quizzes: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  const fetchQuizzes = async () => {
+  const fetchQuizzes = useCallback(async () => {
     setLoading(true); setError(null);
     try {
       const data: any = await examAPI.getQuizzes({ search, page });
@@ -23,9 +23,9 @@ const Quizzes: React.FC = () => {
     } catch (e) {
       setError('Failed to load quizzes');
     } finally { setLoading(false); }
-  };
+  }, [search, page]);
 
-  useEffect(() => { fetchQuizzes(); }, [page, search]);
+  useEffect(() => { fetchQuizzes(); }, [fetchQuizzes]);
 
   return (
     <div className="space-y-6">

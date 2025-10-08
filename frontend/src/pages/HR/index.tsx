@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/UI/Card';
 import { Button } from '@/components/UI/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/Tabs';
-import { Badge } from '@/components/UI/Badge';
 import { 
   Users, 
   DollarSign, 
@@ -18,16 +17,11 @@ import {
 import HRDashboard from './components/HRDashboard';
 import Employees from './components/Employees';
 import Payroll from './components/Payroll';
-import LeaveManagement from './components/LeaveManagement';
-import Attendance from './components/Attendance';
-import Performance from './components/Performance';
-import Departments from './components/Departments';
-import Documents from './components/Documents';
+
 import { useHR } from '@/hooks/useHR';
 
 const HRPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const { stats, isLoading } = useHR();
 
   const tabs = [
@@ -51,10 +45,10 @@ const HRPage: React.FC = () => {
             Manage staff, payroll, attendance, and performance
           </p>
         </div>
-        <Button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Add Employee
-        </Button>
+                 <Button className="flex items-center gap-2">
+           <Plus className="w-4 h-4" />
+           Add Employee
+         </Button>
       </div>
 
       {/* Stats Cards */}
@@ -117,11 +111,11 @@ const HRPage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle>HR Management</CardTitle>
-        </CardHeader>
-        <CardContent>
+             <Card>
+         <CardContent>
+           <div className="mb-4">
+             <h3 className="text-lg font-semibold">HR Management</h3>
+           </div>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-8">
               {tabs.map((tab) => (
@@ -144,25 +138,35 @@ const HRPage: React.FC = () => {
               <Payroll />
             </TabsContent>
 
-            <TabsContent value="leave" className="mt-6">
-              <LeaveManagement />
-            </TabsContent>
+                         <TabsContent value="leave" className="mt-6">
+               <div className="text-center py-8">
+                 <p className="text-gray-500">Leave Management - Coming Soon</p>
+               </div>
+             </TabsContent>
 
-            <TabsContent value="attendance" className="mt-6">
-              <Attendance />
-            </TabsContent>
+             <TabsContent value="attendance" className="mt-6">
+               <div className="text-center py-8">
+                 <p className="text-gray-500">Attendance - Coming Soon</p>
+               </div>
+             </TabsContent>
 
-            <TabsContent value="performance" className="mt-6">
-              <Performance />
-            </TabsContent>
+             <TabsContent value="performance" className="mt-6">
+               <div className="text-center py-8">
+                 <p className="text-gray-500">Performance - Coming Soon</p>
+               </div>
+             </TabsContent>
 
-            <TabsContent value="departments" className="mt-6">
-              <Departments />
-            </TabsContent>
+             <TabsContent value="departments" className="mt-6">
+               <div className="text-center py-8">
+                 <p className="text-gray-500">Departments - Coming Soon</p>
+               </div>
+             </TabsContent>
 
-            <TabsContent value="documents" className="mt-6">
-              <Documents />
-            </TabsContent>
+             <TabsContent value="documents" className="mt-6">
+               <div className="text-center py-8">
+                 <p className="text-gray-500">Documents - Coming Soon</p>
+               </div>
+             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>

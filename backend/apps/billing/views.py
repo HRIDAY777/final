@@ -3,23 +3,24 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Count, Sum, Q, Avg
+from django.db.models import Count, Sum
 from django.utils import timezone
-from django.shortcuts import get_object_or_404
-from django.core.exceptions import ValidationError
 from datetime import timedelta
 from decimal import Decimal
 
 from .models import (
-    Plan, Subscription, Fee, Invoice, InvoiceItem, Payment, Transaction, BillingSettings
+    Plan, Subscription, Fee, Invoice, InvoiceItem, Payment, Transaction,
+    BillingSettings
 )
 from .serializers import (
     PlanSerializer, SubscriptionSerializer, FeeSerializer, InvoiceSerializer,
-    InvoiceListSerializer, InvoiceItemSerializer, PaymentSerializer, PaymentListSerializer,
-    TransactionSerializer, TransactionListSerializer, BillingSettingsSerializer,
-    BillingDashboardSerializer, InvoiceAnalyticsSerializer, PaymentAnalyticsSerializer,
-    RevenueAnalyticsSerializer, CreateInvoiceSerializer, ProcessPaymentSerializer,
-    CancelSubscriptionSerializer, GenerateInvoiceSerializer, SendPaymentReminderSerializer
+    InvoiceListSerializer, PaymentSerializer, PaymentListSerializer,
+    TransactionSerializer, TransactionListSerializer,
+    BillingSettingsSerializer,
+    BillingDashboardSerializer, PaymentAnalyticsSerializer,
+    RevenueAnalyticsSerializer, CreateInvoiceSerializer,
+    ProcessPaymentSerializer,
+    CancelSubscriptionSerializer, SendPaymentReminderSerializer
 )
 
 
@@ -27,7 +28,9 @@ class PlanViewSet(viewsets.ModelViewSet):
     queryset = Plan.objects.all()
     serializer_class = PlanSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter
+    ]
     filterset_fields = ['plan_type', 'billing_cycle', 'is_active']
     search_fields = ['name', 'description']
     ordering_fields = ['price', 'max_students', 'created_at']
@@ -45,7 +48,8 @@ class PlanViewSet(viewsets.ModelViewSet):
         """Get most popular plans by subscription count"""
         plans = self.queryset.annotate(
             subscription_count=Count('subscriptions')
-        ).filter(subscription_count__gt=0).order_by('-subscription_count')[:10]
+        ).filter(subscription_count__gt=0).order_by(
+            '-subscription_count')[:10]
         serializer = self.get_serializer(plans, many=True)
         return Response(serializer.data)
 
@@ -54,7 +58,9 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter
+    ]
     filterset_fields = ['status', 'plan', 'auto_renew']
     search_fields = ['tenant__name', 'plan__name', 'notes']
     ordering_fields = ['start_date', 'end_date', 'created_at']
@@ -83,7 +89,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
         """Cancel a subscription"""
         subscription = self.get_object()
         serializer = CancelSubscriptionSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             try:
                 subscription.cancel(
@@ -99,7 +105,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
                     {"error": str(e)},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -107,7 +113,9 @@ class FeeViewSet(viewsets.ModelViewSet):
     queryset = Fee.objects.all()
     serializer_class = FeeSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter
+    ]
     filterset_fields = ['fee_type', 'is_recurring', 'is_active']
     search_fields = ['name', 'description']
     ordering_fields = ['amount', 'name', 'created_at']
@@ -132,7 +140,9 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter
+    ]
     filterset_fields = ['status', 'tenant', 'student']
     search_fields = ['invoice_number', 'tenant__name', 'student__first_name']
     ordering_fields = ['issue_date', 'due_date', 'total_amount']
@@ -161,11 +171,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     def create_invoice(self, request):
         """Create a new invoice with items"""
         serializer = CreateInvoiceSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             try:
                 data = serializer.validated_data
-                
+
                 # Create invoice
                 invoice = Invoice.objects.create(
                     tenant_id=data['tenant_id'],
@@ -174,7 +184,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     due_date=data['due_date'],
                     notes=data.get('notes', '')
                 )
-                
+
                 # Create invoice items
                 subtotal = Decimal('0.00')
                 for item_data in data['items']:
@@ -183,7 +193,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     unit_price = fee.amount
                     total_price = unit_price * quantity
                     subtotal += total_price
-                    
+
                     InvoiceItem.objects.create(
                         invoice=invoice,
                         fee=fee,
@@ -192,14 +202,15 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         unit_price=unit_price,
                         total_price=total_price
                     )
-                
+
                 # Calculate totals
                 invoice.subtotal = subtotal
                 invoice.calculate_total()
                 invoice.save()
-                
+
                 return Response(
-                    {"message": "Invoice created successfully", "invoice_id": invoice.id},
+                    {"message": "Invoice created successfully",
+                     "invoice_id": invoice.id},
                     status=status.HTTP_201_CREATED
                 )
             except Exception as e:
@@ -207,7 +218,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     {"error": str(e)},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post'])
@@ -223,16 +234,16 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def send_reminder(self, request, pk=None):
         """Send payment reminder"""
-        invoice = self.get_object()
+        self.get_object()  # Get invoice for validation
         serializer = SendPaymentReminderSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             # TODO: Implement reminder sending logic
             return Response(
                 {"message": "Payment reminder sent"},
                 status=status.HTTP_200_OK
             )
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -240,7 +251,9 @@ class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter
+    ]
     filterset_fields = ['status', 'payment_method']
     search_fields = ['payment_id', 'invoice__invoice_number', 'transaction_id']
     ordering_fields = ['payment_date', 'amount', 'created_at']
@@ -269,11 +282,11 @@ class PaymentViewSet(viewsets.ModelViewSet):
     def process_payment(self, request):
         """Process a payment"""
         serializer = ProcessPaymentSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             try:
                 data = serializer.validated_data
-                
+
                 # Create payment
                 payment = Payment.objects.create(
                     invoice_id=data['invoice_id'],
@@ -283,12 +296,13 @@ class PaymentViewSet(viewsets.ModelViewSet):
                     paid_by=request.user,
                     notes=data.get('notes', '')
                 )
-                
+
                 # Mark as completed
                 payment.mark_as_completed(request.user)
-                
+
                 return Response(
-                    {"message": "Payment processed successfully", "payment_id": payment.id},
+                    {"message": "Payment processed successfully",
+                     "payment_id": payment.id},
                     status=status.HTTP_201_CREATED
                 )
             except Exception as e:
@@ -296,7 +310,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
                     {"error": str(e)},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post'])
@@ -314,7 +328,9 @@ class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter
+    ]
     filterset_fields = ['transaction_type', 'tenant']
     search_fields = ['transaction_id', 'description', 'reference']
     ordering_fields = ['transaction_date', 'amount', 'created_at']
@@ -344,7 +360,9 @@ class BillingSettingsViewSet(viewsets.ModelViewSet):
     queryset = BillingSettings.objects.all()
     serializer_class = BillingSettingsSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [
+        DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter
+    ]
     filterset_fields = ['currency', 'payment_gateway_enabled']
     search_fields = ['tenant__name']
     ordering = ['tenant__name']
@@ -358,7 +376,8 @@ class BillingAnalyticsViewSet(viewsets.ViewSet):
         """Get billing dashboard statistics"""
         total_invoices = Invoice.objects.count()
         total_payments = Payment.objects.count()
-        total_revenue = Payment.objects.filter(status='completed').aggregate(
+        total_revenue = Payment.objects.filter(
+            status='completed').aggregate(
             total=Sum('amount')
         )['total'] or Decimal('0.00')
         pending_invoices = Invoice.objects.filter(status='sent').count()
@@ -369,7 +388,8 @@ class BillingAnalyticsViewSet(viewsets.ViewSet):
         overdue_amount = Invoice.objects.filter(status='overdue').aggregate(
             total=Sum('total_amount')
         )['total'] or Decimal('0.00')
-        active_subscriptions = Subscription.objects.filter(status='active').count()
+        active_subscriptions = Subscription.objects.filter(
+            status='active').count()
         expiring_subscriptions = Subscription.objects.filter(
             status='active',
             end_date__lte=timezone.now() + timedelta(days=30)
@@ -401,10 +421,11 @@ class BillingAnalyticsViewSet(viewsets.ViewSet):
         ).order_by('-total_amount')
 
         total_amount = sum(item['total_amount'] for item in payment_methods)
-        
+
         data = []
         for method in payment_methods:
-            percentage = (method['total_amount'] / total_amount * 100) if total_amount > 0 else 0
+            percentage = ((method['total_amount'] / total_amount * 100)
+                          if total_amount > 0 else 0)
             data.append({
                 'payment_method': method['payment_method'],
                 'count': method['count'],
@@ -422,22 +443,24 @@ class BillingAnalyticsViewSet(viewsets.ViewSet):
         periods = []
         for i in range(12):
             date = timezone.now() - timedelta(days=30*i)
-            period_start = date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            period_end = (period_start + timedelta(days=32)).replace(day=1) - timedelta(seconds=1)
-            
+            period_start = date.replace(
+                day=1, hour=0, minute=0, second=0, microsecond=0)
+            period_end = ((period_start + timedelta(days=32)).replace(day=1)
+                          - timedelta(seconds=1))
+
             revenue = Payment.objects.filter(
                 status='completed',
                 payment_date__range=(period_start, period_end)
             ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
-            
+
             invoice_count = Invoice.objects.filter(
                 issue_date__range=(period_start, period_end)
             ).count()
-            
+
             payment_count = Payment.objects.filter(
                 payment_date__range=(period_start, period_end)
             ).count()
-            
+
             periods.append({
                 'period': period_start.strftime('%Y-%m'),
                 'revenue': revenue,

@@ -7,12 +7,10 @@ import {
   ExclamationTriangleIcon,
   CurrencyDollarIcon,
   UserIcon,
-  BookOpenIcon,
   CalendarIcon,
   CheckCircleIcon,
   ClockIcon,
   EyeIcon,
-  PencilIcon,
   TrashIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline';

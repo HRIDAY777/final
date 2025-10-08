@@ -126,7 +126,7 @@ const StudentsList: React.FC = () => {
         responseType: 'blob'
       });
       
-      const url = window.URL.createObjectURL(new Blob([response as BlobPart]));
+      const url = window.URL.createObjectURL(new Blob([response as Blob]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'students.csv');

@@ -9,11 +9,9 @@ import {
   PlusIcon, 
   PencilIcon, 
   TrashIcon, 
-  EyeIcon,
   DocumentTextIcon,
   DocumentIcon,
   CheckCircleIcon,
-  XCircleIcon,
   ClockIcon,
   ArrowDownTrayIcon,
   ArrowUpTrayIcon

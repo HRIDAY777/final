@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent } from '@/components/UI/Card';
 import { Button } from '@/components/UI/Button';
 import { Badge } from '@/components/UI/Badge';
 import Input from '@/components/UI/Input';
@@ -36,11 +36,7 @@ const Employees: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { getEmployees } = useEmployees();
 
-  useEffect(() => {
-    loadEmployees();
-  }, []);
-
-  const loadEmployees = async () => {
+  const loadEmployees = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getEmployees();
@@ -50,7 +46,11 @@ const Employees: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getEmployees]);
+
+  useEffect(() => {
+    loadEmployees();
+  }, [loadEmployees]);
 
   const filteredEmployees = employees.filter(employee =>
     employee.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -119,10 +119,10 @@ const Employees: React.FC = () => {
 
       {/* Employees Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>All Employees ({filteredEmployees.length})</CardTitle>
-        </CardHeader>
         <CardContent>
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">All Employees ({filteredEmployees.length})</h3>
+          </div>
           <Table>
             <TableHeader>
               <TableRow>
@@ -180,12 +180,12 @@ const Employees: React.FC = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenuTrigger>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent>
                         <DropdownMenuItem>
                           <Eye className="mr-2 h-4 w-4" />
                           View Profile

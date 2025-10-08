@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
@@ -16,8 +16,16 @@ const Fees: React.FC = () => {
     name: '', description: '', amount: '0', currency: 'USD', fee_type: 'tuition', is_recurring: false as boolean, recurring_frequency: 'monthly' as any, due_date: ''
   });
 
-  useEffect(() => { fetchFees({ page, search }); }, [page, search]);
-  useEffect(() => { if (feesError) setTimeout(() => clearErrors(), 3000); }, [feesError]);
+  const loadFees = useCallback(() => {
+    fetchFees({ page, search });
+  }, [fetchFees, page, search]);
+
+  const handleClearErrors = useCallback(() => {
+    if (feesError) setTimeout(() => clearErrors(), 3000);
+  }, [feesError, clearErrors]);
+
+  useEffect(() => { loadFees(); }, [loadFees]);
+  useEffect(() => { handleClearErrors(); }, [handleClearErrors]);
 
   const onOpen = (fee?: Fee) => {
     if (fee) {

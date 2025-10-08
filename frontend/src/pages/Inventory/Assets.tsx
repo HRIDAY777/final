@@ -6,15 +6,10 @@ import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   EyeIcon,
   CubeIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  ClockIcon,
   MapPinIcon,
   UserIcon,
   CurrencyDollarIcon,
@@ -54,7 +49,7 @@ const Assets: React.FC = () => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     category: '',
     condition: '',
     status: '',
@@ -285,47 +280,8 @@ const Assets: React.FC = () => {
 
       {/* Filters */}
       <FilterBar
-        search={search}
+        searchValue={search}
         onSearchChange={setSearch}
-        filters={filters}
-        onFiltersChange={setFilters}
-        filterOptions={{
-          category: [
-            { value: '', label: 'All Categories' },
-            { value: 'electronics', label: 'Electronics' },
-            { value: 'furniture', label: 'Furniture' },
-            { value: 'lab-equipment', label: 'Lab Equipment' },
-            { value: 'office-supplies', label: 'Office Supplies' },
-            { value: 'sports-equipment', label: 'Sports Equipment' },
-            { value: 'books', label: 'Books' }
-          ],
-          condition: [
-            { value: '', label: 'All Conditions' },
-            { value: 'excellent', label: 'Excellent' },
-            { value: 'good', label: 'Good' },
-            { value: 'fair', label: 'Fair' },
-            { value: 'poor', label: 'Poor' },
-            { value: 'damaged', label: 'Damaged' }
-          ],
-          status: [
-            { value: '', label: 'All Status' },
-            { value: 'available', label: 'Available' },
-            { value: 'in_use', label: 'In Use' },
-            { value: 'maintenance', label: 'Under Maintenance' },
-            { value: 'retired', label: 'Retired' },
-            { value: 'lost', label: 'Lost' },
-            { value: 'stolen', label: 'Stolen' }
-          ],
-          department: [
-            { value: '', label: 'All Departments' },
-            { value: 'IT Department', label: 'IT Department' },
-            { value: 'AV Department', label: 'AV Department' },
-            { value: 'Administration', label: 'Administration' },
-            { value: 'Science Department', label: 'Science Department' },
-            { value: 'Math Department', label: 'Math Department' },
-            { value: 'English Department', label: 'English Department' }
-          ]
-        }}
       />
 
       {/* Assets List */}
@@ -416,8 +372,9 @@ const Assets: React.FC = () => {
       {/* Pagination */}
       {totalPages > 1 && (
         <Pagination
-          currentPage={page}
-          totalPages={totalPages}
+          page={page}
+          pageSize={10}
+          total={totalPages * 10}
           onPageChange={setPage}
         />
       )}
@@ -428,7 +385,7 @@ const Assets: React.FC = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Asset</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "{selectedAsset.name}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{selectedAsset.name}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-3">
               <Button
@@ -438,7 +395,7 @@ const Assets: React.FC = () => {
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                variant="destructive"
                 onClick={confirmDelete}
               >
                 Delete

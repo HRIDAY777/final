@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/UI/Card';
 import { Button } from '@/components/UI/Button';
 import { Badge } from '@/components/UI/Badge';
 import Input from '@/components/UI/Input';
@@ -50,11 +50,7 @@ const ReportTemplates: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { getTemplates, deleteTemplate } = useReportTemplates();
 
-  useEffect(() => {
-    loadTemplates();
-  }, []);
-
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getTemplates();
@@ -64,7 +60,11 @@ const ReportTemplates: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getTemplates]);
+
+  useEffect(() => {
+    loadTemplates();
+  }, [loadTemplates]);
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this template?')) {
@@ -140,9 +140,7 @@ const ReportTemplates: React.FC = () => {
 
       {/* Templates Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>All Templates ({filteredTemplates.length})</CardTitle>
-        </CardHeader>
+        <CardHeader title={`All Templates (${filteredTemplates.length})`} />
         <CardContent>
           <Table>
             <TableHeader>
@@ -191,12 +189,12 @@ const ReportTemplates: React.FC = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenuTrigger>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent>
                         <DropdownMenuItem>
                           <Eye className="mr-2 h-4 w-4" />
                           View

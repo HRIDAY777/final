@@ -7,7 +7,7 @@ const cn = (...classes: (string | undefined | null | false)[]) => {
 
 interface DialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void; // eslint-disable-line no-unused-vars
   children: React.ReactNode;
 }
 

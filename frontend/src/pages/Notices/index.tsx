@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader } from '../../components/UI/Card';
-import { Button } from '../../components/UI/Button';
 import {
   BellIcon,
   DocumentTextIcon,
@@ -10,11 +9,9 @@ import {
   ClockIcon,
   PlusIcon,
   ChartBarIcon,
-  UserGroupIcon,
   EyeIcon,
   BookOpenIcon,
   ArrowUpIcon,
-  ArrowDownIcon,
 } from '@heroicons/react/24/outline';
 
 interface NoticeStats {
@@ -218,14 +215,14 @@ const NoticesDashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex space-x-3">
-          <Button as={Link} to="/notices/create">
+          <Link to="/notices/create" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2">
             <PlusIcon className="w-4 h-4 mr-2" />
             Create Notice
-          </Button>
-          <Button variant="outline" as={Link} to="/notices/templates">
+          </Link>
+          <Link to="/notices/templates" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-10 px-4 py-2">
             <DocumentTextIcon className="w-4 h-4 mr-2" />
             Templates
-          </Button>
+          </Link>
         </div>
       </div>
 
@@ -364,9 +361,9 @@ const NoticesDashboard: React.FC = () => {
               ))}
             </div>
             <div className="mt-4 pt-4 border-t">
-              <Button variant="outline" as={Link} to="/notices/list" className="w-full">
+              <Link to="/notices/list" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-10 px-4 py-2 w-full">
                 View All Notices
-              </Button>
+              </Link>
             </div>
           </div>
         </Card>
@@ -406,9 +403,9 @@ const NoticesDashboard: React.FC = () => {
               ))}
             </div>
             <div className="mt-6 pt-4 border-t">
-              <Button variant="outline" as={Link} to="/notices/categories" className="w-full">
+              <Link to="/notices/categories" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-10 px-4 py-2 w-full">
                 Manage Categories
-              </Button>
+              </Link>
             </div>
           </div>
         </Card>
@@ -441,22 +438,22 @@ const NoticesDashboard: React.FC = () => {
         <CardHeader title="Quick Actions" />
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button as={Link} to="/notices/create" className="h-20 flex-col">
+            <Link to="/notices/create" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-blue-600 text-white hover:bg-blue-700 h-20 flex-col">
               <PlusIcon className="w-6 h-6 mb-2" />
               <span>Create Notice</span>
-            </Button>
-            <Button as={Link} to="/notices/list" variant="outline" className="h-20 flex-col">
+            </Link>
+            <Link to="/notices/list" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-20 flex-col">
               <DocumentTextIcon className="w-6 h-6 mb-2" />
               <span>All Notices</span>
-            </Button>
-            <Button as={Link} to="/notices/templates" variant="outline" className="h-20 flex-col">
+            </Link>
+            <Link to="/notices/templates" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-20 flex-col">
               <BookOpenIcon className="w-6 h-6 mb-2" />
               <span>Templates</span>
-            </Button>
-            <Button as={Link} to="/notices/analytics" variant="outline" className="h-20 flex-col">
+            </Link>
+            <Link to="/notices/analytics" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-20 flex-col">
               <ChartBarIcon className="w-6 h-6 mb-2" />
               <span>Analytics</span>
-            </Button>
+            </Link>
           </div>
         </div>
       </Card>

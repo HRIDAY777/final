@@ -2,11 +2,11 @@ import React from 'react';
 import { cn } from '@/utils/cn';
 
 interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
-  className?: string;
   children: React.ReactNode;
+  className?: string;
 }
 
-const Label: React.FC<LabelProps> = ({ className, children, ...props }) => {
+const Label: React.FC<LabelProps> = ({ children, className, ...props }) => {
   return (
     <label
       className={cn(

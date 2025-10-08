@@ -1,21 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/UI/Dialog';
 import { Button } from '@/components/UI/Button';
-import { Input } from '@/components/UI/Input';
-import { Label } from '@/components/UI/Label';
+import Input from '@/components/UI/Input';
+import Label from '@/components/UI/Label';
 import { Textarea } from '@/components/UI/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/UI/Select';
-import { Checkbox } from '@/components/UI/Checkbox';
+import Checkbox from '@/components/UI/Checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/UI/Tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/UI/Card';
+import { Card, CardContent, CardHeader } from '@/components/UI/Card';
 import { Badge } from '@/components/UI/Badge';
 import { 
   FileText, 
-  Calendar, 
-  Download, 
-  Settings, 
-  Users,
-  X
+  Download
 } from 'lucide-react';
 import { useReportTemplates } from '@/hooks/useReportTemplates';
 
@@ -48,20 +44,20 @@ const CreateReportModal: React.FC<CreateReportModalProps> = ({ open, onClose }) 
   const [loading, setLoading] = useState(false);
   const { getTemplates, createTemplate } = useReportTemplates();
 
-  useEffect(() => {
-    if (open) {
-      loadTemplates();
-    }
-  }, [open]);
-
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     try {
       const data = await getTemplates();
       setTemplates(data);
     } catch (error) {
       console.error('Error loading templates:', error);
     }
-  };
+  }, [getTemplates]);
+
+  useEffect(() => {
+    if (open) {
+      loadTemplates();
+    }
+  }, [open, loadTemplates]);
 
   const handleCreateReport = async () => {
     if (!selectedTemplate && !reportName) {
@@ -156,7 +152,7 @@ const CreateReportModal: React.FC<CreateReportModalProps> = ({ open, onClose }) 
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="generate">Generate Report</TabsTrigger>
             <TabsTrigger value="template">Create Template</TabsTrigger>
@@ -168,7 +164,7 @@ const CreateReportModal: React.FC<CreateReportModalProps> = ({ open, onClose }) 
               <Label>Select Template</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto">
                 {templates.map((template) => (
-                  <Card
+                  <div
                     key={template.id}
                     className={`cursor-pointer transition-colors ${
                       selectedTemplate === template.id
@@ -177,21 +173,20 @@ const CreateReportModal: React.FC<CreateReportModalProps> = ({ open, onClose }) 
                     }`}
                     onClick={() => setSelectedTemplate(template.id)}
                   >
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm">{template.name}</CardTitle>
+                    <Card>
+                      <CardHeader title={template.name} right={
                         <Badge className={getReportTypeColor(template.report_type)}>
                           {template.report_type}
                         </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 mb-2">{template.description}</p>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span>Format: {template.format.toUpperCase()}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      } />
+                      <CardContent>
+                        <p className="text-sm text-gray-600 mb-2">{template.description}</p>
+                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <span>Format: {template.format.toUpperCase()}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
                 ))}
               </div>
             </div>
@@ -227,7 +222,7 @@ const CreateReportModal: React.FC<CreateReportModalProps> = ({ open, onClose }) 
                     <Checkbox
                       id="schedule"
                       checked={isScheduled}
-                      onCheckedChange={(checked) => setIsScheduled(checked as boolean)}
+                      onChange={(e) => setIsScheduled(e.target.checked)}
                     />
                     <Label htmlFor="schedule">Schedule this report</Label>
                   </div>
@@ -329,11 +324,11 @@ const CreateReportModal: React.FC<CreateReportModalProps> = ({ open, onClose }) 
                 </Select>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="public"
-                  checked={isPublic}
-                  onCheckedChange={(checked) => setIsPublic(checked as boolean)}
-                />
+                                    <Checkbox
+                      id="public"
+                      checked={isPublic}
+                      onChange={(e) => setIsPublic(e.target.checked)}
+                    />
                 <Label htmlFor="public">Make template public</Label>
               </div>
             </div>

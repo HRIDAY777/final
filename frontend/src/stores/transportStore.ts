@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { api } from '../services/api';
+import { apiService } from '../services/api';
 
 export interface Vehicle {
   id: number;
@@ -143,47 +143,79 @@ interface TransportState {
 
 interface TransportActions {
   // Vehicle actions
+  // eslint-disable-next-line no-unused-vars
   fetchVehicles: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchVehicleById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createVehicle: (data: Partial<Vehicle>) => Promise<Vehicle>;
+  // eslint-disable-next-line no-unused-vars
   updateVehicle: (id: number, data: Partial<Vehicle>) => Promise<Vehicle>;
+  // eslint-disable-next-line no-unused-vars
   deleteVehicle: (id: number) => Promise<void>;
 
   // Driver actions
+  // eslint-disable-next-line no-unused-vars
   fetchDrivers: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchDriverById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createDriver: (data: Partial<Driver>) => Promise<Driver>;
+  // eslint-disable-next-line no-unused-vars
   updateDriver: (id: number, data: Partial<Driver>) => Promise<Driver>;
+  // eslint-disable-next-line no-unused-vars
   deleteDriver: (id: number) => Promise<void>;
 
   // Route actions
+  // eslint-disable-next-line no-unused-vars
   fetchRoutes: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchRouteById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createRoute: (data: Partial<Route>) => Promise<Route>;
+  // eslint-disable-next-line no-unused-vars
   updateRoute: (id: number, data: Partial<Route>) => Promise<Route>;
+  // eslint-disable-next-line no-unused-vars
   deleteRoute: (id: number) => Promise<void>;
 
   // Schedule actions
+  // eslint-disable-next-line no-unused-vars
   fetchSchedules: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchScheduleById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createSchedule: (data: Partial<Schedule>) => Promise<Schedule>;
+  // eslint-disable-next-line no-unused-vars
   updateSchedule: (id: number, data: Partial<Schedule>) => Promise<Schedule>;
+  // eslint-disable-next-line no-unused-vars
   deleteSchedule: (id: number) => Promise<void>;
 
   // Trip actions
+  // eslint-disable-next-line no-unused-vars
   fetchTrips: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchTripById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createTrip: (data: Partial<Trip>) => Promise<Trip>;
+  // eslint-disable-next-line no-unused-vars
   updateTrip: (id: number, data: Partial<Trip>) => Promise<Trip>;
+  // eslint-disable-next-line no-unused-vars
   deleteTrip: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   startTrip: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   endTrip: (id: number) => Promise<void>;
 
   // Maintenance actions
+  // eslint-disable-next-line no-unused-vars
   fetchMaintenance: (params?: any) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   fetchMaintenanceById: (id: number) => Promise<void>;
+  // eslint-disable-next-line no-unused-vars
   createMaintenance: (data: Partial<Maintenance>) => Promise<Maintenance>;
+  // eslint-disable-next-line no-unused-vars
   updateMaintenance: (id: number, data: Partial<Maintenance>) => Promise<Maintenance>;
+  // eslint-disable-next-line no-unused-vars
   deleteMaintenance: (id: number) => Promise<void>;
 
   // Utility actions
@@ -225,6 +257,7 @@ const initialState: TransportState = {
 
 export const useTransportStore = create<TransportState & TransportActions>()(
   devtools(
+    // eslint-disable-next-line no-unused-vars
     (set, get) => ({
       ...initialState,
 
@@ -232,8 +265,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchVehicles: async (params = {}) => {
         set({ vehiclesLoading: true, vehiclesError: null });
         try {
-          const response = await api.get('/transport/vehicles/', { params });
-          set({ vehicles: response.data, vehiclesLoading: false });
+          const response = await apiService.get<Vehicle[]>('/transport/vehicles/', { params });
+          set({ vehicles: response, vehiclesLoading: false });
         } catch (error: any) {
           set({ 
             vehiclesError: error.response?.data?.message || 'Failed to fetch vehicles',
@@ -245,8 +278,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchVehicleById: async (id: number) => {
         set({ vehiclesLoading: true, vehiclesError: null });
         try {
-          const response = await api.get(`/transport/vehicles/${id}/`);
-          set({ currentVehicle: response.data, vehiclesLoading: false });
+          const response = await apiService.get<Vehicle>(`/transport/vehicles/${id}/`);
+          set({ currentVehicle: response, vehiclesLoading: false });
         } catch (error: any) {
           set({ 
             vehiclesError: error.response?.data?.message || 'Failed to fetch vehicle',
@@ -258,9 +291,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       createVehicle: async (data: Partial<Vehicle>) => {
         set({ vehiclesLoading: true, vehiclesError: null });
         try {
-          const response = await api.post('/transport/vehicles/', data);
+          const response = await apiService.post<Vehicle>('/transport/vehicles/', data);
           set({ vehiclesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             vehiclesError: error.response?.data?.message || 'Failed to create vehicle',
@@ -273,9 +306,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       updateVehicle: async (id: number, data: Partial<Vehicle>) => {
         set({ vehiclesLoading: true, vehiclesError: null });
         try {
-          const response = await api.put(`/transport/vehicles/${id}/`, data);
+          const response = await apiService.patch<Vehicle>(`/transport/vehicles/${id}/`, data);
           set({ vehiclesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             vehiclesError: error.response?.data?.message || 'Failed to update vehicle',
@@ -288,7 +321,7 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       deleteVehicle: async (id: number) => {
         set({ vehiclesLoading: true, vehiclesError: null });
         try {
-          await api.delete(`/transport/vehicles/${id}/`);
+          await apiService.delete(`/transport/vehicles/${id}/`);
           set({ vehiclesLoading: false });
         } catch (error: any) {
           set({ 
@@ -303,8 +336,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchDrivers: async (params = {}) => {
         set({ driversLoading: true, driversError: null });
         try {
-          const response = await api.get('/transport/drivers/', { params });
-          set({ drivers: response.data, driversLoading: false });
+          const response = await apiService.get<Driver[]>('/transport/drivers/', { params });
+          set({ drivers: response, driversLoading: false });
         } catch (error: any) {
           set({ 
             driversError: error.response?.data?.message || 'Failed to fetch drivers',
@@ -316,8 +349,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchDriverById: async (id: number) => {
         set({ driversLoading: true, driversError: null });
         try {
-          const response = await api.get(`/transport/drivers/${id}/`);
-          set({ currentDriver: response.data, driversLoading: false });
+          const response = await apiService.get<Driver>(`/transport/drivers/${id}/`);
+          set({ currentDriver: response, driversLoading: false });
         } catch (error: any) {
           set({ 
             driversError: error.response?.data?.message || 'Failed to fetch driver',
@@ -329,9 +362,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       createDriver: async (data: Partial<Driver>) => {
         set({ driversLoading: true, driversError: null });
         try {
-          const response = await api.post('/transport/drivers/', data);
+          const response = await apiService.post<Driver>('/transport/drivers/', data);
           set({ driversLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             driversError: error.response?.data?.message || 'Failed to create driver',
@@ -344,9 +377,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       updateDriver: async (id: number, data: Partial<Driver>) => {
         set({ driversLoading: true, driversError: null });
         try {
-          const response = await api.put(`/transport/drivers/${id}/`, data);
+          const response = await apiService.patch<Driver>(`/transport/drivers/${id}/`, data);
           set({ driversLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             driversError: error.response?.data?.message || 'Failed to update driver',
@@ -359,7 +392,7 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       deleteDriver: async (id: number) => {
         set({ driversLoading: true, driversError: null });
         try {
-          await api.delete(`/transport/drivers/${id}/`);
+          await apiService.delete(`/transport/drivers/${id}/`);
           set({ driversLoading: false });
         } catch (error: any) {
           set({ 
@@ -374,8 +407,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchRoutes: async (params = {}) => {
         set({ routesLoading: true, routesError: null });
         try {
-          const response = await api.get('/transport/routes/', { params });
-          set({ routes: response.data, routesLoading: false });
+          const response = await apiService.get<Route[]>('/transport/routes/', { params });
+          set({ routes: response, routesLoading: false });
         } catch (error: any) {
           set({ 
             routesError: error.response?.data?.message || 'Failed to fetch routes',
@@ -387,8 +420,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchRouteById: async (id: number) => {
         set({ routesLoading: true, routesError: null });
         try {
-          const response = await api.get(`/transport/routes/${id}/`);
-          set({ currentRoute: response.data, routesLoading: false });
+          const response = await apiService.get<Route>(`/transport/routes/${id}/`);
+          set({ currentRoute: response, routesLoading: false });
         } catch (error: any) {
           set({ 
             routesError: error.response?.data?.message || 'Failed to fetch route',
@@ -400,9 +433,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       createRoute: async (data: Partial<Route>) => {
         set({ routesLoading: true, routesError: null });
         try {
-          const response = await api.post('/transport/routes/', data);
+          const response = await apiService.post<Route>('/transport/routes/', data);
           set({ routesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             routesError: error.response?.data?.message || 'Failed to create route',
@@ -415,9 +448,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       updateRoute: async (id: number, data: Partial<Route>) => {
         set({ routesLoading: true, routesError: null });
         try {
-          const response = await api.put(`/transport/routes/${id}/`, data);
+          const response = await apiService.patch<Route>(`/transport/routes/${id}/`, data);
           set({ routesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             routesError: error.response?.data?.message || 'Failed to update route',
@@ -430,7 +463,7 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       deleteRoute: async (id: number) => {
         set({ routesLoading: true, routesError: null });
         try {
-          await api.delete(`/transport/routes/${id}/`);
+          await apiService.delete(`/transport/routes/${id}/`);
           set({ routesLoading: false });
         } catch (error: any) {
           set({ 
@@ -445,8 +478,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchSchedules: async (params = {}) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          const response = await api.get('/transport/schedules/', { params });
-          set({ schedules: response.data, schedulesLoading: false });
+          const response = await apiService.get<Schedule[]>('/transport/schedules/', { params });
+          set({ schedules: response, schedulesLoading: false });
         } catch (error: any) {
           set({ 
             schedulesError: error.response?.data?.message || 'Failed to fetch schedules',
@@ -458,8 +491,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchScheduleById: async (id: number) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          const response = await api.get(`/transport/schedules/${id}/`);
-          set({ currentSchedule: response.data, schedulesLoading: false });
+          const response = await apiService.get<Schedule>(`/transport/schedules/${id}/`);
+          set({ currentSchedule: response, schedulesLoading: false });
         } catch (error: any) {
           set({ 
             schedulesError: error.response?.data?.message || 'Failed to fetch schedule',
@@ -471,9 +504,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       createSchedule: async (data: Partial<Schedule>) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          const response = await api.post('/transport/schedules/', data);
+          const response = await apiService.post<Schedule>('/transport/schedules/', data);
           set({ schedulesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             schedulesError: error.response?.data?.message || 'Failed to create schedule',
@@ -486,9 +519,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       updateSchedule: async (id: number, data: Partial<Schedule>) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          const response = await api.put(`/transport/schedules/${id}/`, data);
+          const response = await apiService.patch<Schedule>(`/transport/schedules/${id}/`, data);
           set({ schedulesLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             schedulesError: error.response?.data?.message || 'Failed to update schedule',
@@ -501,7 +534,7 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       deleteSchedule: async (id: number) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          await api.delete(`/transport/schedules/${id}/`);
+          await apiService.delete(`/transport/schedules/${id}/`);
           set({ schedulesLoading: false });
         } catch (error: any) {
           set({ 
@@ -516,8 +549,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchTrips: async (params = {}) => {
         set({ tripsLoading: true, tripsError: null });
         try {
-          const response = await api.get('/transport/trips/', { params });
-          set({ trips: response.data, tripsLoading: false });
+          const response = await apiService.get<Trip[]>('/transport/trips/', { params });
+          set({ trips: response, tripsLoading: false });
         } catch (error: any) {
           set({ 
             tripsError: error.response?.data?.message || 'Failed to fetch trips',
@@ -529,8 +562,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchTripById: async (id: number) => {
         set({ tripsLoading: true, tripsError: null });
         try {
-          const response = await api.get(`/transport/trips/${id}/`);
-          set({ currentTrip: response.data, tripsLoading: false });
+          const response = await apiService.get<Trip>(`/transport/trips/${id}/`);
+          set({ currentTrip: response, tripsLoading: false });
         } catch (error: any) {
           set({ 
             tripsError: error.response?.data?.message || 'Failed to fetch trip',
@@ -542,9 +575,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       createTrip: async (data: Partial<Trip>) => {
         set({ tripsLoading: true, tripsError: null });
         try {
-          const response = await api.post('/transport/trips/', data);
+          const response = await apiService.post<Trip>('/transport/trips/', data);
           set({ tripsLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             tripsError: error.response?.data?.message || 'Failed to create trip',
@@ -557,9 +590,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       updateTrip: async (id: number, data: Partial<Trip>) => {
         set({ tripsLoading: true, tripsError: null });
         try {
-          const response = await api.put(`/transport/trips/${id}/`, data);
+          const response = await apiService.patch<Trip>(`/transport/trips/${id}/`, data);
           set({ tripsLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             tripsError: error.response?.data?.message || 'Failed to update trip',
@@ -572,7 +605,7 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       deleteTrip: async (id: number) => {
         set({ tripsLoading: true, tripsError: null });
         try {
-          await api.delete(`/transport/trips/${id}/`);
+          await apiService.delete(`/transport/trips/${id}/`);
           set({ tripsLoading: false });
         } catch (error: any) {
           set({ 
@@ -586,7 +619,7 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       startTrip: async (id: number) => {
         set({ tripsLoading: true, tripsError: null });
         try {
-          await api.post(`/transport/trips/${id}/start/`);
+          await apiService.post(`/transport/trips/${id}/start/`);
           set({ tripsLoading: false });
         } catch (error: any) {
           set({ 
@@ -600,7 +633,7 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       endTrip: async (id: number) => {
         set({ tripsLoading: true, tripsError: null });
         try {
-          await api.post(`/transport/trips/${id}/end/`);
+          await apiService.post(`/transport/trips/${id}/end/`);
           set({ tripsLoading: false });
         } catch (error: any) {
           set({ 
@@ -615,8 +648,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchMaintenance: async (params = {}) => {
         set({ maintenanceLoading: true, maintenanceError: null });
         try {
-          const response = await api.get('/transport/maintenance/', { params });
-          set({ maintenance: response.data, maintenanceLoading: false });
+          const response = await apiService.get<Maintenance[]>('/transport/maintenance/', { params });
+          set({ maintenance: response, maintenanceLoading: false });
         } catch (error: any) {
           set({ 
             maintenanceError: error.response?.data?.message || 'Failed to fetch maintenance',
@@ -628,8 +661,8 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       fetchMaintenanceById: async (id: number) => {
         set({ maintenanceLoading: true, maintenanceError: null });
         try {
-          const response = await api.get(`/transport/maintenance/${id}/`);
-          set({ currentMaintenance: response.data, maintenanceLoading: false });
+          const response = await apiService.get<Maintenance>(`/transport/maintenance/${id}/`);
+          set({ currentMaintenance: response, maintenanceLoading: false });
         } catch (error: any) {
           set({ 
             maintenanceError: error.response?.data?.message || 'Failed to fetch maintenance',
@@ -641,9 +674,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       createMaintenance: async (data: Partial<Maintenance>) => {
         set({ maintenanceLoading: true, maintenanceError: null });
         try {
-          const response = await api.post('/transport/maintenance/', data);
+          const response = await apiService.post<Maintenance>('/transport/maintenance/', data);
           set({ maintenanceLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             maintenanceError: error.response?.data?.message || 'Failed to create maintenance',
@@ -656,9 +689,9 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       updateMaintenance: async (id: number, data: Partial<Maintenance>) => {
         set({ maintenanceLoading: true, maintenanceError: null });
         try {
-          const response = await api.put(`/transport/maintenance/${id}/`, data);
+          const response = await apiService.patch<Maintenance>(`/transport/maintenance/${id}/`, data);
           set({ maintenanceLoading: false });
-          return response.data;
+          return response;
         } catch (error: any) {
           set({ 
             maintenanceError: error.response?.data?.message || 'Failed to update maintenance',
@@ -671,7 +704,7 @@ export const useTransportStore = create<TransportState & TransportActions>()(
       deleteMaintenance: async (id: number) => {
         set({ maintenanceLoading: true, maintenanceError: null });
         try {
-          await api.delete(`/transport/maintenance/${id}/`);
+          await apiService.delete(`/transport/maintenance/${id}/`);
           set({ maintenanceLoading: false });
         } catch (error: any) {
           set({ 

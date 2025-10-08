@@ -1,6 +1,15 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { api } from '../services/api';
+
+// API Response Types
+interface ApiResponse<T> {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: T[];
+}
 
 export interface Event {
   id: number;
@@ -108,43 +117,43 @@ export interface EventSponsor {
 
 interface EventsState {
   // Events
-  events: any;
+  events: ApiResponse<Event> | null;
   currentEvent: Event | null;
   eventsLoading: boolean;
   eventsError: string | null;
 
   // Categories
-  categories: any;
+  categories: ApiResponse<EventCategory> | null;
   currentCategory: EventCategory | null;
   categoriesLoading: boolean;
   categoriesError: string | null;
 
   // Venues
-  venues: any;
+  venues: ApiResponse<EventVenue> | null;
   currentVenue: EventVenue | null;
   venuesLoading: boolean;
   venuesError: string | null;
 
   // Organizers
-  organizers: any;
+  organizers: ApiResponse<EventOrganizer> | null;
   currentOrganizer: EventOrganizer | null;
   organizersLoading: boolean;
   organizersError: string | null;
 
   // Registrations
-  registrations: any;
+  registrations: ApiResponse<EventRegistration> | null;
   currentRegistration: EventRegistration | null;
   registrationsLoading: boolean;
   registrationsError: string | null;
 
   // Schedules
-  schedules: any;
+  schedules: ApiResponse<EventSchedule> | null;
   currentSchedule: EventSchedule | null;
   schedulesLoading: boolean;
   schedulesError: string | null;
 
   // Sponsors
-  sponsors: any;
+  sponsors: ApiResponse<EventSponsor> | null;
   currentSponsor: EventSponsor | null;
   sponsorsLoading: boolean;
   sponsorsError: string | null;
@@ -253,7 +262,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchEvents: async (params = {}) => {
         set({ eventsLoading: true, eventsError: null });
         try {
-          const response = await api.get('/events/events/', { params });
+          const response = await api.get('/events/events/', { params }) as { data: ApiResponse<Event> };
           set({ events: response.data, eventsLoading: false });
         } catch (error: any) {
           set({ 
@@ -266,7 +275,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchEventById: async (id: number) => {
         set({ eventsLoading: true, eventsError: null });
         try {
-          const response = await api.get(`/events/events/${id}/`);
+          const response = await api.get(`/events/events/${id}/`) as { data: Event };
           set({ currentEvent: response.data, eventsLoading: false });
         } catch (error: any) {
           set({ 
@@ -279,7 +288,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       createEvent: async (data: Partial<Event>) => {
         set({ eventsLoading: true, eventsError: null });
         try {
-          const response = await api.post('/events/events/', data);
+          const response = await api.post('/events/events/', data) as { data: Event };
           set({ eventsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -294,7 +303,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       updateEvent: async (id: number, data: Partial<Event>) => {
         set({ eventsLoading: true, eventsError: null });
         try {
-          const response = await api.put(`/events/events/${id}/`, data);
+          const response = await api.put(`/events/events/${id}/`, data) as { data: Event };
           set({ eventsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -324,7 +333,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchCategories: async (params = {}) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.get('/events/categories/', { params });
+          const response = await api.get('/events/categories/', { params }) as { data: ApiResponse<EventCategory> };
           set({ categories: response.data, categoriesLoading: false });
         } catch (error: any) {
           set({ 
@@ -337,7 +346,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchCategoryById: async (id: number) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.get(`/events/categories/${id}/`);
+          const response = await api.get(`/events/categories/${id}/`) as { data: EventCategory };
           set({ currentCategory: response.data, categoriesLoading: false });
         } catch (error: any) {
           set({ 
@@ -350,7 +359,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       createCategory: async (data: Partial<EventCategory>) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.post('/events/categories/', data);
+          const response = await api.post('/events/categories/', data) as { data: EventCategory };
           set({ categoriesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -365,7 +374,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       updateCategory: async (id: number, data: Partial<EventCategory>) => {
         set({ categoriesLoading: true, categoriesError: null });
         try {
-          const response = await api.put(`/events/categories/${id}/`, data);
+          const response = await api.put(`/events/categories/${id}/`, data) as { data: EventCategory };
           set({ categoriesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -395,7 +404,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchVenues: async (params = {}) => {
         set({ venuesLoading: true, venuesError: null });
         try {
-          const response = await api.get('/events/venues/', { params });
+          const response = await api.get('/events/venues/', { params }) as { data: ApiResponse<EventVenue> };
           set({ venues: response.data, venuesLoading: false });
         } catch (error: any) {
           set({ 
@@ -408,7 +417,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchVenueById: async (id: number) => {
         set({ venuesLoading: true, venuesError: null });
         try {
-          const response = await api.get(`/events/venues/${id}/`);
+          const response = await api.get(`/events/venues/${id}/`) as { data: EventVenue };
           set({ currentVenue: response.data, venuesLoading: false });
         } catch (error: any) {
           set({ 
@@ -421,7 +430,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       createVenue: async (data: Partial<EventVenue>) => {
         set({ venuesLoading: true, venuesError: null });
         try {
-          const response = await api.post('/events/venues/', data);
+          const response = await api.post('/events/venues/', data) as { data: EventVenue };
           set({ venuesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -436,7 +445,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       updateVenue: async (id: number, data: Partial<EventVenue>) => {
         set({ venuesLoading: true, venuesError: null });
         try {
-          const response = await api.put(`/events/venues/${id}/`, data);
+          const response = await api.put(`/events/venues/${id}/`, data) as { data: EventVenue };
           set({ venuesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -466,7 +475,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchOrganizers: async (params = {}) => {
         set({ organizersLoading: true, organizersError: null });
         try {
-          const response = await api.get('/events/organizers/', { params });
+          const response = await api.get('/events/organizers/', { params }) as { data: ApiResponse<EventOrganizer> };
           set({ organizers: response.data, organizersLoading: false });
         } catch (error: any) {
           set({ 
@@ -479,7 +488,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchOrganizerById: async (id: number) => {
         set({ organizersLoading: true, organizersError: null });
         try {
-          const response = await api.get(`/events/organizers/${id}/`);
+          const response = await api.get(`/events/organizers/${id}/`) as { data: EventOrganizer };
           set({ currentOrganizer: response.data, organizersLoading: false });
         } catch (error: any) {
           set({ 
@@ -492,7 +501,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       createOrganizer: async (data: Partial<EventOrganizer>) => {
         set({ organizersLoading: true, organizersError: null });
         try {
-          const response = await api.post('/events/organizers/', data);
+          const response = await api.post('/events/organizers/', data) as { data: EventOrganizer };
           set({ organizersLoading: false });
           return response.data;
         } catch (error: any) {
@@ -507,7 +516,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       updateOrganizer: async (id: number, data: Partial<EventOrganizer>) => {
         set({ organizersLoading: true, organizersError: null });
         try {
-          const response = await api.put(`/events/organizers/${id}/`, data);
+          const response = await api.put(`/events/organizers/${id}/`, data) as { data: EventOrganizer };
           set({ organizersLoading: false });
           return response.data;
         } catch (error: any) {
@@ -537,7 +546,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchRegistrations: async (params = {}) => {
         set({ registrationsLoading: true, registrationsError: null });
         try {
-          const response = await api.get('/events/registrations/', { params });
+          const response = await api.get('/events/registrations/', { params }) as { data: ApiResponse<EventRegistration> };
           set({ registrations: response.data, registrationsLoading: false });
         } catch (error: any) {
           set({ 
@@ -550,7 +559,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchRegistrationById: async (id: number) => {
         set({ registrationsLoading: true, registrationsError: null });
         try {
-          const response = await api.get(`/events/registrations/${id}/`);
+          const response = await api.get(`/events/registrations/${id}/`) as { data: EventRegistration };
           set({ currentRegistration: response.data, registrationsLoading: false });
         } catch (error: any) {
           set({ 
@@ -563,7 +572,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       createRegistration: async (data: Partial<EventRegistration>) => {
         set({ registrationsLoading: true, registrationsError: null });
         try {
-          const response = await api.post('/events/registrations/', data);
+          const response = await api.post('/events/registrations/', data) as { data: EventRegistration };
           set({ registrationsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -578,7 +587,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       updateRegistration: async (id: number, data: Partial<EventRegistration>) => {
         set({ registrationsLoading: true, registrationsError: null });
         try {
-          const response = await api.put(`/events/registrations/${id}/`, data);
+          const response = await api.put(`/events/registrations/${id}/`, data) as { data: EventRegistration };
           set({ registrationsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -636,7 +645,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchSchedules: async (params = {}) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          const response = await api.get('/events/schedules/', { params });
+          const response = await api.get('/events/schedules/', { params }) as { data: ApiResponse<EventSchedule> };
           set({ schedules: response.data, schedulesLoading: false });
         } catch (error: any) {
           set({ 
@@ -649,7 +658,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchScheduleById: async (id: number) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          const response = await api.get(`/events/schedules/${id}/`);
+          const response = await api.get(`/events/schedules/${id}/`) as { data: EventSchedule };
           set({ currentSchedule: response.data, schedulesLoading: false });
         } catch (error: any) {
           set({ 
@@ -662,7 +671,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       createSchedule: async (data: Partial<EventSchedule>) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          const response = await api.post('/events/schedules/', data);
+          const response = await api.post('/events/schedules/', data) as { data: EventSchedule };
           set({ schedulesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -677,7 +686,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       updateSchedule: async (id: number, data: Partial<EventSchedule>) => {
         set({ schedulesLoading: true, schedulesError: null });
         try {
-          const response = await api.put(`/events/schedules/${id}/`, data);
+          const response = await api.put(`/events/schedules/${id}/`, data) as { data: EventSchedule };
           set({ schedulesLoading: false });
           return response.data;
         } catch (error: any) {
@@ -707,7 +716,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchSponsors: async (params = {}) => {
         set({ sponsorsLoading: true, sponsorsError: null });
         try {
-          const response = await api.get('/events/sponsors/', { params });
+          const response = await api.get('/events/sponsors/', { params }) as { data: ApiResponse<EventSponsor> };
           set({ sponsors: response.data, sponsorsLoading: false });
         } catch (error: any) {
           set({ 
@@ -720,7 +729,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       fetchSponsorById: async (id: number) => {
         set({ sponsorsLoading: true, sponsorsError: null });
         try {
-          const response = await api.get(`/events/sponsors/${id}/`);
+          const response = await api.get(`/events/sponsors/${id}/`) as { data: EventSponsor };
           set({ currentSponsor: response.data, sponsorsLoading: false });
         } catch (error: any) {
           set({ 
@@ -733,7 +742,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       createSponsor: async (data: Partial<EventSponsor>) => {
         set({ sponsorsLoading: true, sponsorsError: null });
         try {
-          const response = await api.post('/events/sponsors/', data);
+          const response = await api.post('/events/sponsors/', data) as { data: EventSponsor };
           set({ sponsorsLoading: false });
           return response.data;
         } catch (error: any) {
@@ -748,7 +757,7 @@ export const useEventsStore = create<EventsState & EventsActions>()(
       updateSponsor: async (id: number, data: Partial<EventSponsor>) => {
         set({ sponsorsLoading: true, sponsorsError: null });
         try {
-          const response = await api.put(`/events/sponsors/${id}/`, data);
+          const response = await api.put(`/events/sponsors/${id}/`, data) as { data: EventSponsor };
           set({ sponsorsLoading: false });
           return response.data;
         } catch (error: any) {

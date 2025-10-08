@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, AuthTokens, LoginRequest, RegisterRequest } from '../types';
@@ -13,6 +14,8 @@ interface AuthState {
 
   // Actions
   login: (credentials: LoginRequest) => Promise<boolean>;
+  facebookLogin: (accessToken: string) => Promise<boolean>;
+  googleLogin: (accessToken: string) => Promise<boolean>;
   register: (userData: RegisterRequest) => Promise<boolean>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -50,6 +53,72 @@ export const useAuthStore = create<AuthState>()(
           set({
             user,
             tokens,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
+          
+          return true;
+        } catch (error) {
+          const errorResponse = handleApiError(error);
+          set({
+            isLoading: false,
+            error: errorResponse.message,
+          });
+          return false;
+        }
+      },
+
+      // Facebook login action
+      facebookLogin: async (accessToken: string) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          const response = await authAPI.facebookLogin(accessToken);
+          
+          // Store tokens
+          localStorage.setItem('access_token', response.access);
+          localStorage.setItem('refresh_token', response.refresh);
+          
+          set({
+            user: response.user,
+            tokens: {
+              access: response.access,
+              refresh: response.refresh,
+            },
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
+          
+          return true;
+        } catch (error) {
+          const errorResponse = handleApiError(error);
+          set({
+            isLoading: false,
+            error: errorResponse.message,
+          });
+          return false;
+        }
+      },
+
+      // Google login action
+      googleLogin: async (accessToken: string) => {
+        set({ isLoading: true, error: null });
+        
+        try {
+          const response = await authAPI.googleLogin(accessToken);
+          
+          // Store tokens
+          localStorage.setItem('access_token', response.access);
+          localStorage.setItem('refresh_token', response.refresh);
+          
+          set({
+            user: response.user,
+            tokens: {
+              access: response.access,
+              refresh: response.refresh,
+            },
             isAuthenticated: true,
             isLoading: false,
             error: null,

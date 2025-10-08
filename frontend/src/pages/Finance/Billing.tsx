@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { useBillingStore } from '../../stores/billingStore';
 import { useTranslation } from '../../utils/i18n';
 import { Button } from '../../components/UI/Button';
 import { FilterBar } from '../../components/UI/FilterBar';
-import { Pagination } from '../../components/UI/Pagination';
+
 import { 
   CreditCardIcon, 
   DocumentTextIcon, 
@@ -13,8 +13,7 @@ import {
   ChartBarIcon,
   PlusIcon,
   EyeIcon,
-  PencilIcon,
-  TrashIcon
+  PencilIcon
 } from '@heroicons/react/24/outline';
 
 const Billing: React.FC = () => {
@@ -23,10 +22,14 @@ const Billing: React.FC = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  useEffect(() => { 
+  const loadData = useCallback(() => {
     fetchPlans({ page: 1 }); 
     fetchInvoices({ page, search });
-  }, [page, search]);
+  }, [fetchPlans, fetchInvoices, page, search]);
+
+  useEffect(() => { 
+    loadData();
+  }, [loadData]);
 
   return (
     <div className="space-y-6">

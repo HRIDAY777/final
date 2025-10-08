@@ -68,13 +68,13 @@ const ForgotPassword: React.FC = () => {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h2>
             <p className="text-gray-600 mb-6">
-              We've sent a password reset link to <strong>{email}</strong>
+              We&apos;ve sent a password reset link to <strong>{email}</strong>
             </p>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
               <div className="flex items-start">
                 <ExclamationTriangleIcon className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
                 <div className="text-sm text-blue-800">
-                  <p className="font-medium mb-1">Didn't receive the email?</p>
+                  <p className="font-medium mb-1">Didn&apos;t receive the email?</p>
                   <ul className="space-y-1 text-left">
                     <li>• Check your spam folder</li>
                     <li>• Make sure you entered the correct email address</li>
@@ -138,7 +138,7 @@ const ForgotPassword: React.FC = () => {
           <div className="mx-auto w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-green-500 text-white grid place-items-center">🔐</div>
           <h2 className="mt-4 text-center text-2xl font-bold text-gray-900">Forgot Password?</h2>
           <p className="mt-1 text-center text-sm text-gray-500">
-            No worries! Enter your email and we'll send you reset instructions.
+            No worries! Enter your email and we&apos;ll send you reset instructions.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -196,7 +196,7 @@ const ForgotPassword: React.FC = () => {
           <div className="mt-8 bg-gray-50 rounded-lg p-4">
             <h3 className="text-sm font-medium text-gray-900 mb-2">Need Help?</h3>
             <p className="text-sm text-gray-600 mb-3">
-              If you're having trouble accessing your account, contact our support team.
+              If you&apos;re having trouble accessing your account, contact our support team.
             </p>
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">

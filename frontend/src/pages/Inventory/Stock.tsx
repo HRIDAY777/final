@@ -6,19 +6,14 @@ import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import {
   PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
   PencilIcon,
   TrashIcon,
   EyeIcon,
   BuildingStorefrontIcon,
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
   CurrencyDollarIcon,
   MapPinIcon,
   TagIcon,
   ArrowUpIcon,
-  ArrowDownIcon,
 } from '@heroicons/react/24/outline';
 
 interface StockItem {
@@ -47,7 +42,7 @@ const Stock: React.FC = () => {
   const [stockItems, setStockItems] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     category: '',
     stock_status: '',
     is_active: ''
@@ -279,32 +274,8 @@ const Stock: React.FC = () => {
 
       {/* Filters */}
       <FilterBar
-        search={search}
+        searchValue={search}
         onSearchChange={setSearch}
-        filters={filters}
-        onFiltersChange={setFilters}
-        filterOptions={{
-          category: [
-            { value: '', label: 'All Categories' },
-            { value: 'office-supplies', label: 'Office Supplies' },
-            { value: 'lab-equipment', label: 'Lab Equipment' },
-            { value: 'sports-equipment', label: 'Sports Equipment' },
-            { value: 'books', label: 'Books' },
-            { value: 'electronics', label: 'Electronics' }
-          ],
-          stock_status: [
-            { value: '', label: 'All Status' },
-            { value: 'in_stock', label: 'In Stock' },
-            { value: 'low_stock', label: 'Low Stock' },
-            { value: 'out_of_stock', label: 'Out of Stock' },
-            { value: 'overstocked', label: 'Overstocked' }
-          ],
-          is_active: [
-            { value: '', label: 'All Items' },
-            { value: 'true', label: 'Active' },
-            { value: 'false', label: 'Inactive' }
-          ]
-        }}
       />
 
       {/* Stock Items List */}
@@ -407,8 +378,9 @@ const Stock: React.FC = () => {
       {/* Pagination */}
       {totalPages > 1 && (
         <Pagination
-          currentPage={page}
-          totalPages={totalPages}
+          page={page}
+          pageSize={10}
+          total={totalPages * 10}
           onPageChange={setPage}
         />
       )}
@@ -419,7 +391,7 @@ const Stock: React.FC = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Delete Stock Item</h3>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to delete "{selectedItem.name}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{selectedItem.name}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end space-x-3">
               <Button
@@ -429,7 +401,7 @@ const Stock: React.FC = () => {
                 Cancel
               </Button>
               <Button
-                variant="danger"
+                variant="destructive"
                 onClick={confirmDelete}
               >
                 Delete

@@ -5,7 +5,6 @@ import {
   UserGroupIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
-  PencilIcon,
   TrashIcon,
   EyeIcon,
   PlusIcon,
@@ -14,11 +13,9 @@ import {
   MapPinIcon,
   CalendarIcon,
   CurrencyDollarIcon,
-  ShoppingBagIcon,
   StarIcon,
   CheckCircleIcon,
-  XCircleIcon,
-  ExclamationTriangleIcon
+  XCircleIcon
 } from '@heroicons/react/24/outline';
 
 interface Customer {
@@ -64,7 +61,6 @@ const Customers: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState('all');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   // Mock data for demonstration
@@ -264,7 +260,7 @@ const Customers: React.FC = () => {
             Manage customer accounts, profiles, and loyalty programs
           </p>
         </div>
-        <Button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2">
+        <Button className="flex items-center gap-2">
           <PlusIcon className="h-4 w-4" />
           Add Customer
         </Button>
@@ -527,7 +523,7 @@ const Customers: React.FC = () => {
               </p>
               {!searchQuery && statusFilter === 'all' && typeFilter === 'all' && (
                 <div className="mt-6">
-                  <Button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2">
+                  <Button className="flex items-center gap-2">
                     <PlusIcon className="h-4 w-4" />
                     Add Customer
                   </Button>

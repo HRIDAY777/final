@@ -9,8 +9,7 @@ import {
   ChartBarIcon, 
   AcademicCapIcon,
   DocumentTextIcon,
-  TrophyIcon,
-  ExclamationTriangleIcon
+  TrophyIcon
 } from '@heroicons/react/24/outline';
 
 interface DashboardStats {

@@ -3,7 +3,7 @@ import React from 'react';
 interface FilterBarProps {
   searchPlaceholder?: string;
   searchValue: string;
-  onSearchChange: (value: string) => void;
+  onSearchChange: (value: string) => void; // eslint-disable-line no-unused-vars
   right?: React.ReactNode;
 }
 

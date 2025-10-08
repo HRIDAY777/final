@@ -5,24 +5,12 @@ Main API views with ViewSets.
 from django.utils import timezone
 from django.http import JsonResponse
 
-# Import working ViewSets from different apps
-# Temporarily commented out until all ViewSets are implemented
-# from apps.students.views import (
-#     StudentViewSet, StudentProfileViewSet, StudentGuardianViewSet,
-#     StudentDocumentViewSet, StudentAchievementViewSet,
-#     StudentDisciplineViewSet, StudentAcademicRecordViewSet,
-#     StudentSettingsViewSet
-# )
-
-# from apps.teachers.views import (
-#     TeacherViewSet, TeacherProfileViewSet, TeacherQualificationViewSet,
-#     TeacherExperienceViewSet, TeacherSubjectViewSet, TeacherClassViewSet,
-#     TeacherAttendanceViewSet, TeacherSalaryViewSet, TeacherLeaveViewSet,
-#     TeacherPerformanceViewSet, TeacherDocumentViewSet,
-#     TeacherSettingsViewSet
-# )
-
-# from apps.tenants.views import TenantViewSet
+# Import only essential ViewSets that we know work
+from apps.students.views import StudentViewSet
+from apps.teachers.views import TeacherViewSet
+from apps.tenants.views import TenantViewSet
+from apps.academics.views import ClassViewSet
+from apps.subjects.views import SubjectViewSet, AcademicYearViewSet
 
 
 def health_view(request):
@@ -35,22 +23,16 @@ def health_view(request):
 
 
 # Re-export all ViewSets for URL routing
-# Temporarily empty until all ViewSets are implemented
 __all__ = [
     # Student Management
-    # 'StudentViewSet', 'StudentProfileViewSet', 'StudentGuardianViewSet',
-    # 'StudentDocumentViewSet', 'StudentAchievementViewSet',
-    # 'StudentDisciplineViewSet', 'StudentAcademicRecordViewSet',
-    # 'StudentSettingsViewSet',
+    'StudentViewSet',
 
     # Teacher Management
-    # 'TeacherViewSet', 'TeacherProfileViewSet', 'TeacherQualificationViewSet',
-    # 'TeacherExperienceViewSet', 'TeacherSubjectViewSet',
-    # 'TeacherClassViewSet', 'TeacherAttendanceViewSet',
-    # 'TeacherSalaryViewSet', 'TeacherLeaveViewSet',
-    # 'TeacherPerformanceViewSet', 'TeacherDocumentViewSet',
-    # 'TeacherSettingsViewSet',
+    'TeacherViewSet',
 
     # Multi-tenant
-    # 'TenantViewSet',
+    'TenantViewSet',
+
+    # Academics
+    'ClassViewSet', 'SubjectViewSet', 'AcademicYearViewSet',
 ]

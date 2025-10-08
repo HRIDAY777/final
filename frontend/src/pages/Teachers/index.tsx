@@ -33,7 +33,7 @@ const Teachers: React.FC = () => {
 
   const fetchDashboardStats = async () => {
     try {
-      const data = await apiService.get('/teachers/dashboard/');
+      const data = await apiService.get('/teachers/dashboard/') as DashboardStats;
       setStats(data);
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
@@ -83,7 +83,7 @@ const Teachers: React.FC = () => {
         <PageHeader 
           title="Teachers" 
           subtitle="Comprehensive teacher management system"
-          right={
+          actions={
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => window.location.href = '/teachers/list'}>
                 View All Teachers

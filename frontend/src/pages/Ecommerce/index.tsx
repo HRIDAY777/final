@@ -9,16 +9,12 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   ArrowTrendingUpIcon,
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-  ClockIcon,
   EyeIcon,
   PlusIcon,
   ArrowRightIcon,
   StarIcon,
   TagIcon,
-  TruckIcon,
-  CreditCardIcon
+  TruckIcon
 } from '@heroicons/react/24/outline';
 
 interface EcommerceStats {

@@ -175,7 +175,7 @@ export const apiService = {
   },
 
   // Upload file
-  upload: async <T>(url: string, file: File, onProgress?: (progress: number) => void): Promise<T> => {
+  upload: async <T>(url: string, file: File, onProgress?: (progressPercent: number) => void): Promise<T> => { // eslint-disable-line no-unused-vars
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -186,8 +186,8 @@ export const apiService = {
         },
         onUploadProgress: (progressEvent) => {
           if (onProgress && progressEvent.total) {
-            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            onProgress(progress);
+            const progressPercent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            onProgress(progressPercent);
           }
         },
       });
@@ -295,6 +295,19 @@ export const authAPI = {
 
   confirmResetPassword: async (data: any): Promise<void> => {
     return apiService.post('/auth/reset-password-confirm/', data);
+  },
+
+  // Social OAuth
+  facebookLogin: async (accessToken: string): Promise<AuthTokens> => {
+    return apiService.post<AuthTokens>('/accounts/auth/facebook/callback/', { 
+      access_token: accessToken 
+    });
+  },
+
+  googleLogin: async (accessToken: string): Promise<AuthTokens> => {
+    return apiService.post<AuthTokens>('/accounts/auth/google/callback/', { 
+      access_token: accessToken 
+    });
   },
 };
 
@@ -505,6 +518,300 @@ export const notificationAPI = {
   markAsRead: (id: string) => apiService.patch(`/notifications/${id}/mark-read/`),
   markAllAsRead: () => apiService.post('/notifications/mark-all-read/'),
   deleteNotification: (id: string) => apiService.delete(`/notifications/${id}/`),
+};
+
+// Reports API
+export const reportsAPI = {
+  // Templates
+  getTemplates: (params?: any) => getPaginatedData('/reports/templates/', 1, 10, params),
+  getTemplate: (id: string) => apiService.get(`/reports/templates/${id}/`),
+  createTemplate: (data: any) => apiService.post('/reports/templates/', data),
+  updateTemplate: (id: string, data: any) => apiService.put(`/reports/templates/${id}/`, data),
+  deleteTemplate: (id: string) => apiService.delete(`/reports/templates/${id}/`),
+
+  // Generated Reports
+  getGeneratedReports: (params?: any) => getPaginatedData('/reports/generated/', 1, 10, params),
+  getGeneratedReport: (id: string) => apiService.get(`/reports/generated/${id}/`),
+  createGeneratedReport: (data: any) => apiService.post('/reports/generated/', data),
+  updateGeneratedReport: (id: string, data: any) => apiService.put(`/reports/generated/${id}/`, data),
+  deleteGeneratedReport: (id: string) => apiService.delete(`/reports/generated/${id}/`),
+
+  // Scheduled Reports
+  getScheduledReports: (params?: any) => getPaginatedData('/reports/scheduled/', 1, 10, params),
+  getScheduledReport: (id: string) => apiService.get(`/reports/scheduled/${id}/`),
+  createScheduledReport: (data: any) => apiService.post('/reports/scheduled/', data),
+  updateScheduledReport: (id: string, data: any) => apiService.put(`/reports/scheduled/${id}/`, data),
+  deleteScheduledReport: (id: string) => apiService.delete(`/reports/scheduled/${id}/`),
+
+  // Categories
+  getCategories: (params?: any) => getPaginatedData('/reports/categories/', 1, 10, params),
+  getCategory: (id: string) => apiService.get(`/reports/categories/${id}/`),
+  createCategory: (data: any) => apiService.post('/reports/categories/', data),
+  updateCategory: (id: string, data: any) => apiService.put(`/reports/categories/${id}/`, data),
+  deleteCategory: (id: string) => apiService.delete(`/reports/categories/${id}/`),
+
+  // Parameters
+  getParameters: (params?: any) => getPaginatedData('/reports/parameters/', 1, 10, params),
+  getParameter: (id: string) => apiService.get(`/reports/parameters/${id}/`),
+  createParameter: (data: any) => apiService.post('/reports/parameters/', data),
+  updateParameter: (id: string, data: any) => apiService.put(`/reports/parameters/${id}/`, data),
+  deleteParameter: (id: string) => apiService.delete(`/reports/parameters/${id}/`),
+
+  // Access Logs
+  getAccessLogs: (params?: any) => getPaginatedData('/reports/access-logs/', 1, 10, params),
+  getAccessLog: (id: string) => apiService.get(`/reports/access-logs/${id}/`),
+
+  // Exports
+  getExports: (params?: any) => getPaginatedData('/reports/exports/', 1, 10, params),
+  getExport: (id: string) => apiService.get(`/reports/exports/${id}/`),
+  createExport: (data: any) => apiService.post('/reports/exports/', data),
+  updateExport: (id: string, data: any) => apiService.put(`/reports/exports/${id}/`, data),
+  deleteExport: (id: string) => apiService.delete(`/reports/exports/${id}/`),
+
+  // Comments
+  getComments: (params?: any) => getPaginatedData('/reports/comments/', 1, 10, params),
+  getComment: (id: string) => apiService.get(`/reports/comments/${id}/`),
+  createComment: (data: any) => apiService.post('/reports/comments/', data),
+  updateComment: (id: string, data: any) => apiService.put(`/reports/comments/${id}/`, data),
+  deleteComment: (id: string) => apiService.delete(`/reports/comments/${id}/`),
+
+  // Dashboards
+  getDashboards: (params?: any) => getPaginatedData('/reports/dashboards/', 1, 10, params),
+  getDashboard: (id: string) => apiService.get(`/reports/dashboards/${id}/`),
+  createDashboard: (data: any) => apiService.post('/reports/dashboards/', data),
+  updateDashboard: (id: string, data: any) => apiService.put(`/reports/dashboards/${id}/`, data),
+  deleteDashboard: (id: string) => apiService.delete(`/reports/dashboards/${id}/`),
+
+  // Analytics
+  getReportAnalytics: (params?: any) => apiService.get('/reports/analytics/', { params }),
+  getTemplateUsage: (params?: any) => apiService.get('/reports/analytics/template-usage/', { params }),
+  getReportTrends: (params?: any) => apiService.get('/reports/analytics/report-trends/', { params }),
+};
+
+// Finance API
+export const financeAPI = {
+  // Plans
+  getPlans: (params?: any) => getPaginatedData('/finance/plans/', 1, 10, params),
+  getPlan: (id: string) => apiService.get(`/finance/plans/${id}/`),
+  createPlan: (data: any) => apiService.post('/finance/plans/', data),
+  updatePlan: (id: string, data: any) => apiService.put(`/finance/plans/${id}/`, data),
+  deletePlan: (id: string) => apiService.delete(`/finance/plans/${id}/`),
+
+  // Subscriptions
+  getSubscriptions: (params?: any) => getPaginatedData('/finance/subscriptions/', 1, 10, params),
+  getSubscription: (id: string) => apiService.get(`/finance/subscriptions/${id}/`),
+  createSubscription: (data: any) => apiService.post('/finance/subscriptions/', data),
+  updateSubscription: (id: string, data: any) => apiService.put(`/finance/subscriptions/${id}/`, data),
+  deleteSubscription: (id: string) => apiService.delete(`/finance/subscriptions/${id}/`),
+
+  // Fees
+  getFees: (params?: any) => getPaginatedData('/finance/fees/', 1, 10, params),
+  getFee: (id: string) => apiService.get(`/finance/fees/${id}/`),
+  createFee: (data: any) => apiService.post('/finance/fees/', data),
+  updateFee: (id: string, data: any) => apiService.put(`/finance/fees/${id}/`, data),
+  deleteFee: (id: string) => apiService.delete(`/finance/fees/${id}/`),
+
+  // Payments
+  getPayments: (params?: any) => getPaginatedData('/finance/payments/', 1, 10, params),
+  getPayment: (id: string) => apiService.get(`/finance/payments/${id}/`),
+  createPayment: (data: any) => apiService.post('/finance/payments/', data),
+  updatePayment: (id: string, data: any) => apiService.put(`/finance/payments/${id}/`, data),
+  deletePayment: (id: string) => apiService.delete(`/finance/payments/${id}/`),
+
+  // Invoices
+  getInvoices: (params?: any) => getPaginatedData('/finance/invoices/', 1, 10, params),
+  getInvoice: (id: string) => apiService.get(`/finance/invoices/${id}/`),
+  createInvoice: (data: any) => apiService.post('/finance/invoices/', data),
+  updateInvoice: (id: string, data: any) => apiService.put(`/finance/invoices/${id}/`, data),
+  deleteInvoice: (id: string) => apiService.delete(`/finance/invoices/${id}/`),
+
+  // Reports
+  getReports: (params?: any) => getPaginatedData('/finance/reports/', 1, 10, params),
+  getReport: (id: string) => apiService.get(`/finance/reports/${id}/`),
+  createReport: (data: any) => apiService.post('/finance/reports/', data),
+  updateReport: (id: string, data: any) => apiService.put(`/finance/reports/${id}/`, data),
+  deleteReport: (id: string) => apiService.delete(`/finance/reports/${id}/`),
+
+  // Settings
+  getSettings: (params?: any) => getPaginatedData('/finance/settings/', 1, 10, params),
+  getSetting: (id: string) => apiService.get(`/finance/settings/${id}/`),
+  createSetting: (data: any) => apiService.post('/finance/settings/', data),
+  updateSetting: (id: string, data: any) => apiService.put(`/finance/settings/${id}/`, data),
+  deleteSetting: (id: string) => apiService.delete(`/finance/settings/${id}/`),
+
+  // Analytics
+  getFinanceAnalytics: (params?: any) => apiService.get('/finance/analytics/', { params }),
+  getRevenueTrends: (params?: any) => apiService.get('/finance/analytics/revenue-trends/', { params }),
+  getPaymentSummary: (params?: any) => apiService.get('/finance/analytics/payment-summary/', { params }),
+};
+
+// Library API
+export const libraryAPI = {
+  // Categories
+  getCategories: (params?: any) => getPaginatedData('/library/categories/', 1, 10, params),
+  getCategory: (id: string) => apiService.get(`/library/categories/${id}/`),
+  createCategory: (data: any) => apiService.post('/library/categories/', data),
+  updateCategory: (id: string, data: any) => apiService.put(`/library/categories/${id}/`, data),
+  deleteCategory: (id: string) => apiService.delete(`/library/categories/${id}/`),
+
+  // Authors
+  getAuthors: (params?: any) => getPaginatedData('/library/authors/', 1, 10, params),
+  getAuthor: (id: string) => apiService.get(`/library/authors/${id}/`),
+  createAuthor: (data: any) => apiService.post('/library/authors/', data),
+  updateAuthor: (id: string, data: any) => apiService.put(`/library/authors/${id}/`, data),
+  deleteAuthor: (id: string) => apiService.delete(`/library/authors/${id}/`),
+
+  // Books
+  getBooks: (params?: any) => getPaginatedData('/library/books/', 1, 10, params),
+  getBook: (id: string) => apiService.get(`/library/books/${id}/`),
+  createBook: (data: any) => apiService.post('/library/books/', data),
+  updateBook: (id: string, data: any) => apiService.put(`/library/books/${id}/`, data),
+  deleteBook: (id: string) => apiService.delete(`/library/books/${id}/`),
+
+  // Borrowings
+  getBorrowings: (params?: any) => getPaginatedData('/library/borrowings/', 1, 10, params),
+  getBorrowing: (id: string) => apiService.get(`/library/borrowings/${id}/`),
+  createBorrowing: (data: any) => apiService.post('/library/borrowings/', data),
+  updateBorrowing: (id: string, data: any) => apiService.put(`/library/borrowings/${id}/`, data),
+  deleteBorrowing: (id: string) => apiService.delete(`/library/borrowings/${id}/`),
+
+  // Reservations
+  getReservations: (params?: any) => getPaginatedData('/library/reservations/', 1, 10, params),
+  getReservation: (id: string) => apiService.get(`/library/reservations/${id}/`),
+  createReservation: (data: any) => apiService.post('/library/reservations/', data),
+  updateReservation: (id: string, data: any) => apiService.put(`/library/reservations/${id}/`, data),
+  deleteReservation: (id: string) => apiService.delete(`/library/reservations/${id}/`),
+
+  // Fines
+  getFines: (params?: any) => getPaginatedData('/library/fines/', 1, 10, params),
+  getFine: (id: string) => apiService.get(`/library/fines/${id}/`),
+  createFine: (data: any) => apiService.post('/library/fines/', data),
+  updateFine: (id: string, data: any) => apiService.put(`/library/fines/${id}/`, data),
+  deleteFine: (id: string) => apiService.delete(`/library/fines/${id}/`),
+
+  // Settings
+  getSettings: (params?: any) => getPaginatedData('/library/settings/', 1, 10, params),
+  getSetting: (id: string) => apiService.get(`/library/settings/${id}/`),
+  createSetting: (data: any) => apiService.post('/library/settings/', data),
+  updateSetting: (id: string, data: any) => apiService.put(`/library/settings/${id}/`, data),
+  deleteSetting: (id: string) => apiService.delete(`/library/settings/${id}/`),
+
+  // Analytics
+  getLibraryAnalytics: (params?: any) => apiService.get('/library/analytics/', { params }),
+  getBookUsage: (params?: any) => apiService.get('/library/analytics/book-usage/', { params }),
+  getBorrowingTrends: (params?: any) => apiService.get('/library/analytics/borrowing-trends/', { params }),
+};
+
+// Transport API
+export const transportAPI = {
+  // Vehicles
+  getVehicles: (params?: any) => getPaginatedData('/transport/vehicles/', 1, 10, params),
+  getVehicle: (id: string) => apiService.get(`/transport/vehicles/${id}/`),
+  createVehicle: (data: any) => apiService.post('/transport/vehicles/', data),
+  updateVehicle: (id: string, data: any) => apiService.put(`/transport/vehicles/${id}/`, data),
+  deleteVehicle: (id: string) => apiService.delete(`/transport/vehicles/${id}/`),
+
+  // Drivers
+  getDrivers: (params?: any) => getPaginatedData('/transport/drivers/', 1, 10, params),
+  getDriver: (id: string) => apiService.get(`/transport/drivers/${id}/`),
+  createDriver: (data: any) => apiService.post('/transport/drivers/', data),
+  updateDriver: (id: string, data: any) => apiService.put(`/transport/drivers/${id}/`, data),
+  deleteDriver: (id: string) => apiService.delete(`/transport/drivers/${id}/`),
+
+  // Routes
+  getRoutes: (params?: any) => getPaginatedData('/transport/routes/', 1, 10, params),
+  getRoute: (id: string) => apiService.get(`/transport/routes/${id}/`),
+  createRoute: (data: any) => apiService.post('/transport/routes/', data),
+  updateRoute: (id: string, data: any) => apiService.put(`/transport/routes/${id}/`, data),
+  deleteRoute: (id: string) => apiService.delete(`/transport/routes/${id}/`),
+
+  // Trips
+  getTrips: (params?: any) => getPaginatedData('/transport/trips/', 1, 10, params),
+  getTrip: (id: string) => apiService.get(`/transport/trips/${id}/`),
+  createTrip: (data: any) => apiService.post('/transport/trips/', data),
+  updateTrip: (id: string, data: any) => apiService.put(`/transport/trips/${id}/`, data),
+  deleteTrip: (id: string) => apiService.delete(`/transport/trips/${id}/`),
+
+  // Student Transport
+  getStudentTransport: (params?: any) => getPaginatedData('/transport/student-transport/', 1, 10, params),
+  getStudentTransportRecord: (id: string) => apiService.get(`/transport/student-transport/${id}/`),
+  createStudentTransport: (data: any) => apiService.post('/transport/student-transport/', data),
+  updateStudentTransport: (id: string, data: any) => apiService.put(`/transport/student-transport/${id}/`, data),
+  deleteStudentTransport: (id: string) => apiService.delete(`/transport/student-transport/${id}/`),
+
+  // Trip Passengers
+  getTripPassengers: (params?: any) => getPaginatedData('/transport/trip-passengers/', 1, 10, params),
+  getTripPassenger: (id: string) => apiService.get(`/transport/trip-passengers/${id}/`),
+  createTripPassenger: (data: any) => apiService.post('/transport/trip-passengers/', data),
+  updateTripPassenger: (id: string, data: any) => apiService.put(`/transport/trip-passengers/${id}/`, data),
+  deleteTripPassenger: (id: string) => apiService.delete(`/transport/trip-passengers/${id}/`),
+
+  // Maintenance
+  getMaintenance: (params?: any) => getPaginatedData('/transport/maintenance/', 1, 10, params),
+  getMaintenanceRecord: (id: string) => apiService.get(`/transport/maintenance/${id}/`),
+  createMaintenance: (data: any) => apiService.post('/transport/maintenance/', data),
+  updateMaintenance: (id: string, data: any) => apiService.put(`/transport/maintenance/${id}/`, data),
+  deleteMaintenance: (id: string) => apiService.delete(`/transport/maintenance/${id}/`),
+
+  // Fuel Records
+  getFuelRecords: (params?: any) => getPaginatedData('/transport/fuel-records/', 1, 10, params),
+  getFuelRecord: (id: string) => apiService.get(`/transport/fuel-records/${id}/`),
+  createFuelRecord: (data: any) => apiService.post('/transport/fuel-records/', data),
+  updateFuelRecord: (id: string, data: any) => apiService.put(`/transport/fuel-records/${id}/`, data),
+  deleteFuelRecord: (id: string) => apiService.delete(`/transport/fuel-records/${id}/`),
+
+  // Settings
+  getSettings: (params?: any) => getPaginatedData('/transport/settings/', 1, 10, params),
+  getSetting: (id: string) => apiService.get(`/transport/settings/${id}/`),
+  createSetting: (data: any) => apiService.post('/transport/settings/', data),
+  updateSetting: (id: string, data: any) => apiService.put(`/transport/settings/${id}/`, data),
+  deleteSetting: (id: string) => apiService.delete(`/transport/settings/${id}/`),
+
+  // Dashboard
+  getDashboard: (params?: any) => apiService.get('/transport/dashboard/', { params }),
+};
+
+// RBAC API
+export const rbacAPI = {
+  // Users
+  getUsers: (params?: any) => getPaginatedData('/accounts/users/', 1, 10, params),
+  getUser: (id: string) => apiService.get(`/accounts/users/${id}/`),
+  createUser: (data: any) => apiService.post('/accounts/users/', data),
+  updateUser: (id: string, data: any) => apiService.put(`/accounts/users/${id}/`, data),
+  deleteUser: (id: string) => apiService.delete(`/accounts/users/${id}/`),
+  getCurrentUser: () => apiService.get('/accounts/users/me/'),
+  checkUserPermission: (id: string, data: any) => apiService.post(`/accounts/users/${id}/check_permission/`, data),
+  getUserPermissions: (id: string) => apiService.get(`/accounts/users/${id}/permissions/`),
+  updateUserPermissions: (id: string, data: any) => apiService.post(`/accounts/users/${id}/update_permissions/`, data),
+  getUserAccessSummary: (id: string) => apiService.get(`/accounts/users/${id}/access_summary/`),
+
+  // Admin Roles
+  getAdminRoles: (params?: any) => getPaginatedData('/accounts/admin-roles/', 1, 10, params),
+  getAdminRole: (id: string) => apiService.get(`/accounts/admin-roles/${id}/`),
+  createAdminRole: (data: any) => apiService.post('/accounts/admin-roles/', data),
+  updateAdminRole: (id: string, data: any) => apiService.put(`/accounts/admin-roles/${id}/`, data),
+  deleteAdminRole: (id: string) => apiService.delete(`/accounts/admin-roles/${id}/`),
+  getRoleTemplates: () => apiService.get('/accounts/admin-roles/templates/'),
+  getRoleAssignments: (id: string) => apiService.get(`/accounts/admin-roles/${id}/assignments/`),
+
+  // Admin Assignments
+  getAdminAssignments: (params?: any) => getPaginatedData('/accounts/admin-assignments/', 1, 10, params),
+  getAdminAssignment: (id: string) => apiService.get(`/accounts/admin-assignments/${id}/`),
+  createAdminAssignment: (data: any) => apiService.post('/accounts/admin-assignments/', data),
+  updateAdminAssignment: (id: string, data: any) => apiService.put(`/accounts/admin-assignments/${id}/`, data),
+  deleteAdminAssignment: (id: string) => apiService.delete(`/accounts/admin-assignments/${id}/`),
+  bulkAssignRoles: (data: any) => apiService.post('/accounts/admin-assignments/bulk_assign/', data),
+  deactivateAssignment: (id: string) => apiService.post(`/accounts/admin-assignments/${id}/deactivate/`),
+
+  // Audit Logs
+  getAuditLogs: (params?: any) => getPaginatedData('/accounts/audit-logs/', 1, 10, params),
+  getAuditLog: (id: string) => apiService.get(`/accounts/audit-logs/${id}/`),
+  getMyActivity: () => apiService.get('/accounts/audit-logs/my_activity/'),
+
+  // Permissions
+  checkPermission: (data: any) => apiService.post('/accounts/permissions/check/', data),
+  getMyPermissions: () => apiService.get('/accounts/permissions/my_permissions/'),
+  getAccessibleInstitutes: () => apiService.get('/accounts/permissions/accessible_institutes/'),
 };
 
 // WebSocket service

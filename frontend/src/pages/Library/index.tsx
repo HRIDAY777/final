@@ -8,11 +8,9 @@ import {
   ClockIcon,
   ExclamationTriangleIcon,
   PlusIcon,
-  ChartBarIcon,
   DocumentTextIcon,
   CalendarIcon,
   ArrowUpIcon,
-  ArrowDownIcon,
 } from '@heroicons/react/24/outline';
 
 interface LibraryStats {
@@ -214,14 +212,14 @@ const LibraryDashboard: React.FC = () => {
           <p className="text-gray-600">Manage your library collection and track borrowing activity</p>
         </div>
         <div className="flex space-x-3">
-          <Button as={Link} to="/library/books">
+          <Link to="/library/books" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2">
             <PlusIcon className="w-4 h-4 mr-2" />
             Add Book
-          </Button>
-          <Button variant="outline" as={Link} to="/library/borrowings">
+          </Link>
+          <Link to="/library/borrowings" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-10 px-4 py-2">
             <BookOpenIcon className="w-4 h-4 mr-2" />
             Manage Borrowings
-          </Button>
+          </Link>
         </div>
       </div>
 
@@ -326,9 +324,9 @@ const LibraryDashboard: React.FC = () => {
               ))}
             </div>
             <div className="mt-4 pt-4 border-t">
-              <Button variant="outline" as={Link} to="/library/borrowings" className="w-full">
+              <Link to="/library/borrowings" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-10 px-4 py-2 w-full">
                 View All Activity
-              </Button>
+              </Link>
             </div>
           </div>
         </Card>
@@ -362,9 +360,9 @@ const LibraryDashboard: React.FC = () => {
               </div>
             )}
             <div className="mt-4 pt-4 border-t">
-              <Button variant="outline" as={Link} to="/library/fines" className="w-full">
+              <Link to="/library/fines" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-10 px-4 py-2 w-full">
                 Manage Fines
-              </Button>
+              </Link>
             </div>
           </div>
         </Card>
@@ -399,9 +397,9 @@ const LibraryDashboard: React.FC = () => {
             ))}
           </div>
           <div className="mt-6 pt-4 border-t">
-            <Button variant="outline" as={Link} to="/library/categories" className="w-full">
+            <Link to="/library/categories" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-10 px-4 py-2 w-full">
               View All Categories
-            </Button>
+            </Link>
           </div>
         </div>
       </Card>
@@ -411,22 +409,22 @@ const LibraryDashboard: React.FC = () => {
         <CardHeader title="Quick Actions" />
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Button as={Link} to="/library/books" className="h-20 flex-col">
+            <Link to="/library/books" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-blue-600 text-white hover:bg-blue-700 h-20 flex-col">
               <BookOpenIcon className="w-6 h-6 mb-2" />
               <span>Manage Books</span>
-            </Button>
-            <Button as={Link} to="/library/borrowings" variant="outline" className="h-20 flex-col">
+            </Link>
+            <Link to="/library/borrowings" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-20 flex-col">
               <UserGroupIcon className="w-6 h-6 mb-2" />
               <span>Borrowings</span>
-            </Button>
-            <Button as={Link} to="/library/reservations" variant="outline" className="h-20 flex-col">
+            </Link>
+            <Link to="/library/reservations" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-20 flex-col">
               <CalendarIcon className="w-6 h-6 mb-2" />
               <span>Reservations</span>
-            </Button>
-            <Button as={Link} to="/library/fines" variant="outline" className="h-20 flex-col">
+            </Link>
+            <Link to="/library/fines" className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none border border-gray-300 bg-transparent hover:bg-gray-50 h-20 flex-col">
               <ExclamationTriangleIcon className="w-6 h-6 mb-2" />
               <span>Fines</span>
-            </Button>
+            </Link>
           </div>
         </div>
       </Card>

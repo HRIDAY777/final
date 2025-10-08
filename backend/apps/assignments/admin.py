@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.utils.html import format_html
 from .models import Assignment, AssignmentSubmission, AssignmentComment
 
 
@@ -7,7 +6,8 @@ from .models import Assignment, AssignmentSubmission, AssignmentComment
 class AssignmentAdmin(admin.ModelAdmin):
     list_display = [
         'title', 'assignment_type', 'subject', 'class_group', 'due_date',
-        'total_marks', 'status', 'is_active', 'submission_count', 'graded_count'
+        'total_marks', 'status', 'is_active', 'submission_count',
+        'graded_count'
     ]
     list_filter = [
         'assignment_type', 'status', 'is_active', 'subject', 'class_group',
@@ -16,13 +16,16 @@ class AssignmentAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description', 'instructions']
     ordering = ['-due_date', '-created_at']
     readonly_fields = [
-        'submission_count', 'graded_count', 'is_overdue', 'created_at', 'updated_at'
+        'submission_count', 'graded_count', 'is_overdue', 'created_at',
+        'updated_at'
     ]
     date_hierarchy = 'created_at'
-    
+
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'description', 'instructions', 'assignment_type')
+            'fields': (
+                'title', 'description', 'instructions', 'assignment_type'
+            )
         }),
         ('Academic Details', {
             'fields': ('subject', 'class_group', 'total_marks', 'weightage')
@@ -68,14 +71,17 @@ class AssignmentSubmissionAdmin(admin.ModelAdmin):
         'days_late', 'percentage', 'created_at', 'updated_at'
     ]
     date_hierarchy = 'submission_date'
-    
+
     fieldsets = (
         ('Submission Details', {
-            'fields': ('assignment', 'student', 'submission_text', 'attachment')
+            'fields': (
+                'assignment', 'student', 'submission_text', 'attachment'
+            )
         }),
         ('Grading', {
             'fields': (
-                'marks_obtained', 'percentage', 'grade', 'feedback', 'rubric_scores'
+                'marks_obtained', 'percentage', 'grade', 'feedback',
+                'rubric_scores'
             )
         }),
         ('Status', {
@@ -107,7 +113,7 @@ class AssignmentCommentAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
     readonly_fields = ['created_at', 'updated_at']
     date_hierarchy = 'created_at'
-    
+
     fieldsets = (
         ('Comment Details', {
             'fields': ('assignment', 'submission', 'comment_type', 'content')

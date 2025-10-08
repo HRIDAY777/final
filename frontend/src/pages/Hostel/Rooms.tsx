@@ -1,19 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card } from '../../components/UI/Card';
 import { PageHeader } from '../../components/UI/Page';
 import { FilterBar } from '../../components/UI/FilterBar';
 import { Pagination } from '../../components/UI/Pagination';
 import { Button } from '../../components/UI/Button';
-import { getPaginatedData, apiService } from '../../services/api';
 import {
   HomeModernIcon,
-  FunnelIcon,
   DocumentArrowDownIcon,
   EyeIcon,
   PencilIcon,
-  TrashIcon,
-  WrenchScrewdriverIcon,
-  UserGroupIcon
+  TrashIcon
 } from '@heroicons/react/24/outline';
 
 interface RoomListItem {
@@ -31,10 +27,7 @@ interface RoomListItem {
   amenities: string[];
 }
 
-interface Paginated<T> {
-  count: number;
-  results: T[];
-}
+
 
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   const getStatusColor = (status: string) => {
@@ -78,25 +71,14 @@ const Rooms: React.FC = () => {
   const [rooms, setRooms] = useState<RoomListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [selectedRoom, setSelectedRoom] = useState<RoomListItem | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
   // Filter states
-  const [filters, setFilters] = useState({
-    building: '',
-    status: '',
-    room_type: '',
-    floor: '',
-    search: '',
-  });
+  const [searchValue, setSearchValue] = useState('');
 
-  useEffect(() => {
-    fetchRooms();
-  }, [currentPage, filters]);
-
-  const fetchRooms = async () => {
+  const fetchRooms = useCallback(async () => {
     try {
       setLoading(true);
       // Mock data for demonstration
@@ -107,13 +89,13 @@ const Rooms: React.FC = () => {
           building_name: 'Building A',
           floor: 1,
           room_type_name: 'Double Room',
-          status: 'occupied',
+          status: 'available',
           current_capacity: 2,
-          available_beds: 0,
-          occupancy_rate: 100,
-          is_occupied: true,
+          available_beds: 2,
+          occupancy_rate: 0,
+          is_occupied: false,
           description: 'Comfortable double room with modern amenities',
-          amenities: ['AC', 'WiFi', 'Attached Bathroom', 'Study Table'],
+          amenities: ['WiFi', 'AC', 'Private Bathroom']
         },
         {
           id: 2,
@@ -121,13 +103,13 @@ const Rooms: React.FC = () => {
           building_name: 'Building A',
           floor: 1,
           room_type_name: 'Single Room',
-          status: 'available',
-          current_capacity: 0,
-          available_beds: 1,
-          occupancy_rate: 0,
-          is_occupied: false,
-          description: 'Cozy single room with basic amenities',
-          amenities: ['WiFi', 'Shared Bathroom', 'Study Table'],
+          status: 'occupied',
+          current_capacity: 1,
+          available_beds: 0,
+          occupancy_rate: 100,
+          is_occupied: true,
+          description: 'Cozy single room with study desk',
+          amenities: ['WiFi', 'AC', 'Study Desk']
         },
         {
           id: 3,
@@ -136,45 +118,25 @@ const Rooms: React.FC = () => {
           floor: 2,
           room_type_name: 'Triple Room',
           status: 'maintenance',
-          current_capacity: 0,
-          available_beds: 3,
+          current_capacity: 3,
+          available_beds: 0,
           occupancy_rate: 0,
           is_occupied: false,
-          description: 'Spacious triple room under maintenance',
-          amenities: ['AC', 'WiFi', 'Attached Bathroom', 'Study Table', 'Wardrobe'],
-        },
-        {
-          id: 4,
-          room_number: 'C-301',
-          building_name: 'Building C',
-          floor: 3,
-          room_type_name: 'Double Room',
-          status: 'reserved',
-          current_capacity: 1,
-          available_beds: 1,
-          occupancy_rate: 50,
-          is_occupied: false,
-          description: 'Premium double room with balcony',
-          amenities: ['AC', 'WiFi', 'Attached Bathroom', 'Study Table', 'Balcony'],
-        },
+          description: 'Spacious triple room for group accommodation',
+          amenities: ['WiFi', 'AC', 'Shared Bathroom', 'Kitchen']
+        }
       ];
 
-      // Apply filters
-      let filteredRooms = mockRooms.filter(room => {
-        if (filters.building && room.building_name !== filters.building) return false;
-        if (filters.status && room.status !== filters.status) return false;
-        if (filters.room_type && room.room_type_name !== filters.room_type) return false;
-        if (filters.floor && room.floor.toString() !== filters.floor) return false;
-        if (filters.search) {
-          const searchLower = filters.search.toLowerCase();
-          return (
-            room.room_number.toLowerCase().includes(searchLower) ||
-            room.building_name.toLowerCase().includes(searchLower) ||
-            room.description.toLowerCase().includes(searchLower)
-          );
-        }
-        return true;
-      });
+      // Apply search filter
+      let filteredRooms = mockRooms;
+      if (searchValue) {
+        const searchLower = searchValue.toLowerCase();
+        filteredRooms = mockRooms.filter(room => 
+          room.room_number.toLowerCase().includes(searchLower) ||
+          room.building_name.toLowerCase().includes(searchLower) ||
+          room.room_type_name.toLowerCase().includes(searchLower)
+        );
+      }
 
       // Pagination
       const itemsPerPage = 10;
@@ -184,18 +146,18 @@ const Rooms: React.FC = () => {
 
       setRooms(paginatedRooms);
       setTotalCount(filteredRooms.length);
-      setTotalPages(Math.ceil(filteredRooms.length / itemsPerPage));
     } catch (error) {
       console.error('Error fetching rooms:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, searchValue]);
 
-  const handleFilterChange = (newFilters: any) => {
-    setFilters(newFilters);
-    setCurrentPage(1);
-  };
+  useEffect(() => {
+    fetchRooms();
+  }, [fetchRooms]);
+
+
 
   const handleExport = () => {
     // Export functionality
@@ -215,62 +177,14 @@ const Rooms: React.FC = () => {
     console.log('Delete room:', room);
   };
 
-  const filterOptions = [
-    {
-      key: 'building',
-      label: 'Building',
-      type: 'select',
-      options: [
-        { value: '', label: 'All Buildings' },
-        { value: 'Building A', label: 'Building A' },
-        { value: 'Building B', label: 'Building B' },
-        { value: 'Building C', label: 'Building C' },
-      ],
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      type: 'select',
-      options: [
-        { value: '', label: 'All Status' },
-        { value: 'available', label: 'Available' },
-        { value: 'occupied', label: 'Occupied' },
-        { value: 'maintenance', label: 'Maintenance' },
-        { value: 'reserved', label: 'Reserved' },
-      ],
-    },
-    {
-      key: 'room_type',
-      label: 'Room Type',
-      type: 'select',
-      options: [
-        { value: '', label: 'All Types' },
-        { value: 'Single Room', label: 'Single Room' },
-        { value: 'Double Room', label: 'Double Room' },
-        { value: 'Triple Room', label: 'Triple Room' },
-      ],
-    },
-    {
-      key: 'floor',
-      label: 'Floor',
-      type: 'select',
-      options: [
-        { value: '', label: 'All Floors' },
-        { value: '1', label: 'Floor 1' },
-        { value: '2', label: 'Floor 2' },
-        { value: '3', label: 'Floor 3' },
-      ],
-    },
-  ];
-
   return (
     <div className="space-y-6">
       <PageHeader
         title="Room Management"
-        description="Manage hostel rooms, allocations, and maintenance"
+        subtitle="Manage hostel rooms, allocations, and maintenance"
         actions={
           <div className="flex space-x-3">
-            <Button variant="primary" size="sm">
+            <Button variant="default" size="sm">
               <HomeModernIcon className="h-4 w-4 mr-2" />
               Add Room
             </Button>
@@ -284,9 +198,8 @@ const Rooms: React.FC = () => {
 
       <Card>
         <FilterBar
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          options={filterOptions}
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
           searchPlaceholder="Search rooms..."
         />
 
@@ -384,9 +297,9 @@ const Rooms: React.FC = () => {
 
               <div className="mt-6">
                 <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalCount={totalCount}
+                  page={currentPage}
+                  pageSize={10}
+                  total={totalCount}
                   onPageChange={setCurrentPage}
                 />
               </div>
@@ -489,7 +402,7 @@ const Rooms: React.FC = () => {
                   Close
                 </Button>
                 <Button
-                  variant="primary"
+                  variant="default"
                   onClick={() => handleEdit(selectedRoom)}
                 >
                   <PencilIcon className="h-4 w-4 mr-2" />

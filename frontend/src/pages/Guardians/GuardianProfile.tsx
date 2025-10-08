@@ -8,17 +8,14 @@ import {
   UserIcon,
   PhoneIcon,
   EnvelopeIcon,
-  AcademicCapIcon,
   MapPinIcon,
-  CalendarIcon,
   DocumentTextIcon,
   UsersIcon,
   CogIcon,
-  BellIcon,
   PencilIcon
 } from '@heroicons/react/24/outline';
 
-interface GuardianProfile {
+interface GuardianProfileData {
   id: string;
   guardian_id: string;
   first_name: string;
@@ -65,13 +62,13 @@ interface GuardianProfile {
 
 const GuardianProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [guardian, setGuardian] = useState<GuardianProfile | null>(null);
+  const [guardian, setGuardian] = useState<GuardianProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
   // Mock data
   useEffect(() => {
-    const mockGuardian: GuardianProfile = {
+    const mockGuardian: GuardianProfileData = {
       id: '1',
       guardian_id: 'G001',
       first_name: 'আব্দুল',
@@ -193,7 +190,7 @@ const GuardianProfile: React.FC = () => {
           <div className="text-center py-12">
             <UserIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">Guardian not found</h3>
-            <p className="text-gray-500">The guardian you're looking for doesn't exist.</p>
+            <p className="text-gray-500">The guardian you&apos;re looking for doesn&apos;t exist.</p>
           </div>
         </Card>
       </div>

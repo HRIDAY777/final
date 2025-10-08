@@ -7,4 +7,5 @@ class AnalyticsConfig(AppConfig):
     verbose_name = 'Analytics & Insights'
 
     def ready(self):
-        import apps.analytics.signals
+        # Import signals to register them
+        import apps.analytics.signals  # noqa: F401
