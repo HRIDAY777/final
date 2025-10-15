@@ -1,306 +1,593 @@
-// Security utilities for XSS protection and input sanitization
+/**
+ * Security utilities for production applications
+ */
 
-export class SecurityUtils {
-  // Sanitize HTML content to prevent XSS
-  static sanitizeHTML(html: string): string {
-    const div = document.createElement('div');
-    div.textContent = html;
-    return div.innerHTML;
+export interface SecurityConfig {
+  enableCSP: boolean
+  enableXSSProtection: boolean
+  enableCSRFProtection: boolean
+  enableClickjackingProtection: boolean
+  allowedOrigins: string[]
+  maxRequestSize: number
+  rateLimiting: {
+    enabled: boolean
+    maxRequests: number
+    windowMs: number
   }
+}
 
-  // Sanitize user input
-  static sanitizeInput(input: string): string {
+/**
+ * XSS Protection utilities
+ */
+export const xssProtection = {
+  /**
+   * Sanitize HTML content
+   */
+  sanitizeHtml: (html: string): string => {
+    const div = document.createElement('div')
+    div.textContent = html
+    return div.innerHTML
+  },
+
+  /**
+   * Escape HTML special characters
+   */
+  escapeHtml: (text: string): string => {
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+      '/': '&#x2F;'
+    }
+    
+    return text.replace(/[&<>"'/]/g, (char) => map[char])
+  },
+
+  /**
+   * Validate and sanitize user input
+   */
+  sanitizeInput: (input: string): string => {
+    if (typeof input !== 'string') return ''
+    
     return input
-      .replace(/[<>]/g, '') // Remove < and >
+      .trim()
+      .replace(/[<>]/g, '') // Remove potential HTML tags
       .replace(/javascript:/gi, '') // Remove javascript: protocol
       .replace(/on\w+=/gi, '') // Remove event handlers
-      .trim();
-  }
+  },
 
-  // Validate email format
-  static isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  // Validate password strength
-  static validatePassword(password: string): {
-    isValid: boolean;
-    score: number;
-    feedback: string[];
-  } {
-    const feedback: string[] = [];
-    let score = 0;
-
-    // Length check
-    if (password.length >= 8) {
-      score += 1;
-    } else {
-      feedback.push('Password must be at least 8 characters long');
-    }
-
-    // Uppercase check
-    if (/[A-Z]/.test(password)) {
-      score += 1;
-    } else {
-      feedback.push('Password must contain at least one uppercase letter');
-    }
-
-    // Lowercase check
-    if (/[a-z]/.test(password)) {
-      score += 1;
-    } else {
-      feedback.push('Password must contain at least one lowercase letter');
-    }
-
-    // Number check
-    if (/\d/.test(password)) {
-      score += 1;
-    } else {
-      feedback.push('Password must contain at least one number');
-    }
-
-    // Special character check
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      score += 1;
-    } else {
-      feedback.push('Password must contain at least one special character');
-    }
-
-    return {
-      isValid: score >= 4,
-      score,
-      feedback,
-    };
-  }
-
-  // Generate secure random string
-  static generateSecureToken(length: number = 32): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const randomArray = new Uint8Array(length);
-    crypto.getRandomValues(randomArray);
-    
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(randomArray[i] % chars.length);
-    }
-    
-    return result;
-  }
-
-  // Hash password (client-side, for demo purposes)
-  static async hashPassword(password: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-  }
-
-  // Validate URL
-  static isValidURL(url: string): boolean {
+  /**
+   * Check for potential XSS in URL
+   */
+  isSafeUrl: (url: string): boolean => {
     try {
-      new URL(url);
-      return true;
+      const parsedUrl = new URL(url)
+      const allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:']
+      
+      if (!allowedProtocols.includes(parsedUrl.protocol)) {
+        return false
+      }
+      
+      // Check for javascript: or data: protocols
+      if (url.toLowerCase().includes('javascript:') || url.toLowerCase().includes('data:')) {
+        return false
+      }
+      
+      return true
     } catch {
-      return false;
-    }
-  }
-
-  // Validate phone number (basic)
-  static isValidPhoneNumber(phone: string): boolean {
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
-  }
-
-  // Escape special characters for SQL injection prevention
-  static escapeSQL(input: string): string {
-    return input
-      .replace(/'/g, "''")
-      .replace(/--/g, '')
-      .replace(/;/g, '')
-      .replace(/\/\*/g, '')
-      .replace(/\*\//g, '');
-  }
-
-  // Validate file type
-  static isValidFileType(file: File, allowedTypes: string[]): boolean {
-    return allowedTypes.includes(file.type);
-  }
-
-  // Validate file size
-  static isValidFileSize(file: File, maxSizeInMB: number): boolean {
-    return file.size <= maxSizeInMB * 1024 * 1024;
-  }
-
-  // Generate CSRF token
-  static generateCSRFToken(): string {
-    return this.generateSecureToken(32);
-  }
-
-  // Validate CSRF token
-  static validateCSRFToken(token: string, storedToken: string): boolean {
-    return token === storedToken && token.length === 32;
-  }
-
-  // Rate limiting utility
-  static createRateLimiter(maxRequests: number, timeWindow: number) {
-    const requests = new Map<string, number[]>();
-
-    return (identifier: string): boolean => {
-      const now = Date.now();
-      const userRequests = requests.get(identifier) || [];
-      
-      // Remove old requests outside the time window
-      const validRequests = userRequests.filter(time => now - time < timeWindow);
-      
-      if (validRequests.length >= maxRequests) {
-        return false; // Rate limit exceeded
-      }
-      
-      validRequests.push(now);
-      requests.set(identifier, validRequests);
-      return true; // Request allowed
-    };
-  }
-
-  // Content Security Policy helper
-  static generateCSP(): string {
-    return [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: https:",
-      "connect-src 'self' https:",
-      "frame-src 'none'",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "frame-ancestors 'none'",
-      "upgrade-insecure-requests"
-    ].join('; ');
-  }
-
-  // Input validation for common fields
-  static validateInput(type: string, value: string): {
-    isValid: boolean;
-    message?: string;
-  } {
-    switch (type) {
-      case 'email':
-        return {
-          isValid: this.isValidEmail(value),
-          message: this.isValidEmail(value) ? undefined : 'Please enter a valid email address'
-        };
-
-      case 'password':
-        const passwordValidation = this.validatePassword(value);
-        return {
-          isValid: passwordValidation.isValid,
-          message: passwordValidation.isValid ? undefined : passwordValidation.feedback[0]
-        };
-
-      case 'phone':
-        return {
-          isValid: this.isValidPhoneNumber(value),
-          message: this.isValidPhoneNumber(value) ? undefined : 'Please enter a valid phone number'
-        };
-
-      case 'url':
-        return {
-          isValid: this.isValidURL(value),
-          message: this.isValidURL(value) ? undefined : 'Please enter a valid URL'
-        };
-
-      case 'name':
-        const nameRegex = /^[a-zA-Z\s]{2,50}$/;
-        return {
-          isValid: nameRegex.test(value),
-          message: nameRegex.test(value) ? undefined : 'Name must be 2-50 characters and contain only letters and spaces'
-        };
-
-      case 'username':
-        const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-        return {
-          isValid: usernameRegex.test(value),
-          message: usernameRegex.test(value) ? undefined : 'Username must be 3-20 characters and contain only letters, numbers, and underscores'
-        };
-
-      default:
-        return {
-          isValid: true
-        };
-    }
-  }
-
-  // Sanitize object properties recursively
-  static sanitizeObject<T>(obj: T): T {
-    if (typeof obj === 'string') {
-      return this.sanitizeInput(obj) as T;
-    }
-
-    if (Array.isArray(obj)) {
-      return obj.map(item => this.sanitizeObject(item)) as T;
-    }
-
-    if (obj && typeof obj === 'object') {
-      const sanitized: any = {};
-      for (const [key, value] of Object.entries(obj)) {
-        sanitized[key] = this.sanitizeObject(value);
-      }
-      return sanitized;
-    }
-
-    return obj;
-  }
-
-  // Check if string contains potentially dangerous content
-  static containsDangerousContent(input: string): boolean {
-    const dangerousPatterns = [
-      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-      /javascript:/gi,
-      /on\w+\s*=/gi,
-      /data:text\/html/gi,
-      /vbscript:/gi,
-      /expression\s*\(/gi,
-    ];
-
-    return dangerousPatterns.some(pattern => pattern.test(input));
-  }
-
-  // Log security events
-  static logSecurityEvent(event: string, details: any): void {
-    console.warn(`Security Event: ${event}`, details);
-    
-    // In production, send to security monitoring service
-    if (process.env.NODE_ENV === 'production') {
-      // Send to security monitoring service
-      // Example: sendToSecurityService(event, details);
+      return false
     }
   }
 }
 
-// Export individual functions for convenience
-export const {
-  sanitizeHTML,
-  sanitizeInput,
-  isValidEmail,
-  validatePassword,
-  generateSecureToken,
-  hashPassword,
-  isValidURL,
-  isValidPhoneNumber,
-  escapeSQL,
-  isValidFileType,
-  isValidFileSize,
-  generateCSRFToken,
-  validateCSRFToken,
-  createRateLimiter,
-  generateCSP,
-  validateInput,
-  sanitizeObject,
-  containsDangerousContent,
-  logSecurityEvent,
-} = SecurityUtils;
+/**
+ * CSRF Protection utilities
+ */
+export const csrfProtection = {
+  /**
+   * Generate CSRF token
+   */
+  generateToken: (): string => {
+    const array = new Uint8Array(32)
+    crypto.getRandomValues(array)
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
+  },
+
+  /**
+   * Store CSRF token
+   */
+  storeToken: (token: string): void => {
+    sessionStorage.setItem('csrf_token', token)
+  },
+
+  /**
+   * Get CSRF token
+   */
+  getToken: (): string | null => {
+    return sessionStorage.getItem('csrf_token')
+  },
+
+  /**
+   * Validate CSRF token
+   */
+  validateToken: (token: string): boolean => {
+    const storedToken = csrfProtection.getToken()
+    return storedToken === token && token.length > 0
+  },
+
+  /**
+   * Add CSRF token to headers
+   */
+  addTokenToHeaders: (headers: Record<string, string> = {}): Record<string, string> => {
+    const token = csrfProtection.getToken()
+    if (token) {
+      headers['X-CSRFToken'] = token
+    }
+    return headers
+  }
+}
+
+/**
+ * Content Security Policy utilities
+ */
+export const cspProtection = {
+  /**
+   * Generate CSP header
+   */
+  generateCSP: (options: {
+    allowInlineScripts?: boolean
+    allowEval?: boolean
+    allowedDomains?: string[]
+  } = {}): string => {
+    const {
+      allowInlineScripts = false,
+      allowEval = false,
+      allowedDomains = []
+    } = options
+
+    const directives = [
+      "default-src 'self'",
+      `script-src 'self'${allowInlineScripts ? " 'unsafe-inline'" : ''}${allowEval ? " 'unsafe-eval'" : ''}`,
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https:",
+      "font-src 'self' data:",
+      "connect-src 'self'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'"
+    ]
+
+    if (allowedDomains.length > 0) {
+      const domainList = allowedDomains.join(' ')
+      directives[0] += ` ${domainList}`
+      directives[3] += ` ${domainList}`
+    }
+
+    return directives.join('; ')
+  },
+
+  /**
+   * Set CSP meta tag
+   */
+  setCSPMetaTag: (policy: string): void => {
+    let metaTag = document.querySelector('meta[http-equiv="Content-Security-Policy"]')
+    
+    if (!metaTag) {
+      metaTag = document.createElement('meta')
+      metaTag.setAttribute('http-equiv', 'Content-Security-Policy')
+      document.head.appendChild(metaTag)
+    }
+    
+    metaTag.setAttribute('content', policy)
+  }
+}
+
+/**
+ * Input validation utilities
+ */
+export const inputValidation = {
+  /**
+   * Validate email format
+   */
+  isValidEmail: (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  },
+
+  /**
+   * Validate password strength
+   */
+  validatePassword: (password: string): {
+    isValid: boolean
+    score: number
+    feedback: string[]
+  } => {
+    const feedback: string[] = []
+    let score = 0
+
+    if (password.length < 8) {
+      feedback.push('Password must be at least 8 characters long')
+    } else {
+      score += 1
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      feedback.push('Password must contain at least one uppercase letter')
+    } else {
+      score += 1
+    }
+
+    if (!/[a-z]/.test(password)) {
+      feedback.push('Password must contain at least one lowercase letter')
+    } else {
+      score += 1
+    }
+
+    if (!/\d/.test(password)) {
+      feedback.push('Password must contain at least one number')
+    } else {
+      score += 1
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      feedback.push('Password must contain at least one special character')
+    } else {
+      score += 1
+    }
+
+    return {
+      isValid: feedback.length === 0,
+      score,
+      feedback
+    }
+  },
+
+  /**
+   * Validate phone number
+   */
+  isValidPhone: (phone: string): boolean => {
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/
+    return phoneRegex.test(phone.replace(/\s/g, ''))
+  },
+
+  /**
+   * Validate URL
+   */
+  isValidUrl: (url: string): boolean => {
+    try {
+      new URL(url)
+      return true
+    } catch {
+      return false
+    }
+  },
+
+  /**
+   * Validate file type
+   */
+  isValidFileType: (file: File, allowedTypes: string[]): boolean => {
+    return allowedTypes.includes(file.type)
+  },
+
+  /**
+   * Validate file size
+   */
+  isValidFileSize: (file: File, maxSizeInMB: number): boolean => {
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024
+    return file.size <= maxSizeInBytes
+  }
+}
+
+/**
+ * Rate limiting utilities
+ */
+export class RateLimiter {
+  private requests: Map<string, number[]> = new Map()
+  private maxRequests: number
+  private windowMs: number
+
+  constructor(maxRequests = 100, windowMs = 60000) {
+    this.maxRequests = maxRequests
+    this.windowMs = windowMs
+  }
+
+  /**
+   * Check if request is allowed
+   */
+  isAllowed(key: string): boolean {
+    const now = Date.now()
+    const windowStart = now - this.windowMs
+
+    if (!this.requests.has(key)) {
+      this.requests.set(key, [])
+    }
+
+    const userRequests = this.requests.get(key)!
+    
+    // Remove old requests outside the window
+    const validRequests = userRequests.filter(timestamp => timestamp > windowStart)
+    this.requests.set(key, validRequests)
+
+    // Check if under limit
+    if (validRequests.length >= this.maxRequests) {
+      return false
+    }
+
+    // Add current request
+    validRequests.push(now)
+    this.requests.set(key, validRequests)
+
+    return true
+  }
+
+  /**
+   * Get remaining requests
+   */
+  getRemaining(key: string): number {
+    const now = Date.now()
+    const windowStart = now - this.windowMs
+
+    if (!this.requests.has(key)) {
+      return this.maxRequests
+    }
+
+    const userRequests = this.requests.get(key)!
+    const validRequests = userRequests.filter(timestamp => timestamp > windowStart)
+
+    return Math.max(0, this.maxRequests - validRequests.length)
+  }
+
+  /**
+   * Reset rate limit for a key
+   */
+  reset(key: string): void {
+    this.requests.delete(key)
+  }
+
+  /**
+   * Clear all rate limits
+   */
+  clear(): void {
+    this.requests.clear()
+  }
+}
+
+/**
+ * Secure storage utilities
+ */
+export const secureStorage = {
+  /**
+   * Encrypt data before storing
+   */
+  encrypt: async (data: string, key: string): Promise<string> => {
+    try {
+      const encoder = new TextEncoder()
+      const dataBuffer = encoder.encode(data)
+      const keyBuffer = encoder.encode(key)
+      
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw',
+        keyBuffer,
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey']
+      )
+      
+      const derivedKey = await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: encoder.encode('educore-salt'),
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        cryptoKey,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt']
+      )
+      
+      const iv = crypto.getRandomValues(new Uint8Array(12))
+      const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        derivedKey,
+        dataBuffer
+      )
+      
+      const encryptedArray = new Uint8Array(encrypted)
+      const combined = new Uint8Array(iv.length + encryptedArray.length)
+      combined.set(iv)
+      combined.set(encryptedArray)
+      
+      return btoa(String.fromCharCode(...combined))
+    } catch (error) {
+      console.error('Encryption failed:', error)
+      throw new Error('Failed to encrypt data')
+    }
+  },
+
+  /**
+   * Decrypt data after retrieving
+   */
+  decrypt: async (encryptedData: string, key: string): Promise<string> => {
+    try {
+      const encoder = new TextEncoder()
+      const decoder = new TextDecoder()
+      
+      const combined = new Uint8Array(
+        atob(encryptedData).split('').map(char => char.charCodeAt(0))
+      )
+      
+      const iv = combined.slice(0, 12)
+      const encrypted = combined.slice(12)
+      
+      const keyBuffer = encoder.encode(key)
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw',
+        keyBuffer,
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey']
+      )
+      
+      const derivedKey = await crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: encoder.encode('educore-salt'),
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        cryptoKey,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      )
+      
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv },
+        derivedKey,
+        encrypted
+      )
+      
+      return decoder.decode(decrypted)
+    } catch (error) {
+      console.error('Decryption failed:', error)
+      throw new Error('Failed to decrypt data')
+    }
+  },
+
+  /**
+   * Store sensitive data securely
+   */
+  setSecureItem: async (key: string, value: string): Promise<void> => {
+    const encryptionKey = await this.getOrCreateEncryptionKey()
+    const encryptedValue = await secureStorage.encrypt(value, encryptionKey)
+    localStorage.setItem(`secure_${key}`, encryptedValue)
+  },
+
+  /**
+   * Retrieve sensitive data
+   */
+  getSecureItem: async (key: string): Promise<string | null> => {
+    try {
+      const encryptedValue = localStorage.getItem(`secure_${key}`)
+      if (!encryptedValue) return null
+      
+      const encryptionKey = await this.getOrCreateEncryptionKey()
+      return await secureStorage.decrypt(encryptedValue, encryptionKey)
+    } catch (error) {
+      console.error('Failed to retrieve secure item:', error)
+      return null
+    }
+  },
+
+  /**
+   * Get or create encryption key
+   */
+  getOrCreateEncryptionKey: async (): Promise<string> => {
+    let key = localStorage.getItem('encryption_key')
+    
+    if (!key) {
+      // Generate a new key
+      const array = new Uint8Array(32)
+      crypto.getRandomValues(array)
+      key = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
+      localStorage.setItem('encryption_key', key)
+    }
+    
+    return key
+  }
+}
+
+/**
+ * Security headers utilities
+ */
+export const securityHeaders = {
+  /**
+   * Set security headers for fetch requests
+   */
+  getSecureHeaders: (): Record<string, string> => {
+    const token = csrfProtection.getToken()
+    
+    return {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+      ...(token && { 'X-CSRFToken': token })
+    }
+  },
+
+  /**
+   * Validate response headers
+   */
+  validateResponseHeaders: (response: Response): boolean => {
+    const requiredHeaders = [
+      'X-Content-Type-Options',
+      'X-Frame-Options',
+      'X-XSS-Protection'
+    ]
+    
+    return requiredHeaders.every(header => 
+      response.headers.has(header)
+    )
+  }
+}
+
+/**
+ * Security configuration
+ */
+export const securityConfig: SecurityConfig = {
+  enableCSP: true,
+  enableXSSProtection: true,
+  enableCSRFProtection: true,
+  enableClickjackingProtection: true,
+  allowedOrigins: [
+    'https://educore.com',
+    'https://www.educore.com',
+    'https://app.educore.com'
+  ],
+  maxRequestSize: 10 * 1024 * 1024, // 10MB
+  rateLimiting: {
+    enabled: true,
+    maxRequests: 100,
+    windowMs: 60000 // 1 minute
+  }
+}
+
+// Initialize security measures
+export const initializeSecurity = (): void => {
+  // Set CSP if enabled
+  if (securityConfig.enableCSP) {
+    const csp = cspProtection.generateCSP({
+      allowedDomains: securityConfig.allowedOrigins
+    })
+    cspProtection.setCSPMetaTag(csp)
+  }
+
+  // Initialize CSRF protection
+  if (securityConfig.enableCSRFProtection) {
+    const token = csrfProtection.generateToken()
+    csrfProtection.storeToken(token)
+  }
+
+  // Set security headers
+  Object.defineProperty(window, 'secureHeaders', {
+    value: securityHeaders.getSecureHeaders(),
+    writable: false
+  })
+}
+
+export default {
+  xssProtection,
+  csrfProtection,
+  cspProtection,
+  inputValidation,
+  RateLimiter,
+  secureStorage,
+  securityHeaders,
+  securityConfig,
+  initializeSecurity
+}

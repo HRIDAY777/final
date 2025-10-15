@@ -546,6 +546,244 @@ const translations: Translations = {
     bn: 'কর্ম',
     hi: 'कार्य',
     ar: 'الإجراءات'
+  },
+
+  // Academics
+  'academics.courses': {
+    en: 'Courses',
+    bn: 'কোর্স',
+    hi: 'पाठ्यक्रम',
+    ar: 'الدورات'
+  },
+  'academics.lessons': {
+    en: 'Lessons',
+    bn: 'পাঠ',
+    hi: 'पाठ',
+    ar: 'الدروس'
+  },
+  'academics.grades': {
+    en: 'Grades',
+    bn: 'গ্রেড',
+    hi: 'ग्रेड',
+    ar: 'الدرجات'
+  },
+
+  // Students
+  'students.all_students': {
+    en: 'All Students',
+    bn: 'সমস্ত শিক্ষার্থী',
+    hi: 'सभी छात्र',
+    ar: 'جميع الطلاب'
+  },
+  'students.add_student': {
+    en: 'Add Student',
+    bn: 'শিক্ষার্থী যোগ করুন',
+    hi: 'छात्र जोड़ें',
+    ar: 'إضافة طالب'
+  },
+
+  // Teachers
+  'teachers.all_teachers': {
+    en: 'All Teachers',
+    bn: 'সমস্ত শিক্ষক',
+    hi: 'सभी शिक्षक',
+    ar: 'جميع المعلمين'
+  },
+  'teachers.add_teacher': {
+    en: 'Add Teacher',
+    bn: 'শিক্ষক যোগ করুন',
+    hi: 'शिक्षक जोड़ें',
+    ar: 'إضافة معلم'
+  },
+
+  // Attendance
+  'attendance.sessions': {
+    en: 'Sessions',
+    bn: 'সেশন',
+    hi: 'सत्र',
+    ar: 'الجلسات'
+  },
+  'attendance.records': {
+    en: 'Records',
+    bn: 'রেকর্ড',
+    hi: 'रिकॉर्ड',
+    ar: 'السجلات'
+  },
+  'attendance.guardian_portal': {
+    en: 'Guardian Portal',
+    bn: 'অভিভাবক পোর্টাল',
+    hi: 'अभिभावक पोर्टल',
+    ar: 'بوابة ولي الأمر'
+  },
+  'attendance.ai_analytics': {
+    en: 'AI Analytics',
+    bn: 'এআই বিশ্লেষণ',
+    hi: 'एआई विश्लेषण',
+    ar: 'تحليلات الذكاء الاصطناعي'
+  },
+  'attendance.biometric_integration': {
+    en: 'Biometric Integration',
+    bn: 'বায়োমেট্রিক ইন্টিগ্রেশন',
+    hi: 'बायोमेट्रिक एकीकरण',
+    ar: 'التكامل البيومتري'
+  },
+  'attendance.leave_requests': {
+    en: 'Leave Requests',
+    bn: 'ছুটির অনুরোধ',
+    hi: 'अवकाश अनुरोध',
+    ar: 'طلبات الإجازة'
+  },
+  'attendance.reports': {
+    en: 'Reports',
+    bn: 'রিপোর্ট',
+    hi: 'रिपोर्ट',
+    ar: 'التقارير'
+  },
+
+  // Exams
+  'exams.schedules': {
+    en: 'Schedules',
+    bn: 'সময়সূচী',
+    hi: 'अनुसूची',
+    ar: 'الجداول'
+  },
+  'exams.questions': {
+    en: 'Questions',
+    bn: 'প্রশ্ন',
+    hi: 'प्रश्न',
+    ar: 'الأسئلة'
+  },
+  'exams.results': {
+    en: 'Results',
+    bn: 'ফলাফল',
+    hi: 'परिणाम',
+    ar: 'النتائج'
+  },
+  'exams.quizzes': {
+    en: 'Quizzes',
+    bn: 'কুইজ',
+    hi: 'प्रश्नोत्तरी',
+    ar: 'الاختبارات القصيرة'
+  },
+
+  // Finance
+  'finance.billing': {
+    en: 'Billing',
+    bn: 'বিলিং',
+    hi: 'बिलिंग',
+    ar: 'الفواتير'
+  },
+  'finance.fees': {
+    en: 'Fees',
+    bn: 'ফি',
+    hi: 'शुल्क',
+    ar: 'الرسوم'
+  },
+  'finance.invoices': {
+    en: 'Invoices',
+    bn: 'চালান',
+    hi: 'बीजक',
+    ar: 'الفواتير'
+  },
+  'finance.payments': {
+    en: 'Payments',
+    bn: 'পেমেন্ট',
+    hi: 'भुगतान',
+    ar: 'المدفوعات'
+  },
+  'finance.plans': {
+    en: 'Plans',
+    bn: 'পরিকল্পনা',
+    hi: 'योजनाएं',
+    ar: 'الخطط'
+  },
+  'finance.reports': {
+    en: 'Reports',
+    bn: 'রিপোর্ট',
+    hi: 'रिपोर्ट',
+    ar: 'التقارير'
+  },
+
+  // Library
+  'library.books': {
+    en: 'Books',
+    bn: 'বই',
+    hi: 'किताबें',
+    ar: 'الكتب'
+  },
+  'library.borrowings': {
+    en: 'Borrowings',
+    bn: 'ধার',
+    hi: 'उधार',
+    ar: 'الاستعارات'
+  },
+  'library.reservations': {
+    en: 'Reservations',
+    bn: 'সংরক্ষণ',
+    hi: 'आरक्षण',
+    ar: 'الحجوزات'
+  },
+  'library.categories': {
+    en: 'Categories',
+    bn: 'বিভাগ',
+    hi: 'श्रेणियां',
+    ar: 'الفئات'
+  },
+  'library.authors': {
+    en: 'Authors',
+    bn: 'লেখক',
+    hi: 'लेखक',
+    ar: 'المؤلفون'
+  },
+  'library.fines': {
+    en: 'Fines',
+    bn: 'জরিমানা',
+    hi: 'जुर्माना',
+    ar: 'الغرامات'
+  },
+
+  // Transport
+  'transport.routes': {
+    en: 'Routes',
+    bn: 'রুট',
+    hi: 'मार्ग',
+    ar: 'الطرق'
+  },
+  'transport.drivers': {
+    en: 'Drivers',
+    bn: 'ড্রাইভার',
+    hi: 'चालक',
+    ar: 'السائقون'
+  },
+  'transport.vehicles': {
+    en: 'Vehicles',
+    bn: 'যানবাহন',
+    hi: 'वाहन',
+    ar: 'المركبات'
+  },
+
+  // Hostel
+  'hostel.rooms': {
+    en: 'Rooms',
+    bn: 'রুম',
+    hi: 'कमरे',
+    ar: 'الغرف'
+  },
+
+  // HR
+  'hr.payroll': {
+    en: 'Payroll',
+    bn: 'পে-রোল',
+    hi: 'वेतन',
+    ar: 'كشوف المرتبات'
+  },
+
+  // Timetable
+  'timetable.schedules': {
+    en: 'Schedules',
+    bn: 'সময়সূচী',
+    hi: 'अनुसूची',
+    ar: 'الجداول'
   }
 };
 

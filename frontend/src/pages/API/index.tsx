@@ -30,7 +30,7 @@ interface APIEndpoint {
   example?: {
     request?: any;
     response?: any;
-  };
+  } | undefined;
 }
 
 const APIDocumentation: React.FC = () => {
@@ -603,7 +603,10 @@ const APIDocumentation: React.FC = () => {
                   return (
                     <button
                       key={category.id}
-                      onClick={() => setSelectedEndpoint({ ...apiEndpoints[0], category: category.id })}
+                      onClick={() => {
+                        const firstEndpoint = apiEndpoints.find(ep => ep.category === category.id) || apiEndpoints[0] || null;
+                        setSelectedEndpoint(firstEndpoint);
+                      }}
                       className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-all duration-200 hover:bg-gray-50 ${
                         selectedEndpoint?.category === category.id ? 'bg-blue-50 border border-blue-200' : ''
                       }`}

@@ -55,9 +55,12 @@ const ShopProducts: React.FC = () => {
       if (sortBy) params.ordering = sortBy;
 
       const response = await apiService.get('/ecommerce/products/', { params });
-      setProducts(response.data);
+      // Handle both paginated and non-paginated responses
+      const data = response.data?.results || response.data || [];
+      setProducts(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading products:', error);
+      setProducts([]); // Set empty array on error
     } finally {
       setLoading(false);
     }

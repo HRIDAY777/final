@@ -5,6 +5,13 @@ Main API URL configuration.
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from .health import (
+    health_check,
+    health_check_detailed,
+    readiness_check,
+    liveness_check,
+    metrics
+)
 
 # Create routers for each module
 router = DefaultRouter()
@@ -27,8 +34,12 @@ urlpatterns = [
     # Main API router
     path('', include(router.urls)),
 
-    # Health check
-    path('health/', views.health_view, name='health'),
+    # Health Check & Monitoring - Production Ready
+    path('health/', health_check, name='health_check'),
+    path('health/detailed/', health_check_detailed, name='health_check_detailed'),
+    path('health/ready/', readiness_check, name='readiness_check'),
+    path('health/live/', liveness_check, name='liveness_check'),
+    path('metrics/', metrics, name='metrics'),
 
     # Authentication
     path('auth/', include('apps.accounts.urls')),

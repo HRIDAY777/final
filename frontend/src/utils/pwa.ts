@@ -28,7 +28,8 @@ class PWA {
   }
 
   private async initializePWA(): Promise<void> {
-    if ('serviceWorker' in navigator) {
+    // Only enable PWA features in production
+    if (import.meta.env.PROD && 'serviceWorker' in navigator) {
       try {
         await this.registerServiceWorker();
         this.setupUpdateNotifications();
@@ -36,6 +37,8 @@ class PWA {
       } catch (error) {
         console.error('PWA initialization failed:', error);
       }
+    } else if (import.meta.env.DEV) {
+      console.log('PWA features disabled in development mode');
     }
   }
 

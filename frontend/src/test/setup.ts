@@ -1,4 +1,129 @@
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom'
+import { vi } from 'vitest'
+
+// Mock environment variables
+vi.mock('import.meta.env', () => ({
+  VITE_API_URL: 'http://localhost:8000',
+  VITE_WS_URL: 'ws://localhost:8000',
+  DEV: true,
+  PROD: false
+}))
+
+// Mock window.matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+})
+
+// Mock IntersectionObserver
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}))
+
+// Mock ResizeObserver
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}))
+
+// Mock crypto for tests
+Object.defineProperty(global, 'crypto', {
+  value: {
+    getRandomValues: vi.fn().mockImplementation((arr) => {
+      for (let i = 0; i < arr.length; i++) {
+        arr[i] = Math.floor(Math.random() * 256)
+      }
+      return arr
+    }),
+    subtle: {
+      importKey: vi.fn(),
+      deriveKey: vi.fn(),
+      encrypt: vi.fn(),
+      decrypt: vi.fn(),
+    }
+  }
+})
+
+// Mock fetch
+global.fetch = vi.fn()
+
+// Mock localStorage
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+}
+global.localStorage = localStorageMock as any
+
+// Mock sessionStorage
+const sessionStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+}
+global.sessionStorage = sessionStorageMock as any
+
+// Mock console methods to avoid noise in tests
+global.console = {
+  ...console,
+  log: vi.fn(),
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+}
+
+// Setup test environment
+beforeEach(() => {
+  vi.clearAllMocks()
+  localStorageMock.clear()
+  sessionStorageMock.clear()
+})
+
+// Global test utilities
+declare global {
+  var testUtils: {
+    mockApiResponse: (data: any, status?: number) => void
+    mockApiError: (error: string, status?: number) => void
+    waitFor: (ms: number) => Promise<void>
+  }
+}
+
+global.testUtils = {
+  mockApiResponse: (data: any, status = 200) => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: status >= 200 && status < 300,
+      status,
+      json: () => Promise.resolve(data),
+      text: () => Promise.resolve(JSON.stringify(data)),
+    } as Response)
+  },
+  
+  mockApiError: (error: string, status = 500) => {
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status,
+      json: () => Promise.resolve({ error }),
+      text: () => Promise.resolve(error),
+    } as Response)
+  },
+  
+  waitFor: (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+};
 import { vi } from 'vitest';
 
 // Mock IntersectionObserver
