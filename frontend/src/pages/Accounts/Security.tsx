@@ -81,16 +81,37 @@ const Security: React.FC = () => {
     }
 
     setIsChangingPassword(true);
-    // TODO: Implement API call to change password
-    setTimeout(() => {
-      setIsChangingPassword(false);
+    
+    try {
+      const response = await fetch('/api/auth/change-password/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          old_password: passwordData.currentPassword,
+          new_password: passwordData.newPassword,
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to change password');
+      }
+      
       setPasswordData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
       alert('Password changed successfully');
-    }, 2000);
+    } catch (error) {
+      console.error('Error changing password:', error);
+      alert(error instanceof Error ? error.message : 'Failed to change password. Please try again.');
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   const handleToggle2FA = () => {
@@ -114,17 +135,51 @@ const Security: React.FC = () => {
     }
   };
 
-  const handleTerminateSession = (sessionId: string) => {
+  const handleTerminateSession = async (sessionId: string) => {
     if (window.confirm('Are you sure you want to terminate this session?')) {
-      // TODO: Implement API call to terminate session
-      console.log('Terminating session:', sessionId);
+      try {
+        const response = await fetch(`/api/auth/sessions/${sessionId}/terminate/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to terminate session');
+        }
+        
+        console.log('Session terminated:', sessionId);
+        alert('Session terminated successfully');
+      } catch (error) {
+        console.error('Error terminating session:', error);
+        alert('Failed to terminate session. Please try again.');
+      }
     }
   };
 
-  const handleTerminateAllSessions = () => {
+  const handleTerminateAllSessions = async () => {
     if (window.confirm('Are you sure you want to terminate all other sessions?')) {
-      // TODO: Implement API call to terminate all sessions
-      console.log('Terminating all sessions');
+      try {
+        const response = await fetch('/api/auth/sessions/terminate-all/', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to terminate sessions');
+        }
+        
+        console.log('All sessions terminated');
+        alert('All other sessions terminated successfully');
+      } catch (error) {
+        console.error('Error terminating sessions:', error);
+        alert('Failed to terminate sessions. Please try again.');
+      }
     }
   };
 

@@ -1,173 +1,110 @@
-import React, { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
-import { useResponsive } from '../../hooks/useResponsive';
+import React from 'react';
 
 interface Column {
   key: string;
   label: string;
   render?: (value: any, row: any) => React.ReactNode;
-  sortable?: boolean;
-  mobile?: boolean; // Show on mobile
-  tablet?: boolean; // Show on tablet
-  desktop?: boolean; // Show on desktop
+  className?: string;
+  mobileHidden?: boolean;
 }
 
 interface ResponsiveTableProps {
   columns: Column[];
   data: any[];
+  keyField?: string;
   onRowClick?: (row: any) => void;
-  sortable?: boolean;
   className?: string;
   emptyMessage?: string;
 }
 
+/**
+ * 100% Responsive Table Component
+ * - Desktop: Traditional table layout
+ * - Tablet: Compact table
+ * - Mobile: Card-based layout with labels
+ */
 const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
   columns,
   data,
+  keyField = 'id',
   onRowClick,
-  sortable = false,
   className = '',
-  emptyMessage = 'No data available',
+  emptyMessage = 'No data available'
 }) => {
-  const { isMobile, isTablet } = useResponsive();
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: 'asc' | 'desc';
-  } | null>(null);
-
-  // Filter columns based on screen size
-  const visibleColumns = columns.filter(column => {
-    if (isMobile) return column.mobile !== false;
-    if (isTablet) return column.tablet !== false;
-    return column.desktop !== false;
-  });
-
-  const handleSort = (key: string) => {
-    if (!sortable) return;
-
-    setSortConfig(prev => {
-      if (prev?.key === key) {
-        return {
-          key,
-          direction: prev.direction === 'asc' ? 'desc' : 'asc',
-        };
-      }
-      return { key, direction: 'asc' };
-    });
-  };
-
-  const sortedData = React.useMemo(() => {
-    if (!sortConfig) return data;
-
-    return [...data].sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
-
-      if (aValue < bValue) {
-        return sortConfig.direction === 'asc' ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortConfig.direction === 'asc' ? 1 : -1;
-      }
-      return 0;
-    });
-  }, [data, sortConfig]);
-
-  if (data.length === 0) {
+  if (!data || data.length === 0) {
     return (
-      <div className={`empty-state ${className}`}>
-        <p className="text-gray-500">{emptyMessage}</p>
-      </div>
-    );
-  }
-
-  if (isMobile) {
-    return (
-      <div className={`space-y-4 ${className}`}>
-        {sortedData.map((row, index) => (
-          <div
-            key={index}
-            className={`card-compact cursor-pointer transition-all duration-200 hover:shadow-medium ${
-              onRowClick ? 'hover:bg-gray-50' : ''
-            }`}
-            onClick={() => onRowClick?.(row)}
-          >
-            {visibleColumns.map((column) => (
-              <div key={column.key} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
-                <span className="font-medium text-gray-600 text-sm">{column.label}:</span>
-                <span className="text-gray-900 text-sm">
-                  {column.render ? column.render(row[column.key], row) : row[column.key]}
-                </span>
-              </div>
-            ))}
-          </div>
-        ))}
+      <div className="text-center py-8 sm:py-12 md:py-16 text-gray-500">
+        <p className="text-sm sm:text-base md:text-lg">{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className={`table-responsive ${className}`}>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            {visibleColumns.map((column) => (
-              <th
-                key={column.key}
-                className={`
-                  px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider
-                  ${column.sortable && sortable ? 'cursor-pointer hover:bg-gray-100' : ''}
-                `}
-                onClick={() => column.sortable && handleSort(column.key)}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>{column.label}</span>
-                  {column.sortable && sortable && (
-                    <div className="flex flex-col">
-                      <ChevronUpIcon
-                        className={`w-3 h-3 ${
-                          sortConfig?.key === column.key && sortConfig?.direction === 'asc'
-                            ? 'text-blue-600'
-                            : 'text-gray-400'
-                        }`}
-                      />
-                      <ChevronDownIcon
-                        className={`w-3 h-3 -mt-1 ${
-                          sortConfig?.key === column.key && sortConfig?.direction === 'desc'
-                            ? 'text-blue-600'
-                            : 'text-gray-400'
-                        }`}
-                      />
-                    </div>
-                  )}
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {sortedData.map((row, index) => (
-            <tr
-              key={index}
-              className={`
-                transition-all duration-200
-                ${onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''}
-              `}
-              onClick={() => onRowClick?.(row)}
-            >
-              {visibleColumns.map((column) => (
-                <td
+    <>
+      {/* Desktop & Tablet Table View */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className={`min-w-full divide-y divide-gray-200 ${className}`}>
+          <thead className="bg-gray-50">
+            <tr>
+              {columns.map((column) => (
+                <th
                   key={column.key}
-                  className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900"
+                  className={`px-4 py-3 lg:px-6 lg:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${column.className || ''}`}
                 >
-                  {column.render ? column.render(row[column.key], row) : row[column.key]}
-                </td>
+                  {column.label}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {data.map((row, idx) => (
+              <tr
+                key={row[keyField] || idx}
+                onClick={() => onRowClick?.(row)}
+                className={`${onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''} transition-colors`}
+              >
+                {columns.map((column) => (
+                  <td
+                    key={column.key}
+                    className={`px-4 py-3 lg:px-6 lg:py-4 whitespace-nowrap text-sm text-gray-900 ${column.className || ''}`}
+                  >
+                    {column.render ? column.render(row[column.key], row) : row[column.key]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {data.map((row, idx) => (
+          <div
+            key={row[keyField] || idx}
+            onClick={() => onRowClick?.(row)}
+            className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 ${
+              onRowClick ? 'active:scale-98 cursor-pointer' : ''
+            } transition-all`}
+          >
+            {columns.map((column) => {
+              if (column.mobileHidden) return null;
+              
+              return (
+                <div key={column.key} className="flex justify-between items-start py-2 border-b border-gray-100 last:border-0">
+                  <span className="text-xs font-semibold text-gray-600 flex-shrink-0 mr-3">
+                    {column.label}
+                  </span>
+                  <span className="text-sm text-gray-900 text-right">
+                    {column.render ? column.render(row[column.key], row) : row[column.key]}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

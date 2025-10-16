@@ -124,25 +124,110 @@ const Settings: React.FC = () => {
     }, 1000);
   }, []);
 
-  const handleSaveSettings = () => {
-    console.log('Saving settings:', settings);
-    // TODO: Implement API call to save settings
+  const handleSaveSettings = async () => {
+    try {
+      const response = await fetch('/api/finance/settings/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save settings');
+      }
+      
+      const savedSettings = await response.json();
+      console.log('Settings saved successfully:', savedSettings);
+      alert('Settings saved successfully');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      alert('Failed to save settings. Please try again.');
+    }
   };
 
-  const handleTestGateway = (gatewayId: string) => {
-    console.log('Testing gateway:', gatewayId);
-    // TODO: Implement gateway testing
+  const handleTestGateway = async (gatewayId: string) => {
+    try {
+      const response = await fetch(`/api/finance/payment-gateways/${gatewayId}/test/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Gateway test failed');
+      }
+      
+      const result = await response.json();
+      console.log('Gateway test result:', result);
+      alert(`Gateway test ${result.success ? 'successful' : 'failed'}`);
+    } catch (error) {
+      console.error('Error testing gateway:', error);
+      alert('Gateway test failed. Please check your configuration.');
+    }
   };
 
-  const handleAddGateway = () => {
-    console.log('Adding new payment gateway');
-    // TODO: Implement add gateway functionality
+  const handleAddGateway = async () => {
+    const gatewayName = prompt('Enter gateway name:');
+    if (!gatewayName) return;
+    
+    const provider = prompt('Enter provider (stripe/paypal/square/razorpay):');
+    if (!provider) return;
+    
+    try {
+      const response = await fetch('/api/finance/payment-gateways/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: gatewayName,
+          provider: provider,
+          status: 'inactive',
+          is_active: false,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to add gateway');
+      }
+      
+      const newGateway = await response.json();
+      console.log('Gateway added:', newGateway);
+      setPaymentGateways(prev => [...prev, newGateway]);
+      alert('Payment gateway added successfully');
+    } catch (error) {
+      console.error('Error adding gateway:', error);
+      alert('Failed to add gateway. Please try again.');
+    }
   };
 
-  const handleRemoveGateway = (gatewayId: string) => {
+  const handleRemoveGateway = async (gatewayId: string) => {
     if (window.confirm('Are you sure you want to remove this payment gateway?')) {
-      console.log('Removing gateway:', gatewayId);
-      // TODO: Implement remove gateway functionality
+      try {
+        const response = await fetch(`/api/finance/payment-gateways/${gatewayId}/`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to remove gateway');
+        }
+        
+        console.log('Gateway removed:', gatewayId);
+        setPaymentGateways(prev => prev.filter(g => g.id !== gatewayId));
+        alert('Payment gateway removed successfully');
+      } catch (error) {
+        console.error('Error removing gateway:', error);
+        alert('Failed to remove gateway. Please try again.');
+      }
     }
   };
 

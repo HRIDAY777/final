@@ -41,10 +41,29 @@ const Profile: React.FC = () => {
     }));
   };
 
-  const handleSave = () => {
-    // TODO: Implement API call to save profile data
-    console.log('Saving profile data:', profileData);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      const response = await fetch('/api/auth/profile/', {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save profile');
+      }
+      
+      const updatedProfile = await response.json();
+      console.log('Profile saved successfully:', updatedProfile);
+      setIsEditing(false);
+      alert('Profile updated successfully');
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      alert('Failed to save profile. Please try again.');
+    }
   };
 
   const handleCancel = () => {

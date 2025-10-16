@@ -130,8 +130,17 @@ export const useScheduledReports = () => {
       setLoading(true);
       setError(null);
       
-      // TODO: Replace with actual API call when backend is ready
-      // await apiClient.post(`/api/reports/scheduled/${id}/pause/`);
+      const response = await fetch(`/api/reports/scheduled/${id}/pause/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to pause report');
+      }
       
       console.log('Scheduled report paused:', id);
       
@@ -149,8 +158,17 @@ export const useScheduledReports = () => {
       setLoading(true);
       setError(null);
       
-      // TODO: Replace with actual API call when backend is ready
-      // await apiClient.post(`/api/reports/scheduled/${id}/resume/`);
+      const response = await fetch(`/api/reports/scheduled/${id}/resume/`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to resume report');
+      }
       
       console.log('Scheduled report resumed:', id);
       
@@ -168,8 +186,16 @@ export const useScheduledReports = () => {
       setLoading(true);
       setError(null);
       
-      // TODO: Replace with actual API call when backend is ready
-      // await apiClient.delete(`/api/reports/scheduled/${id}/`);
+      const response = await fetch(`/api/reports/scheduled/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete report');
+      }
       
       console.log('Scheduled report deleted:', id);
       

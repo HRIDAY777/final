@@ -4,6 +4,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Import Responsive Utilities */
+@import './styles/responsive.css';
+@import './styles/mobile-optimizations.css';
 /* stylelint-enable at-rule-no-unknown */
 
 /* Global enhancements */

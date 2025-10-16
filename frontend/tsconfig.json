@@ -40,7 +40,6 @@
     "removeComments": true,
 
     /* Interop Constraints */
-    "allowImportingTsExtensions": false,
     "verbatimModuleSyntax": false,
 
     /* Type checking */

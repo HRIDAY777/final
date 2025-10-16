@@ -1,89 +1,144 @@
 import { useState, useEffect } from 'react';
 
-export interface Breakpoint {
-  xs: boolean;
-  sm: boolean;
-  md: boolean;
-  lg: boolean;
-  xl: boolean;
-  '2xl': boolean;
-  '3xl': boolean;
-}
+export type Breakpoint = 'mobile' | 'tablet' | 'desktop' | 'wide';
 
-export interface ResponsiveConfig {
+interface ResponsiveState {
   isMobile: boolean;
   isTablet: boolean;
   isDesktop: boolean;
-  isLargeDesktop: boolean;
-  breakpoint: Breakpoint;
+  isWide: boolean;
   width: number;
   height: number;
+  breakpoint: Breakpoint;
 }
 
-const getBreakpoint = (width: number): Breakpoint => ({
-  xs: width >= 475,
-  sm: width >= 640,
-  md: width >= 768,
-  lg: width >= 1024,
-  xl: width >= 1280,
-  '2xl': width >= 1536,
-  '3xl': width >= 1920,
-});
-
-export const useResponsive = (): ResponsiveConfig => {
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 0,
-    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+/**
+ * Custom hook for responsive design
+ * Provides current screen size and breakpoint information
+ */
+export const useResponsive = (): ResponsiveState => {
+  const [state, setState] = useState<ResponsiveState>(() => {
+    const width = typeof window !== 'undefined' ? window.innerWidth : 1024;
+    const height = typeof window !== 'undefined' ? window.innerHeight : 768;
+    
+    return {
+      isMobile: width < 768,
+      isTablet: width >= 768 && width < 1024,
+      isDesktop: width >= 1024,
+      isWide: width >= 1536,
+      width,
+      height,
+      breakpoint: width < 768 ? 'mobile' : width < 1024 ? 'tablet' : width < 1536 ? 'desktop' : 'wide'
+    };
   });
 
   useEffect(() => {
     const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      setState({
+        isMobile: width < 768,
+        isTablet: width >= 768 && width < 1024,
+        isDesktop: width >= 1024,
+        isWide: width >= 1536,
+        width,
+        height,
+        breakpoint: width < 768 ? 'mobile' : width < 1024 ? 'tablet' : width < 1536 ? 'desktop' : 'wide'
       });
     };
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
+    window.addEventListener('resize', handleResize);
+    
+    // Initial check
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const breakpoint = getBreakpoint(windowSize.width);
-
-  return {
-    isMobile: !breakpoint.sm,
-    isTablet: breakpoint.sm && !breakpoint.lg,
-    isDesktop: breakpoint.lg && !breakpoint['2xl'],
-    isLargeDesktop: breakpoint['2xl'],
-    breakpoint,
-    width: windowSize.width,
-    height: windowSize.height,
-  };
+  return state;
 };
 
-export const useIsMobile = (): boolean => {
-  const { isMobile } = useResponsive();
-  return isMobile;
+/**
+ * Hook to get the number of columns for grid based on screen size
+ */
+export const useResponsiveColumns = (
+  mobile: number = 1,
+  tablet: number = 2,
+  desktop: number = 3,
+  wide: number = 4
+): number => {
+  const { isMobile, isTablet, isWide } = useResponsive();
+  
+  if (isMobile) return mobile;
+  if (isTablet) return tablet;
+  if (isWide) return wide;
+  return desktop;
 };
 
-export const useIsTablet = (): boolean => {
-  const { isTablet } = useResponsive();
-  return isTablet;
+/**
+ * Hook to conditionally render based on screen size
+ */
+export const useMediaQuery = (query: string): boolean => {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(query);
+    setMatches(mediaQuery.matches);
+
+    const handler = (event: MediaQueryListEvent) => setMatches(event.matches);
+    
+    // Modern browsers
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handler);
+      return () => mediaQuery.removeEventListener('change', handler);
+    } 
+    // Legacy browsers
+    else {
+      mediaQuery.addListener(handler);
+      return () => mediaQuery.removeListener(handler);
+    }
+  }, [query]);
+
+  return matches;
 };
 
-export const useIsDesktop = (): boolean => {
-  const { isDesktop } = useResponsive();
-  return isDesktop;
-};
+/**
+ * Predefined media queries
+ */
+export const useIsMobile = () => useMediaQuery('(max-width: 767px)');
+export const useIsTablet = () => useMediaQuery('(min-width: 768px) and (max-width: 1023px)');
+export const useIsDesktop = () => useMediaQuery('(min-width: 1024px)');
+export const useIsWide = () => useMediaQuery('(min-width: 1536px)');
+export const useIsPortrait = () => useMediaQuery('(orientation: portrait)');
+export const useIsLandscape = () => useMediaQuery('(orientation: landscape)');
+export const useIsTouchDevice = () => useMediaQuery('(hover: none) and (pointer: coarse)');
 
-export const useIsLargeDesktop = (): boolean => {
-  const { isLargeDesktop } = useResponsive();
-  return isLargeDesktop;
-};
+/**
+ * Hook for orientation change detection
+ */
+export const useOrientation = (): 'portrait' | 'landscape' => {
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(
+    typeof window !== 'undefined' && window.innerHeight > window.innerWidth
+      ? 'portrait'
+      : 'landscape'
+  );
 
-export const useBreakpoint = (breakpoint: keyof Breakpoint): boolean => {
-  const { breakpoint: bp } = useResponsive();
-  return bp[breakpoint];
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      setOrientation(
+        window.innerHeight > window.innerWidth ? 'portrait' : 'landscape'
+      );
+    };
+
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+
+    return () => {
+      window.removeEventListener('resize', handleOrientationChange);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+    };
+  }, []);
+
+  return orientation;
 };

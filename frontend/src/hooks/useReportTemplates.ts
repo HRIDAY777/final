@@ -31,59 +31,19 @@ export const useReportTemplates = () => {
       setLoading(true);
       setError(null);
       
-      // For now, return mock data since the backend might not have these endpoints yet
-      const mockTemplates: ReportTemplate[] = [
-        {
-          id: '1',
-          name: 'Student Performance Report',
-          description: 'Comprehensive report on student academic performance',
-          report_type: 'academic',
-          format: 'pdf',
-          is_public: true,
-          is_active: true,
-          created_at: '2024-01-15T10:30:00Z',
-          created_by: { name: 'John Doe' },
+      const response = await fetch('/api/reports/templates/', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
         },
-        {
-          id: '2',
-          name: 'Attendance Summary',
-          description: 'Monthly attendance summary for all students',
-          report_type: 'attendance',
-          format: 'excel',
-          is_public: false,
-          is_active: true,
-          created_at: '2024-01-10T14:20:00Z',
-          created_by: { name: 'Jane Smith' },
-        },
-        {
-          id: '3',
-          name: 'Financial Statement',
-          description: 'Quarterly financial statement and budget analysis',
-          report_type: 'financial',
-          format: 'pdf',
-          is_public: false,
-          is_active: true,
-          created_at: '2024-01-05T09:15:00Z',
-          created_by: { name: 'Mike Johnson' },
-        },
-        {
-          id: '4',
-          name: 'Teacher Performance',
-          description: 'Teacher performance evaluation and metrics',
-          report_type: 'performance',
-          format: 'pdf',
-          is_public: false,
-          is_active: true,
-          created_at: '2024-01-12T16:45:00Z',
-          created_by: { name: 'Sarah Wilson' },
-        },
-      ];
+      });
       
-      return mockTemplates;
+      if (!response.ok) {
+        throw new Error('Failed to fetch templates');
+      }
       
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await apiClient.get('/api/reports/templates/');
-      // return response.data;
+      const data = await response.json();
+      return data.results || data;
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch templates');
@@ -99,24 +59,21 @@ export const useReportTemplates = () => {
       setLoading(true);
       setError(null);
       
-      // For now, return mock response since the backend might not have these endpoints yet
-      const mockTemplate: ReportTemplate = {
-        id: Date.now().toString(),
-        name: data.name,
-        description: data.description,
-        report_type: data.report_type,
-        format: data.format,
-        is_public: data.is_public,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        created_by: { name: 'Current User' },
-      };
+      const response = await fetch('/api/reports/templates/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
       
-      return mockTemplate;
+      if (!response.ok) {
+        throw new Error('Failed to create template');
+      }
       
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await apiClient.post('/api/reports/templates/', data);
-      // return response.data;
+      const template = await response.json();
+      return template;
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create template');
@@ -132,8 +89,16 @@ export const useReportTemplates = () => {
       setLoading(true);
       setError(null);
       
-      // TODO: Replace with actual API call when backend is ready
-      // await apiClient.delete(`/api/reports/templates/${id}/`);
+      const response = await fetch(`/api/reports/templates/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete template');
+      }
       
       console.log('Template deleted:', id);
       

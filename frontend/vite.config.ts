@@ -2,8 +2,6 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { resolve } from 'path'
-import { visualizer } from 'rollup-plugin-visualizer'
-import { compression } from 'vite-plugin-compression2'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -92,29 +90,7 @@ export default defineConfig(({ command, mode }) => {
         devOptions: {
           enabled: true
         }
-      }),
-
-      // Bundle analyzer for production
-      ...(isProduction ? [
-        visualizer({
-          filename: 'dist/bundle-analysis.html',
-          open: false,
-          gzipSize: true,
-          brotliSize: true
-        })
-      ] : []),
-
-      // Compression for production
-      ...(isProduction ? [
-        compression({
-          algorithm: 'gzip',
-          exclude: [/\.(br)$ /, /\.(gz)$/]
-        }),
-        compression({
-          algorithm: 'brotliCompress',
-          exclude: [/\.(br)$ /, /\.(gz)$/]
-        })
-      ] : [])
+      })
     ],
     resolve: {
       alias: {

@@ -78,8 +78,29 @@ const CreateReportModal: React.FC<CreateReportModalProps> = ({ open, onClose }) 
         });
       } else {
         // Generate report from template
-        // TODO: Implement report generation
-        console.log('Generating report from template:', selectedTemplate);
+        const response = await fetch(`/api/reports/templates/${selectedTemplate}/generate_report/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: reportName || 'Generated Report',
+            description: reportDescription,
+            parameters: {},
+            scheduled: isScheduled,
+            frequency: scheduleFrequency,
+            start_date: scheduleStartDate,
+            recipients: recipients,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to generate report');
+        }
+        
+        const generatedReport = await response.json();
+        console.log('Report generated:', generatedReport);
       }
       
       onClose();

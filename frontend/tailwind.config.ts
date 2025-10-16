@@ -10,13 +10,17 @@ const config: Config = {
   ],
   theme: {
     screens: {
-      'xs': '475px',
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px',
-      '3xl': '1920px',
+      'xs': '375px',     // Small mobile
+      'sm': '640px',     // Mobile landscape / Small tablet
+      'md': '768px',     // Tablet
+      'lg': '1024px',    // Desktop
+      'xl': '1280px',    // Large desktop
+      '2xl': '1536px',   // Extra large desktop
+      '3xl': '1920px',   // Ultra wide
+      // Custom breakpoints
+      'mobile': {'max': '767px'},
+      'tablet': {'min': '768px', 'max': '1023px'},
+      'desktop': {'min': '1024px'},
     },
     extend: {
       colors: {
@@ -145,6 +149,39 @@ const config: Config = {
         '2xl': '1.5rem',
         '3xl': '2rem',
       },
+      // Responsive scale utilities
+      scale: {
+        '98': '0.98',
+        '102': '1.02',
+      },
+      // Touch-friendly sizes
+      minHeight: {
+        'touch': '44px',
+        'touch-lg': '48px',
+      },
+      minWidth: {
+        'touch': '44px',
+        'touch-lg': '48px',
+      },
+      // Container max widths for different breakpoints
+      maxWidth: {
+        'screen-xs': '475px',
+        'screen-sm': '640px',
+        'screen-md': '768px',
+        'screen-lg': '1024px',
+        'screen-xl': '1280px',
+        'screen-2xl': '1536px',
+      },
+    },
+  },
+  // Enable all responsive variants
+  variants: {
+    extend: {
+      display: ['group-hover', 'mobile', 'tablet', 'desktop'],
+      visibility: ['mobile', 'tablet', 'desktop'],
+      backgroundColor: ['active'],
+      scale: ['active'],
+      translate: ['active'],
     },
   },
   plugins: [
