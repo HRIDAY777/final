@@ -284,21 +284,6 @@ export default defineConfig(({ command, mode }) => {
           additionalData: `@import "@styles/utils/variables.scss";`,
           charset: false
         }
-      },
-      postcss: {
-        plugins: [
-          require('autoprefixer'),
-          require('tailwindcss'),
-          ...(isProduction ? [
-            require('cssnano')({
-              preset: ['default', {
-                discardComments: {
-                  removeAll: true,
-                },
-              }]
-            })
-          ] : [])
-        ]
       }
     },
     
