@@ -13,14 +13,7 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     plugins: [
-      react({
-        babel: {
-          plugins: [
-            ['@babel/plugin-proposal-decorators', { legacy: true }],
-            ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]
-          ]
-        }
-      }),
+      react(),
       
       // PWA Configuration
       VitePWA({
