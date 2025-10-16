@@ -372,7 +372,7 @@ export function useOptimizedList<T>(
  */
 export const bundleOptimizations = {
   // Dynamic imports for code splitting
-  importComponent: <T>(importFunc: () => Promise<T>) => {
+  importComponent: <T,>(importFunc: () => Promise<T>) => {
     return React.lazy(importFunc)
   },
   

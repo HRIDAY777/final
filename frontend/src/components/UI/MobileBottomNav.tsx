@@ -1,5 +1,5 @@
 import React from 'react';
-<parameter name="link">import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   HomeIcon,
   AcademicCapIcon,
