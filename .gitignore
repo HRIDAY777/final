@@ -37,6 +37,9 @@ db.sqlite3-journal
 .env.local
 .env.*.local
 *.env
+env.production
+env.production.local
+.env.production
 
 # IDE
 .vscode/
@@ -113,3 +116,14 @@ backups/
 *.zip
 *.tar.gz
 *.rar
+
+# Production deployment files (sensitive)
+nginx/ssl/*.key
+nginx/ssl/*.pem
+nginx/ssl/*.crt
+*_backup_*.tar.gz
+db_backup_*.sql
+
+# Docker volumes data
+postgres_data/
+redis_data/
