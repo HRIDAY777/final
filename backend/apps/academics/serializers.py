@@ -131,7 +131,7 @@ class LessonSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = [
             'id', 'course', 'title', 'description', 'content',
-            'duration_minutes', 'order', 'is_completed', 'scheduled_date',
+            'duration_minutes', 'order', 'is_published',
             'created_at', 'updated_at'
         ]
 
@@ -143,7 +143,7 @@ class LessonCreateSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = [
             'id', 'course_id', 'title', 'description', 'content',
-            'duration_minutes', 'order', 'scheduled_date'
+            'duration_minutes', 'order', 'is_published'
         ]
 
 

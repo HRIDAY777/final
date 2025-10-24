@@ -4,9 +4,10 @@ services:
   # PostgreSQL Database (Production)
   db:
     image: postgres:15-alpine
+    container_name: educore_postgres_prod
     environment:
       POSTGRES_DB: ${DB_NAME:-educore_ultra_prod}
-      POSTGRES_USER: ${DB_USER:-educore_user}
+      POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
       PGDATA: /var/lib/postgresql/data/pgdata
@@ -19,7 +20,7 @@ services:
       - educore_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-educore_user} -d ${DB_NAME:-educore_ultra_prod}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-educore_ultra_prod}"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -44,6 +45,7 @@ services:
   # Redis for caching and message broker (Production)
   redis:
     image: redis:7-alpine
+    container_name: educore_redis_prod
     ports:
       - "6379:6379"
     volumes:
@@ -63,9 +65,10 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
+    container_name: educore_backend_prod
     environment:
       - DJANGO_SETTINGS_ENV=prod
-      - DATABASE_URL=postgresql://${DB_USER:-educore_user}:${DB_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}@db:5432/${DB_NAME:-educore_ultra_prod}
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}@db:5432/${DB_NAME:-educore_ultra_prod}
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-CHANGE_ME_SUPER_RANDOM_64CHARS_FOR_PRODUCTION}
       - DEBUG=False
@@ -91,12 +94,16 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
 
   # React Frontend Application (Production)
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${BACKEND_URL:-https://yourdomain.com/api}
+    container_name: educore_frontend_prod
     ports:
       - "3000:80"
     depends_on:
@@ -115,14 +122,15 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
+    container_name: educore_celery_worker_prod
     environment:
       - DJANGO_SETTINGS_ENV=prod
-      - DATABASE_URL=postgresql://${DB_USER:-educore_user}:${DB_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}@db:5432/${DB_NAME:-educore_ultra_prod}
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}@db:5432/${DB_NAME:-educore_ultra_prod}
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-CHANGE_ME_SUPER_RANDOM_64CHARS_FOR_PRODUCTION}
       - DEBUG=False
     env_file:
-      - env.production.production
+      - env.production
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
@@ -142,14 +150,15 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
+    container_name: educore_celery_beat_prod
     environment:
       - DJANGO_SETTINGS_ENV=prod
-      - DATABASE_URL=postgresql://${DB_USER:-educore_user}:${DB_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}@db:5432/${DB_NAME:-educore_ultra_prod}
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}@db:5432/${DB_NAME:-educore_ultra_prod}
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY:-CHANGE_ME_SUPER_RANDOM_64CHARS_FOR_PRODUCTION}
       - DEBUG=False
     env_file:
-      - env.production.production
+      - env.production
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
@@ -167,6 +176,7 @@ services:
   # Nginx Reverse Proxy (Production)
   nginx:
     image: nginx:alpine
+    container_name: educore_nginx_prod
     ports:
       - "80:80"
       - "443:443"
@@ -190,10 +200,12 @@ services:
   # Prometheus Monitoring (Production)
   prometheus:
     image: prom/prometheus:latest
+    container_name: educore_prometheus_prod
     ports:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -209,13 +221,18 @@ services:
   # Grafana Dashboard (Production)
   grafana:
     image: grafana/grafana:latest
+    container_name: educore_grafana_prod
     ports:
       - "3001:3000"
     environment:
+      - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-CHANGE_ME_GRAFANA_PASSWORD}
       - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - GF_SERVER_ROOT_URL=https://yourdomain.com/grafana
     volumes:
       - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
     networks:
       - educore_network
     restart: unless-stopped
@@ -223,6 +240,7 @@ services:
   # Node Exporter (System Metrics)
   node-exporter:
     image: prom/node-exporter:latest
+    container_name: educore_node_exporter_prod
     ports:
       - "9100:9100"
     volumes:
@@ -232,7 +250,35 @@ services:
     command:
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - educore_network
+    restart: unless-stopped
+
+  # PostgreSQL Exporter (Database Metrics)
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: educore_postgres_exporter_prod
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-CHANGE_ME_STRONG_PASSWORD}@db:5432/${DB_NAME:-educore_ultra_prod}?sslmode=disable
+    ports:
+      - "9187:9187"
+    depends_on:
+      - db
+    networks:
+      - educore_network
+    restart: unless-stopped
+
+  # Redis Exporter (Cache Metrics)
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: educore_redis_exporter_prod
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+    ports:
+      - "9121:9121"
+    depends_on:
+      - redis
     networks:
       - educore_network
     restart: unless-stopped

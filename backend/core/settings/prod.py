@@ -352,7 +352,7 @@ SPECTACULAR_SETTINGS = {
 # ============================================================================
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
-if SENTRY_DSN:
+if SENTRY_DSN and SENTRY_DSN.startswith('http') and 'CHANGE_ME' not in SENTRY_DSN:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
     from sentry_sdk.integrations.redis import RedisIntegration
@@ -380,6 +380,7 @@ if SENTRY_DSN:
 CONN_MAX_AGE = 600
 
 # Template caching
+TEMPLATES[0]['APP_DIRS'] = False  # Must be False when using custom loaders
 TEMPLATES[0]['OPTIONS']['loaders'] = [
     ('django.template.loaders.cached.Loader', [
         'django.template.loaders.filesystem.Loader',

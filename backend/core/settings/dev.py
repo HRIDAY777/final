@@ -24,15 +24,33 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Database settings for development
-# Use SQLite for local development
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': (
-            Path(__file__).resolve().parent.parent.parent / 'db.sqlite3'
-        )
+# Support both SQLite and PostgreSQL based on environment
+DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3')
+
+if DB_ENGINE == 'django.db.backends.postgresql':
+    # Use PostgreSQL if configured
+    DATABASES = {
+        'default': {
+            'ENGINE': DB_ENGINE,
+            'NAME': os.environ.get('DB_NAME', 'educore_dev'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'ATOMIC_REQUESTS': True,
+            'CONN_MAX_AGE': 60,
+        }
     }
-}
+else:
+    # Default to SQLite for simple local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': (
+                Path(__file__).resolve().parent.parent.parent / 'db.sqlite3'
+            )
+        }
+    }
 
 # Email settings for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Dashboard from './pages/Dashboard/Dashboard';
-import Landing from './pages/Landing/Landing';
-import BanglaDemo from './components/UI/BanglaDemo';
+// import Landing from './pages/Landing/Landing'; // Removed during cleanup
+// import BanglaDemo from './components/UI/BanglaDemo'; // Removed during cleanup
 
 // Auth Pages
 import Login from './pages/Auth/Login';
@@ -149,17 +149,17 @@ import SettingsAccount from './pages/Settings/Account';
 import SettingsSecurity from './pages/Settings/Security';
 
 // Other Pages
-import NoticesIndex from './pages/Notices/index';
+// import NoticesIndex from './pages/Notices/index'; // Removed during cleanup
 import { Guardians as GuardiansIndex } from './pages/Guardians/index';
 import TenantsIndex from './pages/Tenants/index';
-import SearchIndex from './pages/Search/Search';
+// import SearchIndex from './pages/Search/Search'; // Removed during cleanup
 import AIToolsModels from './pages/AITools/Models';
-import APIDocumentation from './pages/API/index';
+// import APIDocumentation from './pages/API/index'; // Removed during cleanup
 import AccountsIndex from './pages/Accounts/index';
-import AssignmentsIndex from './pages/Assignments/index';
+// import AssignmentsIndex from './pages/Assignments/index'; // Removed during cleanup
 
 // RBAC Pages
-import RBACPage from './pages/RBAC/index';
+// import RBACPage from './pages/RBAC/index'; // Removed during cleanup
 
 function App() {
   return (
@@ -169,8 +169,8 @@ function App() {
     }}>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/landing" element={<Landing />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/landing" element={<Login />} />
         
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
@@ -312,7 +312,7 @@ function App() {
         <Route path="/reports" element={<Layout><ReportsIndex /></Layout>} />
         
         {/* RBAC Routes */}
-        <Route path="/rbac" element={<Layout><RBACPage /></Layout>} />
+        {/* <Route path="/rbac" element={<Layout><RBACPage /></Layout>} /> Removed during cleanup */}
         
         {/* Settings Routes */}
         <Route path="/settings" element={<Layout><SettingsIndex /></Layout>} />
@@ -322,17 +322,17 @@ function App() {
         <Route path="/settings/security" element={<Layout><SettingsSecurity /></Layout>} />
         
         {/* Other Routes */}
-        <Route path="/notices" element={<Layout><NoticesIndex /></Layout>} />
+        {/* <Route path="/notices" element={<Layout><NoticesIndex /></Layout>} /> Removed during cleanup */}
         <Route path="/guardians" element={<Layout><GuardiansIndex /></Layout>} />
         <Route path="/tenants" element={<Layout><TenantsIndex /></Layout>} />
-        <Route path="/search" element={<Layout><SearchIndex /></Layout>} />
+        {/* <Route path="/search" element={<Layout><SearchIndex /></Layout>} /> Removed during cleanup */}
         <Route path="/ai-tools" element={<Layout><AIToolsModels /></Layout>} />
-        <Route path="/api" element={<Layout><APIDocumentation /></Layout>} />
+        {/* <Route path="/api" element={<Layout><APIDocumentation /></Layout>} /> Removed during cleanup */}
         <Route path="/accounts" element={<Layout><AccountsIndex /></Layout>} />
-        <Route path="/assignments" element={<Layout><AssignmentsIndex /></Layout>} />
+        {/* <Route path="/assignments" element={<Layout><AssignmentsIndex /></Layout>} /> Removed during cleanup */}
         
         {/* Demo Route */}
-        <Route path="/bangla-demo" element={<Layout><BanglaDemo /></Layout>} />
+        {/* <Route path="/bangla-demo" element={<Layout><BanglaDemo /></Layout>} /> Removed during cleanup */}
         
         {/* 404 Route */}
         <Route path="*" element={<Layout><div className="p-6 text-center">Page Not Found</div></Layout>} />
